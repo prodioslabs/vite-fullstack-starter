@@ -24,7 +24,6 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "@repo/contract": "workspace:*",
-    "@ts-rest/core": "^3.39.1",
     "@ts-rest/nest": "^3.39.1",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"

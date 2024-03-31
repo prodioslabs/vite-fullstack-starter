@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "API contracts for the @repo service using ts-rest",
   "private": true,
-  "types": "./dist/index.d.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
       "require": "./dist/index.js",
@@ -11,12 +11,8 @@
     }
   },
   "scripts": {
-    "dev:source": "tsup --watch",
-    "dev:types": "tsc --watch",
-    "dev": "concurrently \"pnpm dev:source\" \"pnpm dev:types\"",
-    "build:source": "tsup",
-    "build:types": "tsc",
-    "build": "concurrently \"pnpm build:source\" \"pnpm build:types\"",
+    "dev": "tsup --watch",
+    "build": "tsup",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write --no-error-on-unmatched-pattern \"./src/**/*.{ts,tsx,js,cjs}\" *.{ts,tsx,js,cjs}"
   },
@@ -29,7 +25,6 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "concurrently": "^8.2.2",
     "tsup": "^8.0.2",
     "typescript": "^5.4.3"
   }
