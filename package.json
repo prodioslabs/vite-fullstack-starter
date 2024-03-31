@@ -2,6 +2,7 @@
   "name": "vite-fullstack-starter",
   "version": "0.1",
   "description": "React fullstack starter with vite, nestjs and ts-rest",
+  "private": true,
   "scripts": {
     "dev": "turbo dev",
     "lint": "turbo lint",
