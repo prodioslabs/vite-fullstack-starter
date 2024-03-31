@@ -1,0 +1,21 @@
+{
+  "name": "vite-fullstack-starter",
+  "version": "0.1",
+  "description": "React fullstack starter with vite, nestjs and ts-rest",
+  "scripts": {
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "turbo format"
+  },
+  "keywords": [
+    "vite",
+    "nestjs",
+    "react",
+    "ts-rest",
+    "starter"
+  ],
+  "author": "Team Prodios",
+  "devDependencies": {
+    "turbo": "^1.13.0"
+  }
+}
