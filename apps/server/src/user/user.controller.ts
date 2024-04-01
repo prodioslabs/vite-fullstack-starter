@@ -4,9 +4,9 @@ import { contract } from '@repo/contract'
 
 @Controller()
 export class UserController {
-  @TsRestHandler(contract.user.getCurerentUser)
-  getUser() {
-    return tsRestHandler(contract.user.getCurerentUser, async () => {
+  @TsRestHandler(contract.user.getCurrentUser)
+  getCurrentUser() {
+    return tsRestHandler(contract.user.getCurrentUser, async () => {
       return {
         status: 200,
         body: {

@@ -8,7 +8,7 @@ export const user = z.object({
 
 export const userContract = client.router(
   {
-    getCurerentUser: {
+    getCurrentUser: {
       method: 'GET',
       path: '/me',
       responses: {
