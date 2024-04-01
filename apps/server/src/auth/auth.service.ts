@@ -75,7 +75,6 @@ export class AuthService {
         },
       }
     } catch (error) {
-      console.log(error)
       if (error instanceof BadRequestException) {
         return {
           status: 409,
