@@ -14,6 +14,7 @@
     "@repo/contract": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.28.9",
+    "@tanstack/react-router": "^1.26.1",
     "@ts-rest/react-query": "^3.39.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -21,6 +22,8 @@
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
+    "@tanstack/router-devtools": "^1.26.1",
+    "@tanstack/router-vite-plugin": "^1.25.0",
     "@types/node": "^20.12.2",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
