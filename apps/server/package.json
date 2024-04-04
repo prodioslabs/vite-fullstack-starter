@@ -30,6 +30,7 @@
     "@repo/contract": "workspace:*",
     "@ts-rest/nest": "^3.39.1",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "joi": "^17.12.2",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.0",

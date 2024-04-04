@@ -1,32 +1,27 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router'
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
-import { useAppStore } from '../stores'
+import { Spinner } from '@repo/ui'
+import { QueryClient } from '@tanstack/react-query'
+import { useCurrentUser } from '../hooks/use-current-user'
 
-export const Route = createRootRoute({ component: Root })
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({ component: Root })
 
 function Root() {
-  const isAuthenticated = useAppStore((store) => store.isAuthenticated)
+  const currentUser = useCurrentUser()
 
-  if (!isAuthenticated) {
+  if (currentUser.status === 'pending') {
     return (
-      <>
-        <Outlet />
-        {import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
-      </>
+      <div className="h-screen flex items-center justify-center gap-2">
+        <Spinner />
+        <div className="text-xs text-muted-foreground">Authenticating...</div>
+      </div>
     )
   }
 
   return (
-    <AppShell>
-      <>
-        <Outlet />
-        {import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
-      </>
-    </AppShell>
+    <>
+      <Outlet />
+      {import.meta.env.DEV ? <TanStackRouterDevtools /> : null}
+    </>
   )
-}
-
-// TODO: Make this appshell
-function AppShell({ children }: React.PropsWithChildren) {
-  return <div>{children}</div>
 }

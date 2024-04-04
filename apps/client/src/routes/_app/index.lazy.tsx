@@ -1,9 +1,9 @@
-import { Button } from '@repo/ui'
-import { match } from 'ts-pattern'
 import { createLazyFileRoute } from '@tanstack/react-router'
-import { client } from '../lib/client'
+import { match } from 'ts-pattern'
+import { Button } from '@repo/ui'
+import { client } from '../../lib/client'
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createLazyFileRoute('/_app/')({
   component: Home,
 })
 
