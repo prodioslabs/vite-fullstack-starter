@@ -19,7 +19,9 @@ import { Route as AppImport } from './routes/_app'
 // Create Virtual Routes
 
 const AppIndexLazyImport = createFileRoute('/_app/')()
+const AuthSignupLazyImport = createFileRoute('/_auth/signup')()
 const AuthLoginLazyImport = createFileRoute('/_auth/login')()
+const AuthForgotPasswordLazyImport = createFileRoute('/_auth/forgot-password')()
 
 // Create/Update Routes
 
@@ -38,10 +40,22 @@ const AppIndexLazyRoute = AppIndexLazyImport.update({
   getParentRoute: () => AppRoute,
 } as any).lazy(() => import('./routes/_app/index.lazy').then((d) => d.Route))
 
+const AuthSignupLazyRoute = AuthSignupLazyImport.update({
+  path: '/signup',
+  getParentRoute: () => AuthRoute,
+} as any).lazy(() => import('./routes/_auth/signup.lazy').then((d) => d.Route))
+
 const AuthLoginLazyRoute = AuthLoginLazyImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any).lazy(() => import('./routes/_auth/login.lazy').then((d) => d.Route))
+
+const AuthForgotPasswordLazyRoute = AuthForgotPasswordLazyImport.update({
+  path: '/forgot-password',
+  getParentRoute: () => AuthRoute,
+} as any).lazy(() =>
+  import('./routes/_auth/forgot-password.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -55,8 +69,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/forgot-password': {
+      preLoaderRoute: typeof AuthForgotPasswordLazyImport
+      parentRoute: typeof AuthImport
+    }
     '/_auth/login': {
       preLoaderRoute: typeof AuthLoginLazyImport
+      parentRoute: typeof AuthImport
+    }
+    '/_auth/signup': {
+      preLoaderRoute: typeof AuthSignupLazyImport
       parentRoute: typeof AuthImport
     }
     '/_app/': {
@@ -70,7 +92,11 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   AppRoute.addChildren([AppIndexLazyRoute]),
-  AuthRoute.addChildren([AuthLoginLazyRoute]),
+  AuthRoute.addChildren([
+    AuthForgotPasswordLazyRoute,
+    AuthLoginLazyRoute,
+    AuthSignupLazyRoute,
+  ]),
 ])
 
 /* prettier-ignore-end */

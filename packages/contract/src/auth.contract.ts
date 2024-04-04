@@ -43,6 +43,22 @@ export const authContract = client.router(
         }),
       },
     },
+    forgotPassword: {
+      method: 'POST',
+      path: '/forgot-password',
+      body: z.object({
+        email: z.string().email(),
+      }),
+      responses: {
+        201: z.object({
+          success: z.literal(true),
+        }),
+        409: z.object({
+          sucess: z.literal(false),
+          message: z.string(),
+        }),
+      },
+    },
   },
   { pathPrefix: '/auth' },
 )
