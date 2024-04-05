@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "UI kit built using shadcn-ui",
   "private": true,
+  "scripts": {
+    "format": "prettier --write --no-error-on-unmatched-pattern \"src/**/*.ts\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
+  },
   "exports": {
     ".": {
       "types": "./src/index.ts",
