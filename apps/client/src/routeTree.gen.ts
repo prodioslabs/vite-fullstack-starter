@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AppImport } from './routes/_app'
+import { Route as AppApplicationServiceSlugImport } from './routes/_app/application.$serviceSlug'
 
 // Create Virtual Routes
 
@@ -57,6 +58,11 @@ const AuthForgotPasswordLazyRoute = AuthForgotPasswordLazyImport.update({
   import('./routes/_auth/forgot-password.lazy').then((d) => d.Route),
 )
 
+const AppApplicationServiceSlugRoute = AppApplicationServiceSlugImport.update({
+  path: '/application/$serviceSlug',
+  getParentRoute: () => AppRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -85,13 +91,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexLazyImport
       parentRoute: typeof AppImport
     }
+    '/_app/application/$serviceSlug': {
+      preLoaderRoute: typeof AppApplicationServiceSlugImport
+      parentRoute: typeof AppImport
+    }
   }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  AppRoute.addChildren([AppIndexLazyRoute]),
+  AppRoute.addChildren([AppIndexLazyRoute, AppApplicationServiceSlugRoute]),
   AuthRoute.addChildren([
     AuthForgotPasswordLazyRoute,
     AuthLoginLazyRoute,
