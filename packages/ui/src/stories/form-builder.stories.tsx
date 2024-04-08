@@ -48,12 +48,13 @@ export const SimpleForm: Story = {
       validationSchema: z.object({
         profile: z.object({
           firstName: z.string().min(2).max(50),
-          secondName: z.string().min(2).max(50),
+          lastName: z.string().min(2).max(50),
           email: z.string().email(),
         }),
       }),
     },
     onSubmit: (values) => {
+      // eslint-disable-next-line no-console
       console.log(values)
     },
   },

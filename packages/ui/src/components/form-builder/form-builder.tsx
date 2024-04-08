@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { useForm, useWatch } from 'react-hook-form'
+import { FieldValues, DefaultValues, useForm, UseFormReturn, useWatch, Path } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { match, P } from 'ts-pattern'
 import { FormConfig } from './types'
@@ -13,14 +13,22 @@ import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
 
-type FormBuilderProps = {
-  config: FormConfig
-  defaultValues: Record<string, unknown>
-  onSubmit: (value: Record<string, unknown>) => void
+type FormBuilderProps<TFieldValues extends FieldValues> = {
+  config: FormConfig<TFieldValues>
+  defaultValues: DefaultValues<TFieldValues>
+  onSubmit: (value: TFieldValues) => void
+  submitButtonProps?: React.ComponentProps<typeof Button>
+  extraActions?: (form: UseFormReturn<TFieldValues>) => React.ReactNode
 }
 
-export function FormBuilder({ config, defaultValues, onSubmit }: FormBuilderProps) {
-  const form = useForm({
+export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
+  config,
+  defaultValues,
+  onSubmit,
+  submitButtonProps,
+  extraActions,
+}: FormBuilderProps<TFieldValues>) {
+  const form = useForm<TFieldValues>({
     resolver: zodResolver(config.validationSchema),
     defaultValues,
   })
@@ -48,7 +56,7 @@ export function FormBuilder({ config, defaultValues, onSubmit }: FormBuilderProp
                   return (
                     <FormField
                       key={field.id}
-                      name={`${subform.id}.${field.id}`}
+                      name={`${subform.id}.${field.id}` as Path<TFieldValues>}
                       control={form.control}
                       render={({ field: fieldProps }) => {
                         return (
@@ -179,7 +187,10 @@ export function FormBuilder({ config, defaultValues, onSubmit }: FormBuilderProp
           )
         })}
         <div className="py-6 flex items-center justify-end gap-4">
-          <Button variant="default">Save</Button>
+          {extraActions?.(form)}
+          <Button variant="default" {...submitButtonProps}>
+            Save
+          </Button>
         </div>
       </form>
     </Form>
