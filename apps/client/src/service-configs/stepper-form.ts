@@ -9,6 +9,7 @@ export const stepperFormConfig: StepperFormConfig = {
     {
       id: 'step-1',
       name: 'step1',
+      description: 'Step 1 description',
       validationSchema: z.object({
         field1: z.string().min(3),
         field2: z.string(),

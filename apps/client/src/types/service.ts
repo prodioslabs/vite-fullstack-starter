@@ -35,6 +35,7 @@ export type StepConfig = {
   hidden?: boolean | ((values: FieldValues) => boolean)
   subforms: Array<SubformConfig>
   validationSchema: z.ZodType
+  description?: string
 }
 
 export type ServiceConfig = CommonFormConfig | StepperFormConfig

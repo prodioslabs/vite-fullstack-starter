@@ -4,11 +4,17 @@ import { zodResolver } from '@hookform/resolvers/zod/src/zod.js'
 import { Button, cn, Form } from '@repo/ui'
 import { StepperFormConfig } from '../../types/service'
 import SubForms from '../sub-forms'
+import Steps from '../steps'
 
 type StepperFormProps = {
   className?: string
   style?: React.CSSProperties
   formConfig: StepperFormConfig
+}
+
+type StepInfo = {
+  title: string
+  description: string
 }
 
 export default function StepperForm({ className, style, formConfig }: StepperFormProps) {
@@ -36,20 +42,17 @@ export default function StepperForm({ className, style, formConfig }: StepperFor
     }
   }
 
+  const stepsInfo: StepInfo[] = formConfig.steps.map((step) => {
+    return {
+      title: step.name,
+      description: step.description || '',
+    }
+  })
+
   return (
     <div className={cn('grid gap-4 md:grid-cols-3', className)} style={style}>
       <div>
-        {formConfig.steps.map((step, index) => (
-          <div key={step.id} className="flex gap-2">
-            <div
-              className={cn(
-                'p-4 w-4 text-white rounded-2xl',
-                index === activeStepIndex ? 'bg-primary' : 'bg-gray-200 text-gray-500',
-              )}
-            />
-            <span> {step.name}</span>
-          </div>
-        ))}
+        <Steps steps={stepsInfo} currentStep={activeStepIndex} direction="vertical" />
       </div>
       <div className="md:col-span-2">
         <Form {...form}>
