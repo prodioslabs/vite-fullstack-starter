@@ -28,17 +28,6 @@ type BaseField = {
   canOfficerModify?: boolean
 }
 
-export type StepperForm = {
-  steps: {
-    [stepId: string]: {
-      name: string
-      description?: string
-      form: FormConfig
-    }
-  }
-  stepOrder: string[]
-}
-
 export type Option = {
   name: string
   value: string
