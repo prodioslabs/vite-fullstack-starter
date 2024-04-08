@@ -27,3 +27,4 @@ dist-ssr
 # Environment files
 .env
 .env.*.local
+*storybook.log
