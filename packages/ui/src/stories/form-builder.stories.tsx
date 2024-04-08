@@ -10,7 +10,7 @@ type Story = StoryObj<typeof FormBuilder>
 
 export const SimpleForm: Story = {
   decorators: (Story) => (
-    <div className="max-w-screen-xl mx-auto">
+    <div className="max-w-screen-lg mx-auto">
       <Story />
     </div>
   ),
@@ -61,7 +61,7 @@ export const SimpleForm: Story = {
 
 export const ProfileForm: Story = {
   decorators: (Story) => (
-    <div className="max-w-screen-xl mx-auto">
+    <div className="max-w-screen-lg mx-auto">
       <Story />
     </div>
   ),

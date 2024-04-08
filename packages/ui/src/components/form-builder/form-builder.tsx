@@ -24,6 +24,7 @@ export function FormBuilder({ config, defaultValues, onSubmit }: FormBuilderProp
     resolver: zodResolver(config.validationSchema),
     defaultValues,
   })
+
   const value = useWatch({ control: form.control })
 
   return (
@@ -31,16 +32,16 @@ export function FormBuilder({ config, defaultValues, onSubmit }: FormBuilderProp
       <form
         className="divide-y"
         onSubmit={form.handleSubmit((value) => {
-          console.log(value)
+          window.alert('Hello world')
           onSubmit(value)
         })}
       >
         {config.subforms.map((subform) => {
           return (
-            <div className="grid grid-cols-12 gap-6 py-6" key={subform.id}>
+            <div className="grid grid-cols-12 gap-16 py-6" key={subform.id}>
               <div className="col-span-4">
                 <div className="font-medium leading-relaxed text-foreground">{subform.name}</div>
-                <div className="text-sm text-muted-foreground w-3/4">{subform.description}</div>
+                <div className="text-sm text-muted-foreground">{subform.description}</div>
               </div>
               <div className="col-span-8 grid grid-cols-12 gap-6">
                 {subform.fields.map((field) => {
