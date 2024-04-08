@@ -17,9 +17,11 @@ type FormBuilderProps = {
   config: FormConfig
   defaultValues: Record<string, unknown>
   onSubmit: (value: Record<string, unknown>) => void
+  buttonProps?: React.ComponentProps<typeof Button>
+  extraActions?: React.ReactNode
 }
 
-export function FormBuilder({ config, defaultValues, onSubmit }: FormBuilderProps) {
+export function FormBuilder({ config, defaultValues, onSubmit, buttonProps, extraActions }: FormBuilderProps) {
   const form = useForm({
     resolver: zodResolver(config.validationSchema),
     defaultValues,
@@ -179,7 +181,10 @@ export function FormBuilder({ config, defaultValues, onSubmit }: FormBuilderProp
           )
         })}
         <div className="py-6 flex items-center justify-end gap-4">
-          <Button variant="default">Save</Button>
+          {extraActions}
+          <Button variant="default" {...buttonProps}>
+            Save
+          </Button>
         </div>
       </form>
     </Form>
