@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { FieldValues, UseFormSetValue } from 'react-hook-form'
 
-export type FormConfig = {
+export type FormConfig<TFieldValues extends FieldValues = FieldValues> = {
   subforms: SubformConfig[]
-  validationSchema: z.ZodType
+  validationSchema: z.ZodType<TFieldValues>
 }
 
 export type SubformConfig = {

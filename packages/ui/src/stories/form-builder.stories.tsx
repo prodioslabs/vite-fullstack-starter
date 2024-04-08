@@ -54,6 +54,7 @@ export const SimpleForm: Story = {
       }),
     },
     onSubmit: (values) => {
+      // eslint-disable-next-line no-console
       console.log(values)
     },
   },
