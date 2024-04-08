@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { FieldValues, UseFormSetValue } from 'react-hook-form'
 
-export type FormConfig<TFieldValues extends FieldValues> = {
+export type FormConfig<TFieldValues extends FieldValues = FieldValues> = {
   subforms: SubformConfig[]
   validationSchema: z.ZodType<TFieldValues>
 }
@@ -26,6 +26,17 @@ type BaseField = {
   maxLength?: number
   placeholder?: string
   canOfficerModify?: boolean
+}
+
+export type StepperForm = {
+  steps: {
+    [stepId: string]: {
+      name: string
+      description?: string
+      form: FormConfig
+    }
+  }
+  stepOrder: string[]
 }
 
 export type Option = {
