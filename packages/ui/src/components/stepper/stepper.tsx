@@ -26,7 +26,10 @@ export function Stepper<TSteps extends Steps = Steps>({ steps, stepsOrder, stepS
         return (
           <div
             key={stepId}
-            className={cn('flex items-start gap-4 relative', index !== stepsOrder.length - 1 ? 'pb-8' : undefined)}
+            className={cn(
+              'flex items-start gap-4 relative min-w-max',
+              index !== stepsOrder.length - 1 ? 'pb-8' : undefined,
+            )}
           >
             <div
               className={cn('h-7 w-7 rounded-full flex items-center justify-center border-2 relative z-10', {
@@ -48,7 +51,9 @@ export function Stepper<TSteps extends Steps = Steps>({ steps, stepsOrder, stepS
               })}
             >
               <div className="font-medium text-sm">{step.title}</div>
-              {step.description ? <div className="text-sm text-muted-foreground">{step.description}</div> : null}
+              {step.description ? (
+                <div className="text-sm text-muted-foreground max-w-sm">{step.description}</div>
+              ) : null}
             </div>
             {index !== stepsOrder.length - 1 ? (
               <div
