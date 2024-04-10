@@ -19,6 +19,8 @@ type FormBuilderProps<TFieldValues extends FieldValues> = {
   onSubmit: (value: TFieldValues) => void
   submitButtonProps?: React.ComponentProps<typeof Button>
   extraActions?: (form: UseFormReturn<TFieldValues>) => React.ReactNode
+  className?: string
+  style?: React.CSSProperties
 }
 
 export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
@@ -27,6 +29,8 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
   onSubmit,
   submitButtonProps,
   extraActions,
+  className,
+  style,
 }: FormBuilderProps<TFieldValues>) {
   const form = useForm<TFieldValues>({
     resolver: zodResolver(config.validationSchema),
@@ -38,7 +42,8 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
   return (
     <Form {...form}>
       <form
-        className="divide-y"
+        className={cn('divide-y', className)}
+        style={style}
         onSubmit={form.handleSubmit((value) => {
           window.alert('Hello world')
           onSubmit(value)
@@ -189,7 +194,7 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
         <div className="py-6 flex items-center justify-end gap-4">
           {extraActions?.(form)}
           <Button variant="default" {...submitButtonProps}>
-            Save
+            {submitButtonProps?.children ?? 'Save'}
           </Button>
         </div>
       </form>

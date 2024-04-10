@@ -10,7 +10,7 @@ type Story = StoryObj<typeof StepperFormBuilder>
 
 export const StepperForm: Story = {
   decorators: (Story) => (
-    <div className="max-w-screen-lg mx-auto">
+    <div className="mx-auto">
       <Story />
     </div>
   ),

@@ -7,6 +7,8 @@ type StepperProps<TSteps extends Steps = Steps> = {
   steps: TSteps
   stepsOrder: (keyof TSteps)[]
   stepStatus: Record<keyof TSteps, StepStatus>
+  className?: string
+  style?: React.CSSProperties
 }
 
 type Step = {
@@ -16,9 +18,15 @@ type Step = {
 
 type StepStatus = 'completed' | 'active' | 'not-started'
 
-export function Stepper<TSteps extends Steps = Steps>({ steps, stepsOrder, stepStatus }: StepperProps<TSteps>) {
+export function Stepper<TSteps extends Steps = Steps>({
+  steps,
+  stepsOrder,
+  stepStatus,
+  className,
+  style,
+}: StepperProps<TSteps>) {
   return (
-    <div className={cn('flex flex-col relative')}>
+    <div className={cn('flex flex-col relative', className)} style={style}>
       {stepsOrder.map((stepId, index) => {
         const step = steps[stepId]
         const status = stepStatus[stepId]
@@ -26,17 +34,17 @@ export function Stepper<TSteps extends Steps = Steps>({ steps, stepsOrder, stepS
         return (
           <div
             key={stepId}
-            className={cn(
-              'flex items-start gap-4 relative min-w-max',
-              index !== stepsOrder.length - 1 ? 'pb-8' : undefined,
-            )}
+            className={cn('flex items-start gap-4 relative', index !== stepsOrder.length - 1 ? 'pb-8' : undefined)}
           >
             <div
-              className={cn('h-7 w-7 rounded-full flex items-center justify-center border-2 relative z-10', {
-                'bg-primary text-primary-foreground  border-primary': status === 'completed',
-                'border-primary bg-background': status === 'active',
-                'border-border bg-background text-foreground': status === 'not-started',
-              })}
+              className={cn(
+                'h-7 w-7 rounded-full flex-shrink-0 flex items-center justify-center border-2 relative z-10',
+                {
+                  'bg-primary text-primary-foreground  border-primary': status === 'completed',
+                  'border-primary bg-background': status === 'active',
+                  'border-border bg-background text-foreground': status === 'not-started',
+                },
+              )}
             >
               {status === 'completed' ? (
                 <CheckIcon className="h-4 w-4 text-current" />
