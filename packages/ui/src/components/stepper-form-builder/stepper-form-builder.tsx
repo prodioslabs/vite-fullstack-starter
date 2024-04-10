@@ -1,5 +1,4 @@
-import { DefaultValues, FieldValues, Path, UseFormReturn, useForm, useWatch } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { DefaultValues, FieldValues, UseFormReturn } from 'react-hook-form'
 import { useState } from 'react'
 import { Button } from '../ui/button'
 import { StepForm, StepperForm } from './types'
@@ -18,22 +17,11 @@ export function StepperFormBuilder<TFieldValues extends FieldValues>({
   config,
   defaultValues,
   onSubmit,
-  submitButtonProps,
-  extraActions,
 }: StepperFormBuilderProps<TFieldValues>) {
   const [activeStepIndex, setActiveStepIndex] = useState(0)
-  const [formData, setFormData] = useState(defaultValues)
+  const [formData, setFormData] = useState(defaultValues as TFieldValues)
 
   const currentStepConfig = config.steps[config.stepOrder[activeStepIndex]] as StepForm
-  const form = useForm<TFieldValues>({
-    defaultValues: formData,
-    resolver: zodResolver(currentStepConfig.form.validationSchema),
-    mode: 'all',
-  })
-
-  const value = useWatch<TFieldValues>({
-    control: form.control,
-  })
 
   const handleNext = () => {
     if (activeStepIndex < config.stepOrder.length - 1) {
@@ -49,14 +37,9 @@ export function StepperFormBuilder<TFieldValues extends FieldValues>({
 
   const handleFinish = () => {
     if (activeStepIndex === config.stepOrder.length - 1) {
-      onSubmit(value)
+      onSubmit(formData)
       window.alert('Form submitted')
     }
-  }
-
-  const handleSave = () => {
-    onSubmit(value)
-    window.alert('Form saved')
   }
 
   const stepsTitleAndDescription = Object.fromEntries(
@@ -84,7 +67,15 @@ export function StepperFormBuilder<TFieldValues extends FieldValues>({
       <FormBuilder
         config={currentStepConfig.form}
         defaultValues={{}}
-        onSubmit={() => {}}
+        onSubmit={(value) => {
+          setFormData((prev) => ({ ...prev, ...value }))
+
+          if (activeStepIndex < config.stepOrder.length - 1) {
+            handleNext()
+          } else {
+            handleFinish()
+          }
+        }}
         className="col-span-3"
         extraActions={() => {
           return (
@@ -97,7 +88,7 @@ export function StepperFormBuilder<TFieldValues extends FieldValues>({
           )
         }}
         submitButtonProps={{
-          children: 'Next',
+          children: activeStepIndex === config.stepOrder.length - 1 ? 'Finish' : 'Next',
         }}
       />
     </div>

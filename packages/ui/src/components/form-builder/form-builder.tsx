@@ -45,7 +45,6 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
         className={cn('divide-y', className)}
         style={style}
         onSubmit={form.handleSubmit((value) => {
-          window.alert('Hello world')
           onSubmit(value)
         })}
       >
