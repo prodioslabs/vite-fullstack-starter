@@ -38,6 +38,7 @@ export type Options = Option[] | ((values: FieldValues) => Option[])
 export type TextField = BaseField & {
   type: 'text'
   placeholder?: string
+  inputType: React.ComponentProps<'input'>['type']
 }
 
 export type TextareaField = BaseField & {

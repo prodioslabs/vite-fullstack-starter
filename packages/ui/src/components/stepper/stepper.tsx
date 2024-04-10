@@ -16,7 +16,7 @@ type Step = {
   description?: string
 }
 
-type StepStatus = 'completed' | 'active' | 'not-started'
+export type StepStatus = 'completed' | 'active' | 'not-started'
 
 export function Stepper<TSteps extends Steps = Steps>({
   steps,
@@ -33,7 +33,7 @@ export function Stepper<TSteps extends Steps = Steps>({
 
         return (
           <div
-            key={stepId}
+            key={String(stepId)}
             className={cn('flex items-start gap-4 relative', index !== stepsOrder.length - 1 ? 'pb-8' : undefined)}
           >
             <div

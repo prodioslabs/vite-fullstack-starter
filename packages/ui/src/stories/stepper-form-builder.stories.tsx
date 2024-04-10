@@ -10,7 +10,7 @@ type Story = StoryObj<typeof StepperFormBuilder>
 
 export const StepperForm: Story = {
   decorators: (Story) => (
-    <div className="mx-auto">
+    <div className="mx-auto max-w-screen-xl">
       <Story />
     </div>
   ),
@@ -121,6 +121,7 @@ export const StepperForm: Story = {
                     id: 'password',
                     name: 'Password',
                     type: 'text',
+                    inputType: 'password',
                     placeholder: 'Password',
                     className: 'col-span-6',
                   },
@@ -139,7 +140,7 @@ export const StepperForm: Story = {
       stepOrder: ['profile', 'account'],
     },
     onSubmit: (values) => {
-      console.log('Submitting form')
+      // eslint-disable-next-line no-console
       console.log(values)
     },
   },

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { FieldValues, DefaultValues, useForm, UseFormReturn, useWatch, Path } from 'react-hook-form'
+import { FieldValues, useForm, UseFormReturn, useWatch, Path, DefaultValues } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { match, P } from 'ts-pattern'
 import { FormConfig } from './types'
@@ -35,6 +35,7 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
   const form = useForm<TFieldValues>({
     resolver: zodResolver(config.validationSchema),
     defaultValues,
+    mode: 'all',
   })
 
   const value = useWatch({ control: form.control })
@@ -71,7 +72,13 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
                               {match(field)
                                 .returnType<React.ReactNode>()
                                 .with({ type: 'text' }, (textField) => {
-                                  return <Input {...fieldProps} placeholder={textField.placeholder} />
+                                  return (
+                                    <Input
+                                      {...fieldProps}
+                                      placeholder={textField.placeholder}
+                                      type={textField.inputType}
+                                    />
+                                  )
                                 })
                                 .with({ type: 'textarea' }, (textareaField) => {
                                   return <Textarea {...fieldProps} placeholder={textareaField.placeholder} />

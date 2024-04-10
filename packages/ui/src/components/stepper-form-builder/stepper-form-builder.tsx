@@ -1,46 +1,58 @@
-import { DefaultValues, FieldValues, UseFormReturn } from 'react-hook-form'
-import { useState } from 'react'
+import { FieldValues, UseFormReturn } from 'react-hook-form'
+import { useCallback, useState } from 'react'
 import { Button } from '../ui/button'
 import { StepForm, StepperForm } from './types'
-import { Stepper } from '../stepper/stepper'
+import { Stepper, StepStatus } from '../stepper'
 import { FormBuilder } from '../form-builder'
+import { cn } from '../../lib/utils'
 
 type StepperFormBuilderProps<TFieldValues extends FieldValues> = {
   config: StepperForm<TFieldValues>
-  defaultValues: DefaultValues<TFieldValues>
+  defaultValues: TFieldValues
   onSubmit: (value: TFieldValues) => void
   submitButtonProps?: React.ComponentProps<typeof Button>
   extraActions?: (form: UseFormReturn<TFieldValues>) => React.ReactNode
+  className?: string
+  style?: React.CSSProperties
 }
 
 export function StepperFormBuilder<TFieldValues extends FieldValues>({
   config,
   defaultValues,
   onSubmit,
+  className,
+  style,
 }: StepperFormBuilderProps<TFieldValues>) {
   const [activeStepIndex, setActiveStepIndex] = useState(0)
-  const [formData, setFormData] = useState(defaultValues as TFieldValues)
+  const [formData, setFormData] = useState<TFieldValues>(defaultValues)
 
   const currentStepConfig = config.steps[config.stepOrder[activeStepIndex]] as StepForm
 
-  const handleNext = () => {
-    if (activeStepIndex < config.stepOrder.length - 1) {
-      setActiveStepIndex((prev) => prev + 1)
-    }
-  }
-
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (activeStepIndex > 0) {
       setActiveStepIndex((prev) => prev - 1)
     }
-  }
+  }, [activeStepIndex])
 
-  const handleFinish = () => {
-    if (activeStepIndex === config.stepOrder.length - 1) {
-      onSubmit(formData)
-      window.alert('Form submitted')
-    }
-  }
+  const handleNext = useCallback(
+    (value: Partial<TFieldValues>) => {
+      setFormData((prev) => ({ ...prev, ...value }))
+      if (activeStepIndex < config.stepOrder.length - 1) {
+        setActiveStepIndex((prev) => prev + 1)
+      }
+    },
+    [activeStepIndex, config.stepOrder.length],
+  )
+
+  const handleFinish = useCallback(
+    (value: Partial<TFieldValues>) => {
+      setFormData((prev) => ({ ...prev, ...value }))
+      if (activeStepIndex === config.stepOrder.length - 1) {
+        onSubmit({ ...formData, ...value })
+      }
+    },
+    [activeStepIndex, config.stepOrder.length, formData, onSubmit],
+  )
 
   const stepsTitleAndDescription = Object.fromEntries(
     config.stepOrder.map((stepId) => {
@@ -54,29 +66,27 @@ export function StepperFormBuilder<TFieldValues extends FieldValues>({
       stepId,
       index === activeStepIndex ? 'active' : index < activeStepIndex ? 'completed' : 'not-started',
     ]),
-  )
+  ) as Record<keyof TFieldValues, StepStatus>
 
   return (
-    <div className="grid grid-cols-4 gap-6">
+    <div className={cn('grid grid-cols-4 gap-12 divide-x', className)} style={style}>
       <Stepper
         steps={stepsTitleAndDescription as TFieldValues}
         stepsOrder={config.stepOrder}
         stepStatus={stepStatus}
-        className="col-span-1"
+        className="col-span-1 py-6"
       />
       <FormBuilder
         config={currentStepConfig.form}
         defaultValues={{}}
         onSubmit={(value) => {
-          setFormData((prev) => ({ ...prev, ...value }))
-
           if (activeStepIndex < config.stepOrder.length - 1) {
-            handleNext()
+            handleNext(value as Partial<TFieldValues>)
           } else {
-            handleFinish()
+            handleFinish(value as Partial<TFieldValues>)
           }
         }}
-        className="col-span-3"
+        className="col-span-3 pl-12"
         extraActions={() => {
           return (
             <>
