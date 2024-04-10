@@ -2,6 +2,7 @@ import { DefaultValues, FieldValues, Path, UseFormReturn, useForm, useWatch } fr
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { P, match } from 'ts-pattern'
+import { z } from 'zod'
 import { Button } from '../ui/button'
 import { StepForm, StepperForm } from './types'
 import { Stepper } from '../stepper/stepper'
