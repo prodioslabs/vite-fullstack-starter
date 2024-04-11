@@ -13,7 +13,6 @@ export const authContract = client.router(
       }),
       responses: {
         200: z.object({
-          token: z.string(),
           user,
         }),
         401: z.object({
@@ -32,7 +31,6 @@ export const authContract = client.router(
       }),
       responses: {
         201: z.object({
-          token: z.string(),
           user,
         }),
         409: z.object({
@@ -56,6 +54,16 @@ export const authContract = client.router(
         409: z.object({
           sucess: z.literal(false),
           message: z.string(),
+        }),
+      },
+    },
+    logout: {
+      method: 'POST',
+      path: '/logout',
+      body: z.object({}),
+      responses: {
+        200: z.object({
+          success: z.literal(true),
         }),
       },
     },
