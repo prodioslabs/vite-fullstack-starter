@@ -1,4 +1,4 @@
 export type SessionPayload = {
   id: string
-  email: string
+  email?: string
 }

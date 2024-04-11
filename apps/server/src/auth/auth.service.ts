@@ -1,18 +1,17 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { JwtPayload } from './auth.type'
+import { SessionPayload } from './auth.type'
 import { UserWithoutSensitiveData } from '../user/user.type'
 import { UserService } from '../user/user.service'
 import { AuthRequestShapes, AuthResponseShapes } from './auth.request'
-
+import { SessionService } from '../session/session.service'
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService,
+    private readonly sessionService: SessionService,
   ) {}
 
-  async validatePayload(payload: JwtPayload): Promise<UserWithoutSensitiveData> {
+  async validatePayload(payload: SessionPayload): Promise<UserWithoutSensitiveData> {
     const user = await this.userService.findOneByEmail(payload.email)
 
     if (!user) {
@@ -34,12 +33,13 @@ export class AuthService {
         }
       }
 
-      const jwtPayload: JwtPayload = { id: user.id, email: user.email }
-      const token = await this.jwtService.signAsync(jwtPayload)
+      const sessionPayload: SessionPayload = { id: user.id, email: user.email }
+      const token = await this.sessionService.createSession(sessionPayload)
+
       return {
         status: 200,
         body: {
-          token,
+          token: token ? token?.sessionToken : '',
           user,
         },
       }
@@ -64,14 +64,21 @@ export class AuthService {
 
   async signup(body: AuthRequestShapes['signup']['body']): Promise<AuthResponseShapes['signup']> {
     try {
+      const userExists = await this.userService.findOneByEmail(body.email)
+      if (userExists) {
+        throw new BadRequestException('User already exists')
+      }
+
       const user = await this.userService.createUser(body)
-      const jwtPayload: JwtPayload = { id: user.id, email: user.email }
-      const token = await this.jwtService.signAsync(jwtPayload)
+
+      const sessionPayload: SessionPayload = { id: user.id, email: user.email }
+      const token = await this.sessionService.createSession(sessionPayload)
+
       return {
         status: 201,
         body: {
+          token: token?.sessionToken,
           user,
-          token,
         },
       }
     } catch (error) {
