@@ -325,7 +325,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                   {
                     id: 'wifeBirthDate',
                     name: 'Date of Birth of Wife',
-                    type: 'text',
+                    type: 'date',
                     className: 'col-span-6',
                   },
                   {
@@ -982,7 +982,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                   {
                     id: 'husbandBirthDate',
                     name: 'Date of Birth of Husband',
-                    type: 'text',
+                    type: 'date',
                     className: 'col-span-6',
                   },
                   {
