@@ -25,4 +25,14 @@ model User {
   role     UserRole @default(USER)
   salt     String
   password String
+
+  sessions Session[]
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String   @db.ObjectId
 }
