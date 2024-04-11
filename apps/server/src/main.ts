@@ -3,6 +3,8 @@ import * as cookieParser from 'cookie-parser'
 import * as session from 'express-session'
 import * as passport from 'passport'
 import { ConfigService } from '@nestjs/config'
+import { PrismaSessionStore } from '@quixo3/prisma-session-store'
+import { PrismaClient } from '@prisma/client'
 import { AppModule } from './app.module'
 import { HttpExceptionFilter } from './utils/http-exception-filter'
 
@@ -20,6 +22,11 @@ async function bootstrap() {
       cookie: {
         maxAge: parseInt(configService.get<string>('SESSION_COOKIE_MAX_AGE')!),
       },
+      store: new PrismaSessionStore(new PrismaClient(), {
+        // PrismaSessionStore will automatically remove expired sessions
+        checkPeriod: 2 * 60 * 1000,
+        dbRecordIdIsSessionId: true,
+      }),
     }),
   )
 
