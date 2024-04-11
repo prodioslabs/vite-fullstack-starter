@@ -16,6 +16,10 @@ export class AuthorizationGuard implements CanActivate {
     }
 
     const userRolesAllowed = this.reflector.get<UserRole | UserRole[]>(AUTHORIZATION_KEY, context.getHandler())
+    if (!userRolesAllowed) {
+      return true
+    }
+
     const user = context.switchToHttp().getRequest().user as UserWithoutSensitiveData
 
     if (

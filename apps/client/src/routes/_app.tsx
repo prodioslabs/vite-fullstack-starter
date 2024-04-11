@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, redirect, ToPathOption } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, redirect, ToPathOption, useNavigate } from '@tanstack/react-router'
 import { LucideIcon, HomeIcon, SettingsIcon, ShoppingCartIcon, SearchIcon, UserIcon } from 'lucide-react'
 import {
   DropdownMenu,
@@ -6,11 +6,12 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Spinner,
 } from '@repo/ui'
+import { useQueryClient } from '@tanstack/react-query'
 import { CURRENT_USER_KEY } from '../hooks/use-current-user'
 import { client } from '../lib/client'
 import { Logo } from '../components/icons'
-import { API_TOKEN_LOCAL_STORAGE_KEY } from '../lib/constants'
 
 export const Route = createFileRoute('/_app')({
   component: AppShell,
@@ -60,7 +61,12 @@ const APP_SHELL_ITEMS: AppShellItem[] = [
 ]
 
 function AppShell() {
-  const user = Route.useLoaderData()
+  const loaderData = Route.useLoaderData()
+
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+
+  const logoutMutation = client.auth.logout.useMutation()
 
   return (
     <div className="flex h-screen">
@@ -100,20 +106,22 @@ function AppShell() {
             <DropdownMenuContent>
               <DropdownMenuItem disabled>
                 <div>
-                  <div>{user.body.name}</div>
-                  <div className="font-medium">{user.body.email}</div>
+                  <div>{loaderData.body.user.name}</div>
+                  <div className="font-medium">{loaderData.body.user.email}</div>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  // Clear the current user and API token
-                  // This is a simple way to log out the user
-                  window.localStorage.removeItem(API_TOKEN_LOCAL_STORAGE_KEY)
-                  window.location.reload()
+                  logoutMutation.mutateAsync({}).then(() => {
+                    queryClient.removeQueries()
+                    navigate({ to: '/login' })
+                  })
                 }}
+                className="gap-2"
               >
-                Logout
+                <span className="flex-1">Logout</span>
+                {logoutMutation.isPending ? <Spinner className="w-4 h-4" /> : null}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -9,6 +9,7 @@ export const Route = createFileRoute('/_auth')({
       queryKey: CURRENT_USER_KEY,
       queryFn: () => client.user.getCurrentUser.query(),
     })
+
     if (user.status === 200) {
       throw redirect({
         to: '/',

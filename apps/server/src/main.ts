@@ -12,7 +12,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   const configService = app.get(ConfigService)
 
-  app.enableCors()
+  app.enableCors({
+    credentials: true,
+    origin: true,
+  })
   app.useGlobalFilters(new HttpExceptionFilter())
   app.use(
     session({

@@ -4,9 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { contract } from '@repo/contract'
 import { Form, FormItem, FormControl, FormField, FormMessage, FormLabel, Input, Button } from '@repo/ui'
+import { useQueryClient } from '@tanstack/react-query'
 import { CURRENT_USER_KEY } from '../../hooks/use-current-user'
-import { API_TOKEN_LOCAL_STORAGE_KEY } from '../../lib/constants'
-import { client, queryClient } from '../../lib/client'
+import { client } from '../../lib/client'
 import { Logo } from '../../components/icons'
 
 export const Route = createLazyFileRoute('/_auth/signup')({
@@ -15,10 +15,10 @@ export const Route = createLazyFileRoute('/_auth/signup')({
 
 function Signup() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const loginMutation = client.auth.signup.useMutation({
     onSuccess: ({ body }) => {
-      window.localStorage.setItem(API_TOKEN_LOCAL_STORAGE_KEY, body.token)
-      queryClient.setQueryData(CURRENT_USER_KEY, { status: 200, body: body.user })
+      queryClient.setQueryData(CURRENT_USER_KEY, { status: 200, body })
       navigate({ to: '/' })
     },
   })
@@ -94,13 +94,8 @@ function Signup() {
               )
             }}
           />
-          <div className="flex items-center justify-end">
-            <Link to="/forgot-password" className="text-primary font-medium text-sm">
-              Forgot Password?
-            </Link>
-          </div>
           <Button type="submit" className="w-full" loading={loginMutation.isPending}>
-            Sign In
+            Register
           </Button>
         </form>
       </Form>

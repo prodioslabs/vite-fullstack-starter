@@ -4,9 +4,9 @@ import { contract } from '@repo/contract'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useQueryClient } from '@tanstack/react-query'
 import { Logo } from '../../components/icons'
-import { client, queryClient } from '../../lib/client'
-import { API_TOKEN_LOCAL_STORAGE_KEY } from '../../lib/constants'
+import { client } from '../../lib/client'
 import { CURRENT_USER_KEY } from '../../hooks/use-current-user'
 
 export const Route = createLazyFileRoute('/_auth/login')({
@@ -15,10 +15,10 @@ export const Route = createLazyFileRoute('/_auth/login')({
 
 function Login() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const loginMutation = client.auth.login.useMutation({
-    onSuccess: ({ body }) => {
-      window.localStorage.setItem(API_TOKEN_LOCAL_STORAGE_KEY, body.token)
-      queryClient.setQueryData(CURRENT_USER_KEY, { status: 200, body: body.user })
+    onSuccess: async ({ body }) => {
+      queryClient.setQueryData(CURRENT_USER_KEY, { status: 200, body })
       navigate({ to: '/' })
     },
   })

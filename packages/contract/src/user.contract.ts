@@ -14,7 +14,9 @@ export const userContract = client.router(
       method: 'GET',
       path: '/me',
       responses: {
-        200: user,
+        200: z.object({
+          user,
+        }),
       },
     },
   },

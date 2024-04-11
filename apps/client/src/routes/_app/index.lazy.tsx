@@ -1,34 +1,35 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
 import { match } from 'ts-pattern'
 import { Button } from '@repo/ui'
-import { client } from '../../lib/client'
+import { useCurrentUser } from '../../hooks/use-current-user'
 
 export const Route = createLazyFileRoute('/_app/')({
   component: Home,
 })
 
 function Home() {
-  const getCurrentUserQuery = client.user.getCurrentUser.useQuery(['user', 'current'])
+  const currentUserQuery = useCurrentUser()
+
   return (
     <div className="p-4">
       <div className="text-xl font-medium mb-2">Home</div>
       <div className="items-center space-y-2 border rounded-md p-3 max-w-screen-md">
         <div className="flex-1 text-sm">
           Current User -{' '}
-          {match(getCurrentUserQuery)
+          {match(currentUserQuery)
             .returnType<string>()
             .with({ status: 'pending' }, () => 'Loading...')
             .with(
               { status: 'success' },
-              ({ data: { body: currentUser } }) => `${currentUser.name} (${currentUser.email})`,
+              ({ data: { body: currentUser } }) => `${currentUser.user.name} (${currentUser.user.email})`,
             )
             .with({ status: 'error' }, () => 'Error')
             .exhaustive()}
         </div>
         <Button
-          loading={getCurrentUserQuery.isLoading}
+          loading={currentUserQuery.isLoading}
           onClick={() => {
-            getCurrentUserQuery.refetch()
+            currentUserQuery.refetch()
           }}
           variant="outline"
         >

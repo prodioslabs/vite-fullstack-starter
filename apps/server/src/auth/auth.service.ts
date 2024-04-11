@@ -76,6 +76,15 @@ export class AuthService {
 
   async logout(request: Request): Promise<AuthResponseShapes['logout']> {
     await new Promise<void>((resolve, reject) => {
+      request.logOut((error) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve()
+        }
+      })
+    })
+    await new Promise<void>((resolve, reject) => {
       request.session.destroy((error) => {
         if (error) {
           reject(error)

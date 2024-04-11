@@ -7,9 +7,9 @@ import { useCurrentUser } from '../hooks/use-current-user'
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({ component: Root })
 
 function Root() {
-  const currentUser = useCurrentUser()
+  const currentUserQuery = useCurrentUser()
 
-  if (currentUser.status === 'pending') {
+  if (currentUserQuery.status === 'pending') {
     return (
       <div className="h-screen flex items-center justify-center gap-2">
         <Spinner />

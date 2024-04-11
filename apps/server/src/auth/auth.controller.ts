@@ -16,8 +16,10 @@ export class AuthController {
   login(@User() user: UserWithoutSensitiveData) {
     return tsRestHandler(contract.auth.login, async () => {
       return {
-        status: 201,
-        body: user,
+        status: 200,
+        body: {
+          user,
+        },
       }
     })
   }
