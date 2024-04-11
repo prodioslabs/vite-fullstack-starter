@@ -17,6 +17,7 @@ export type SubformConfig = {
 type BaseField = {
   id: string
   name: string
+  isNameHidden?: boolean
   description?: string
   className?: string
   required?: boolean
@@ -38,7 +39,7 @@ export type Options = Option[] | ((values: FieldValues) => Option[])
 export type TextField = BaseField & {
   type: 'text'
   placeholder?: string
-  inputType: React.ComponentProps<'input'>['type']
+  inputType?: React.ComponentProps<'input'>['type']
 }
 
 export type TextareaField = BaseField & {
@@ -52,6 +53,7 @@ export type NumberField = BaseField & {
 
 export type CheckboxField = BaseField & {
   type: 'checkbox'
+  label?: string
 }
 
 export type RadioField = BaseField & {
