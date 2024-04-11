@@ -57,7 +57,7 @@ export class AuthService {
       // this method is injected by express-session
       // loginIn method generate the session id and store it in the session store
       // and add the session id to the cookies
-      request.logIn(user, (err) => {
+      request.logIn(user, { session: true }, (err) => {
         if (err) {
           reject(err)
         } else {
