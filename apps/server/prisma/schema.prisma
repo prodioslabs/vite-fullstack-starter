@@ -26,3 +26,11 @@ model User {
   salt     String
   password String
 }
+
+model Session {
+  objId     String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @unique
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}

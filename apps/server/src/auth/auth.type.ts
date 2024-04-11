@@ -1,4 +1,4 @@
-export type JwtPayload = {
+export type SessionPayload = {
   id: string
   email: string
 }

@@ -9,8 +9,8 @@ import { AuthModule } from './auth/auth.module'
     ConfigModule.forRoot({
       envFilePath: ['.env'],
       validationSchema: joi.object({
-        JWT_SECRET: joi.string(),
-        JWT_EXPIRES_IN: joi.string(),
+        SESSION_SECRET: joi.string(),
+        SESSION_COOKIE_MAX_AGE: joi.number(),
       }),
     }),
     UserModule,
