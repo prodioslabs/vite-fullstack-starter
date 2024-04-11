@@ -171,6 +171,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                       setValues('registrationDetails.marriageSolemnizedDate', undefined)
                       setValues('registrationDetails.isMarriageRegistered', undefined)
                       setValues('registrationDetails.registeredInWhichAct', undefined)
+                      setValues('registrationDetails.registeredInWhichAct2', undefined)
                       setValues('registrationDetails.actName', undefined)
                     },
                     options: [
@@ -192,7 +193,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     type: 'select',
                     hidden: (values) => values.registrationDetails?.marriageRegistrationType !== '1',
                     onChange: (values, setValues) => {
-                      setValues('registrationDetails.isMarriageRegistered', undefined)
+                      setValues('registrationDetails.isMarriageRegistered', '')
                     },
                     options: [
                       {
@@ -211,20 +212,19 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     name: 'Whether the marriage been registered under any Act?',
                     type: 'select',
                     onChange: (values, setValues) => {
-                      setValues('registrationDetails.registeredInWhichAct', undefined)
                       setValues('registrationDetails.actName', undefined)
                     },
+                    hidden: (values) => values.registrationDetails?.marriageRegistrationType !== '1',
                     options: [
                       {
-                        value: '1',
+                        value: 'yes',
                         name: 'Yes',
                       },
                       {
-                        value: '2',
+                        value: 'no',
                         name: 'No',
                       },
                     ],
-                    hidden: (values) => values.registrationDetails?.marriageSolemnizedDate !== '1',
                     className: 'col-span-6',
                   },
                   {
@@ -232,10 +232,13 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     name: 'Marriage registered under which Act?',
                     type: 'select',
                     hidden(values) {
-                      return values.registrationDetails?.isMarriageRegistered !== '1'
+                      return !(
+                        values.registrationDetails?.isMarriageRegistered === 'yes' &&
+                        values.registrationDetails?.marriageSolemnizedDate === '1'
+                      )
                     },
                     onChange: (values, setValues) => {
-                      setValues('registrationDetails.actName', undefined)
+                      setValues('registrationDetails.actName', '')
                     },
                     options: [
                       {
@@ -267,7 +270,51 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                         name: 'Any other Acts',
                       },
                     ],
-
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'registeredInWhichAct2',
+                    name: 'Marriage registered under which Act?',
+                    type: 'select',
+                    hidden(values) {
+                      return !(
+                        values.registrationDetails?.isMarriageRegistered === 'yes' &&
+                        values.registrationDetails?.marriageSolemnizedDate === '2'
+                      )
+                    },
+                    onChange: (values, setValues) => {
+                      setValues('registrationDetails.actName', undefined)
+                    },
+                    options: [
+                      {
+                        value: '1',
+                        name: 'Uttarakhand Compulsory Registration of Marriage Act, 2010',
+                      },
+                      {
+                        value: '2',
+                        name: 'Special Marriage Act, 1954',
+                      },
+                      {
+                        value: '3',
+                        name: 'Christian Marriage and Divorce Act, 1957',
+                      },
+                      {
+                        value: '4',
+                        name: 'Parsi Marriage and Divorce Act, 1936',
+                      },
+                      {
+                        value: '5',
+                        name: 'Arya Marriage Validation Act, 1937',
+                      },
+                      {
+                        value: '6',
+                        name: 'Anand Marriage Act, 1909',
+                      },
+                      {
+                        value: '7',
+                        name: 'Any other Acts',
+                      },
+                    ],
                     className: 'col-span-6',
                   },
                   {
@@ -280,6 +327,169 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                       return values.registrationDetails?.registeredInWhichAct !== '7'
                     },
                   },
+                  {
+                    id: 'residentOfUttarakhand',
+                    name: 'Which of the partner(s) is the resident of Uttarakhand?',
+                    type: 'select',
+                    options: [
+                      {
+                        value: 'wife',
+                        name: 'Wife',
+                      },
+                      {
+                        value: 'husband',
+                        name: 'Husband',
+                      },
+                      {
+                        value: 'both',
+                        name: 'Both',
+                      },
+                    ],
+                    hidden: (values) => values.registrationDetails?.marriageRegistrationType !== '2',
+                  },
+                  {
+                    id: 'residentProof',
+                    name: 'Upload the Proof',
+                    type: 'text',
+                    hidden: (values) => {
+                      return !(
+                        values.registrationDetails?.marriageRegistrationType === '2' &&
+                        values.registrationDetails?.residentOfUttarakhand === 'both'
+                      )
+                    },
+                  },
+                  {
+                    id: 'residentCategory',
+                    name: 'In which category of residency does the selected partner fall?',
+                    type: 'select',
+                    hidden: (values) => {
+                      return !(
+                        values.registrationDetails?.marriageRegistrationType === '2' &&
+                        values.registrationDetails?.residentOfUttarakhand === 'both'
+                      )
+                    },
+                    options: [
+                      {
+                        value: 'permanentResident',
+                        name: 'Permanent Resident',
+                      },
+                      {
+                        value: 'stateEmployee',
+                        name: 'State Employee',
+                      },
+                      {
+                        value: 'centralEmployee',
+                        name: 'Central Employee',
+                      },
+                      {
+                        value: 'residingOneYear',
+                        name: 'Residing for one year',
+                      },
+                      {
+                        value: 'beneficiary',
+                        name: 'Beneficiary of any scheme',
+                      },
+                    ],
+                  },
+                  {
+                    id: 'residencyWifeCategory',
+                    name: 'In which category of residency does the wife fall?',
+                    type: 'select',
+                    hidden: (values) => {
+                      return !(
+                        values.registrationDetails?.marriageRegistrationType === '2' &&
+                        values.registrationDetails?.residentOfUttarakhand === 'wife'
+                      )
+                    },
+                    options: [
+                      {
+                        value: 'permanentResident',
+                        name: 'Permanent Resident',
+                      },
+                      {
+                        value: 'stateEmployee',
+                        name: 'State Employee',
+                      },
+                      {
+                        value: 'centralEmployee',
+                        name: 'Central Employee',
+                      },
+                      {
+                        value: 'residingOneYear',
+                        name: 'Residing for one year',
+                      },
+                      {
+                        value: 'beneficiary',
+                        name: 'Beneficiary of any scheme',
+                      },
+                    ],
+                  },
+                  {
+                    id: 'residencyWifeProof',
+                    name: 'Upload the Proof',
+                    type: 'text',
+                    hidden: (values) => {
+                      return !(
+                        values.registrationDetails?.marriageRegistrationType === '2' &&
+                        values.registrationDetails?.residentOfUttarakhand !== 'both'
+                      )
+                    },
+                  },
+                  {
+                    id: 'residencyWifeProof',
+                    name: 'Upload the Proof',
+                    type: 'text',
+                    hidden: (values) => {
+                      return !(
+                        values.registrationDetails?.marriageRegistrationType === '2' &&
+                        values.registrationDetails?.residentOfUttarakhand === 'both'
+                      )
+                    },
+                  },
+                  {
+                    id: 'residencyHusbandCategory',
+                    name: 'In which category of residency does the husband fall?',
+                    type: 'select',
+                    hidden: (values) => {
+                      return !(
+                        values.registrationDetails?.marriageRegistrationType === '2' &&
+                        values.registrationDetails?.residentOfUttarakhand === 'both'
+                      )
+                    },
+                    options: [
+                      {
+                        value: 'permanentResident',
+                        name: 'Permanent Resident',
+                      },
+                      {
+                        value: 'stateEmployee',
+                        name: 'State Employee',
+                      },
+                      {
+                        value: 'centralEmployee',
+                        name: 'Central Employee',
+                      },
+                      {
+                        value: 'residingOneYear',
+                        name: 'Residing for one year',
+                      },
+                      {
+                        value: 'beneficiary',
+                        name: 'Beneficiary of any scheme',
+                      },
+                    ],
+                  },
+                  {
+                    id: 'residencyHusbandProof',
+                    name: 'Upload the Proof',
+                    type: 'text',
+                    hidden: (values) => {
+                      return !(
+                        values.registrationDetails?.marriageRegistrationType === '2' &&
+                        values.registrationDetails?.residentOfUttarakhand === 'both'
+                      )
+                    },
+                  },
                 ],
               },
             ],
@@ -289,6 +499,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                 marriageSolemnizedDate: z.string().optional(),
                 isMarriageRegistered: z.string().optional(),
                 registeredInWhichAct: z.string().optional(),
+                registeredInWhichAct2: z.string().optional(),
                 actName: z.string().optional(),
               }),
             }),
@@ -453,10 +664,153 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     hidden: (values) => values.wifeDetails?.wifeCategory !== 'st',
                   },
                   {
+                    id: 'wifeMaritalStatusAtMarriage',
+                    name: 'Marital Status at the time of Marriage',
+                    type: 'select',
+                    hidden(values) {
+                      return values.registrationDetails?.marriageRegistrationType !== '2'
+                    },
+                    options: [
+                      {
+                        value: 'unmarried',
+                        name: 'Unmarried',
+                      },
+                      {
+                        value: 'married',
+                        name: 'Married',
+                      },
+                      {
+                        value: 'divorcee',
+                        name: 'Divorcee',
+                      },
+                      {
+                        value: 'annulled',
+                        name: 'Annulled',
+                      },
+                      {
+                        value: 'widow',
+                        name: 'Widow',
+                      },
+                    ],
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeDivorceSelection',
+                    name: 'Divorcee Selection',
+                    type: 'select',
+                    hidden(values) {
+                      return values.wifeDetails?.wifeMaritalStatusAtMarriage !== 'divorcee'
+                    },
+                    options: [
+                      {
+                        value: '1',
+                        name: 'Judgement Number of Decree of Divorce',
+                      },
+                      {
+                        value: '2',
+                        name: 'Acknowledgement Certificate Number for Decree of Divorce (if registered under UCC)',
+                      },
+                    ],
+                    className: 'col-span-6',
+                  },
+
+                  {
+                    id: 'wifeDivorceCaseNumber',
+                    name: 'Case Number',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeDivorceCaseYear',
+                    name: 'Year',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeDivorceCNRNumber',
+                    name: 'CNR Number',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeDivorceeDocument',
+                    name: 'Upload the Document',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '1',
+                  },
+                  {
+                    id: 'wifeAnnulledSelection',
+                    name: 'Annulled Selection',
+                    type: 'select',
+                    hidden: (values) => values.wifeDetails?.wifeMaritalStatusAtMarriage !== 'annulled',
+                    options: [
+                      {
+                        value: '1',
+                        name: 'Judgement Number of Decree of Nullity',
+                      },
+                      {
+                        value: '2',
+                        name: 'Acknowledgement Certificate Number for Decree of Nullity (if registered under UCC)',
+                      },
+                    ],
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeAnnulledCaseNumber',
+                    name: 'Case Number',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeAnnulledCaseYear',
+                    name: 'Year',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeAnnulledCNRNumber',
+                    name: 'CNR Number',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeAnnulledDocument',
+                    name: 'Upload the Document',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '1',
+                  },
+
+                  {
+                    id: 'wifeDivorceAcknowledgementNumber',
+                    name: 'Acknowledgement Certificate Number',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '2',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeAnnulledAcknowledgementNumber',
+                    name: 'Acknowledgement Certificate Number',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '2',
+                    className: 'col-span-6',
+                  },
+                  {
                     id: 'wifeMobileNumber',
                     name: 'Mobile Number (Linked with Aadhaar)',
                     type: 'text',
                     className: 'col-span-6',
+                    hidden: (values) => {
+                      return !(
+                        values.wifeDetails?.wifeMaritalStatusAtMarriage === 'widow' ||
+                        values.registrationDetails?.isMarriageRegistered === 'yes'
+                      )
+                    },
                   },
                   {
                     id: 'wifeOtherNumber',
@@ -512,6 +866,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                       setValues('wifePresentAddress.wifeOtherDistrict', undefined)
                       setValues('wifePresentAddress.wifeOtherPinCode', undefined)
                       setValues('wifePresentAddress.wifeOtherFullAddress', undefined)
+                      setValues('wifePresentAddress.wifeCantonmentBoard', undefined)
                     },
                   },
                   {
