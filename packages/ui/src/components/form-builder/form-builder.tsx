@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { FieldValues, useForm, UseFormReturn, useWatch, Path, DefaultValues } from 'react-hook-form'
+import { FieldValues, useForm, UseFormReturn, useWatch, Path, DefaultValues, UseFormSetValue } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { match, P } from 'ts-pattern'
 import { FormConfig } from './types'
@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from '../ui/radio-group'
 import { Label } from '../ui/label'
 import { Button } from '../ui/button'
 import { Checkbox } from '../ui/checkbox'
+import { DatePicker } from '../ui/date-picker'
 
 type FormBuilderProps<TFieldValues extends FieldValues> = {
   config: FormConfig<TFieldValues>
@@ -58,16 +59,25 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
               </div>
               <div className="col-span-8 grid grid-cols-12 gap-6">
                 {subform.fields.map((field) => {
+                  const isHidden = typeof field.hidden === 'function' ? field.hidden(value) : field.hidden
+                  const isDisabled = typeof field.disabled === 'function' ? field.disabled(value) : field.disabled
+
+                  if (isHidden) {
+                    return null
+                  }
+
                   return (
                     <FormField
                       key={field.id}
                       name={`${subform.id}.${field.id}` as Path<TFieldValues>}
                       control={form.control}
                       render={({ field: fieldProps }) => {
+                        fieldProps.disabled = isDisabled
+
                         return (
                           <FormItem className={cn('col-span-12', field.className)}>
-                            <FormLabel>{field.name}</FormLabel>
-                            <FormDescription>{field.description}</FormDescription>
+                            {field.isNameHidden ? null : <FormLabel>{field.name}</FormLabel>}
+                            {field.description ? <FormDescription>{field.description}</FormDescription> : null}
                             <FormControl>
                               {match(field)
                                 .returnType<React.ReactNode>()
@@ -77,6 +87,15 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
                                       {...fieldProps}
                                       placeholder={textField.placeholder}
                                       type={textField.inputType}
+                                      className={cn({
+                                        'bg-muted': fieldProps.disabled,
+                                      })}
+                                      onChange={(e) => {
+                                        fieldProps.onChange(e.target.value)
+                                        if (textField.onChange) {
+                                          textField.onChange(value, form.setValue as UseFormSetValue<FieldValues>)
+                                        }
+                                      }}
                                     />
                                   )
                                 })
@@ -89,8 +108,21 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
                                       ? selectField.options(value)
                                       : selectField.options
                                   return (
-                                    <Select value={fieldProps.value} onValueChange={fieldProps.onChange}>
-                                      <SelectTrigger className={cn('col-span-12', field.className)}>
+                                    <Select
+                                      value={fieldProps.value}
+                                      onValueChange={(val) => {
+                                        fieldProps.onChange(val)
+                                        if (selectField.onChange) {
+                                          selectField.onChange(value, form.setValue as UseFormSetValue<FieldValues>)
+                                        }
+                                      }}
+                                      disabled={fieldProps.disabled}
+                                    >
+                                      <SelectTrigger
+                                        className={cn('col-span-12', field.className, {
+                                          'bg-muted': fieldProps.disabled,
+                                        })}
+                                      >
                                         <SelectValue />
                                       </SelectTrigger>
                                       <SelectContent>
@@ -181,6 +213,35 @@ export function FormBuilder<TFieldValues extends FieldValues = FieldValues>({
                                         )
                                       })}
                                     </div>
+                                  )
+                                })
+                                .with({ type: 'checkbox' }, (checkboxField) => {
+                                  return (
+                                    <div className="flex items-start gap-4">
+                                      <Checkbox
+                                        {...fieldProps}
+                                        id={`${subform.id}.${checkboxField.id}`}
+                                        checked={fieldProps.value}
+                                        onCheckedChange={fieldProps.onChange}
+                                      />
+                                      <Label htmlFor={`${subform.id}.${checkboxField.id}`}>{checkboxField.label}</Label>
+                                    </div>
+                                  )
+                                })
+                                .with({ type: 'date' }, (dateField) => {
+                                  return (
+                                    <DatePicker
+                                      {...fieldProps}
+                                      placeholder={dateField.placeholder}
+                                      className="w-full"
+                                      date={fieldProps.value}
+                                      onChange={(date) => {
+                                        fieldProps.onChange(date)
+                                        if (dateField.onChange) {
+                                          dateField.onChange(value, form.setValue as UseFormSetValue<FieldValues>)
+                                        }
+                                      }}
+                                    />
                                   )
                                 })
                                 .with(P._, () => null)

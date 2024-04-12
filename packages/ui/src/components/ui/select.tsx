@@ -23,7 +23,7 @@ const SelectTrigger = forwardRef<
     {...props}
     disabled={loading || props.disabled}
   >
-    {children}
+    <div className="flex-1 truncate">{children}</div>
     <SelectPrimitive.Icon asChild>
       {loading ? <Spinner /> : <ChevronDownIcon className="h-4 w-4 opacity-50" />}
     </SelectPrimitive.Icon>
