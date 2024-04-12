@@ -10,5 +10,5 @@ export type StepsForm = Record<string, StepForm>
 
 export type StepperForm<TSteps extends StepsForm = StepsForm> = {
   steps: TSteps
-  stepOrder: (keyof TSteps)[]
+  stepOrder: (keyof TSteps)[] | ((value: any) => (keyof TSteps)[])
 }

@@ -1,5 +1,5 @@
 import { FieldValues, UseFormReturn } from 'react-hook-form'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Button } from '../ui/button'
 import { StepForm, StepperForm } from './types'
 import { Stepper, StepStatus } from '../stepper'
@@ -26,7 +26,18 @@ export function StepperFormBuilder<TFieldValues extends FieldValues>({
   const [activeStepIndex, setActiveStepIndex] = useState(0)
   const [formData, setFormData] = useState<TFieldValues>(defaultValues)
 
-  const currentStepConfig = config.steps[config.stepOrder[activeStepIndex]] as StepForm
+  const stepOrder = useMemo(
+    () => {
+      if (typeof config.stepOrder === 'function') {
+        return config.stepOrder(formData)
+      }
+      return config.stepOrder
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [formData, config.stepOrder],
+  )
+
+  const currentStepConfig = config.steps[stepOrder[activeStepIndex]] as StepForm
 
   const handleBack = useCallback(() => {
     if (activeStepIndex > 0) {
@@ -55,14 +66,14 @@ export function StepperFormBuilder<TFieldValues extends FieldValues>({
   )
 
   const stepsTitleAndDescription = Object.fromEntries(
-    config.stepOrder.map((stepId) => {
+    stepOrder.map((stepId) => {
       const step = config.steps[stepId]
       return [stepId, { title: step.name, description: step.description }]
     }),
   )
 
   const stepStatus = Object.fromEntries(
-    config.stepOrder.map((stepId, index) => [
+    stepOrder.map((stepId, index) => [
       stepId,
       index === activeStepIndex ? 'active' : index < activeStepIndex ? 'completed' : 'not-started',
     ]),
@@ -72,7 +83,7 @@ export function StepperFormBuilder<TFieldValues extends FieldValues>({
     <div className={cn('grid grid-cols-4 gap-12 divide-x', className)} style={style}>
       <Stepper
         steps={stepsTitleAndDescription as TFieldValues}
-        stepsOrder={config.stepOrder}
+        stepsOrder={stepOrder}
         stepStatus={stepStatus}
         className="col-span-1 py-6"
       />
