@@ -81,6 +81,10 @@ export type MultiCheckboxField = BaseField & {
   options: Options
 }
 
+type Heading = BaseField & {
+  type: 'heading'
+}
+
 export type Field =
   | CheckboxField
   | DateField
@@ -91,3 +95,4 @@ export type Field =
   | SelectField
   | TextareaField
   | TextField
+  | Heading

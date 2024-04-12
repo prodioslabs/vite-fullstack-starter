@@ -668,7 +668,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     name: 'Marital Status at the time of Marriage',
                     type: 'select',
                     hidden(values) {
-                      return values.registrationDetails?.marriageRegistrationType !== '2'
+                      return values.registrationDetails?.isMarriageRegistered === 'yes'
                     },
                     options: [
                       {
@@ -723,27 +723,27 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                   },
                   {
                     id: 'wifeDivorceCaseYear',
-                    name: 'Year',
+                    name: 'Case Year',
                     type: 'text',
                     hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '1',
                     className: 'col-span-6',
                   },
                   {
                     id: 'wifeDivorceCNRNumber',
-                    name: 'CNR Number',
+                    name: 'CNR Number on the decree of divorce',
                     type: 'text',
                     hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '1',
                     className: 'col-span-6',
                   },
                   {
                     id: 'wifeDivorceeDocument',
-                    name: 'Upload the Document',
+                    name: 'Upload the Decree of Divorce',
                     type: 'text',
                     hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '1',
                   },
                   {
                     id: 'wifeAnnulledSelection',
-                    name: 'Annulled Selection',
+                    name: 'Select either one',
                     type: 'select',
                     hidden: (values) => values.wifeDetails?.wifeMaritalStatusAtMarriage !== 'annulled',
                     options: [
@@ -767,38 +767,43 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                   },
                   {
                     id: 'wifeAnnulledCaseYear',
-                    name: 'Year',
+                    name: 'Case Year',
                     type: 'text',
                     hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '1',
                     className: 'col-span-6',
                   },
                   {
                     id: 'wifeAnnulledCNRNumber',
-                    name: 'CNR Number',
+                    name: 'CNR Number on the decree of Nullity of marriage',
                     type: 'text',
                     hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '1',
                     className: 'col-span-6',
                   },
                   {
                     id: 'wifeAnnulledDocument',
-                    name: 'Upload the Document',
+                    name: 'Upload Decree of Nullity document',
                     type: 'text',
                     hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '1',
                   },
-
                   {
                     id: 'wifeDivorceAcknowledgementNumber',
-                    name: 'Acknowledgement Certificate Number',
+                    name: 'Acknowledgement Certificate Number of the decree of divorce registered under UCC',
                     type: 'text',
                     hidden: (values) => values.wifeDetails?.wifeDivorceSelection !== '2',
                     className: 'col-span-6',
                   },
                   {
                     id: 'wifeAnnulledAcknowledgementNumber',
-                    name: 'Acknowledgement Certificate Number',
+                    name: 'Acknowledgement Certificate Number of decree of Nullity of marriage registered under UCC',
                     type: 'text',
                     hidden: (values) => values.wifeDetails?.wifeAnnulledSelection !== '2',
                     className: 'col-span-6',
+                  },
+                  {
+                    id: 'wifeWidowDocument',
+                    name: 'Upload Death Certificate of Spouse',
+                    type: 'text',
+                    hidden: (values) => values.wifeDetails?.wifeMaritalStatusAtMarriage !== 'widow',
                   },
                   {
                     id: 'wifeMobileNumber',
@@ -817,12 +822,24 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     name: 'Alternate Mobile No',
                     type: 'text',
                     className: 'col-span-6',
+                    hidden: (values) => {
+                      return !(
+                        values.wifeDetails?.wifeMaritalStatusAtMarriage === 'widow' ||
+                        values.registrationDetails?.isMarriageRegistered === 'yes'
+                      )
+                    },
                   },
                   {
                     id: 'wifeMailId',
                     name: 'Email ID',
                     type: 'text',
                     className: 'col-span-6',
+                    hidden: (values) => {
+                      return !(
+                        values.wifeDetails?.wifeMaritalStatusAtMarriage === 'widow' ||
+                        values.registrationDetails?.isMarriageRegistered === 'yes'
+                      )
+                    },
                   },
                 ],
               },
@@ -1353,13 +1370,13 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                   },
                   {
                     id: 'husbandAge',
-                    name: 'Age of Husband',
+                    name: 'Age',
                     type: 'text',
                     className: 'col-span-6',
                   },
                   {
                     id: 'husbandGuardianType',
-                    name: 'Guardian Type',
+                    name: 'Select Guardian type',
                     type: 'select',
                     options: [
                       {
@@ -1394,7 +1411,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                   },
                   {
                     id: 'husbandGuardianName',
-                    name: 'Guardian Name',
+                    name: "Legal Guardian's Name",
                     type: 'text',
                     className: 'col-span-6',
                     hidden: (values) => values.husbandDetails?.husbandGuardianType !== 'legalGuardian',
@@ -1511,22 +1528,178 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                       'Notwithstanding anything mentioned under Section 2 of the Uniform Civil Code, Uttarakhand 2024. I, being a member of a Scheduled Tribe, hereby solemnly affirm and declare that I am voluntarily filling and submitting the memorandum for marriage registration in order to register my marriage under the aforementioned Code.',
                   },
                   {
+                    id: 'husbandMaritalStatusAtMarriage',
+                    name: 'Marital Status at the time of Marriage',
+                    type: 'select',
+                    hidden(values) {
+                      return values.registrationDetails?.isMarriageRegistered === 'yes'
+                    },
+                    options: [
+                      {
+                        value: 'unmarried',
+                        name: 'Unmarried',
+                      },
+                      {
+                        value: 'married',
+                        name: 'Married',
+                      },
+                      {
+                        value: 'divorcee',
+                        name: 'Divorcee',
+                      },
+                      {
+                        value: 'annulled',
+                        name: 'Annulled',
+                      },
+                      {
+                        value: 'widower',
+                        name: 'Widower',
+                      },
+                    ],
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandDivorceSelection',
+                    name: 'Divorcee Selection',
+                    type: 'select',
+                    hidden(values) {
+                      return values.husbandDetails?.husbandMaritalStatusAtMarriage !== 'divorcee'
+                    },
+                    options: [
+                      {
+                        value: '1',
+                        name: 'Judgement Number of Decree of Divorce',
+                      },
+                      {
+                        value: '2',
+                        name: 'Acknowledgement Certificate Number for Decree of Divorce (if registered under UCC)',
+                      },
+                    ],
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandDivorceCaseNumber',
+                    name: 'Case Number',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandDivorceSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandDivorceCaseYear',
+                    name: 'Case Year',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandDivorceSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandDivorceCNRNumber',
+                    name: 'CNR Number on the decree of divorce',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandDivorceSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandDivorceDocument',
+                    name: 'Upload the Decree of Divorce',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandDivorceSelection !== '1',
+                  },
+                  {
+                    id: 'husbandAnnulledAcknowledgementNumber',
+                    name: 'Acknowledgement Certificate Number of the decree of divorce registered under UCC',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandDivorceSelection !== '2',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandWidowDocument',
+                    name: 'Upload the Document',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandMaritalStatusAtMarriage !== 'widower',
+                  },
+                  {
+                    id: 'husbandAnnulledSelection',
+                    name: 'Select either one',
+                    type: 'select',
+                    hidden: (values) => values.husbandDetails?.husbandMaritalStatusAtMarriage !== 'annulled',
+                    options: [
+                      {
+                        value: '1',
+                        name: 'Judgement Number of Decree of Nullity',
+                      },
+                      {
+                        value: '2',
+                        name: 'Acknowledgement Certificate Number for Decree of Nullity (if registered under UCC)',
+                      },
+                    ],
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandAnnulledCaseNumber',
+                    name: 'Case Number',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandAnnulledSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandAnnulledCaseYear',
+                    name: 'Case Year',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandAnnulledSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandAnnulledCNRNumber',
+                    name: 'CNR Number on the decree of Nullity of marriage',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandAnnulledSelection !== '1',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'husbandAnnulledDocument',
+                    name: 'Upload Decree of Nullity document',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandAnnulledSelection !== '1',
+                  },
+                  {
+                    id: 'husbandDivorceAcknowledgementNumber',
+                    name: 'Acknowledgement Certificate Number of the decree of divorce registered under UCC',
+                    type: 'text',
+                    hidden: (values) => values.husbandDetails?.husbandDivorceSelection !== '2',
+                    className: 'col-span-6',
+                  },
+                  {
                     id: 'husbandMobileNumber',
                     name: 'Mobile Number (Linked with Aadhaar)',
                     type: 'text',
                     className: 'col-span-6',
+                    hidden: (values) => {
+                      return !(values.husbandDetails?.husbandMaritalStatusAtMarriage === 'widower')
+                    },
                   },
                   {
                     id: 'husbandOtherNumber',
                     name: 'Alternate Mobile No',
                     type: 'text',
                     className: 'col-span-6',
+                    hidden: (values) => {
+                      return !(
+                        values.husbandDetails?.husbandMaritalStatusAtMarriage === 'widower' ||
+                        values.registrationDetails?.isMarriageRegistered === 'yes'
+                      )
+                    },
                   },
                   {
                     id: 'husbandMailId',
                     name: 'Email ID',
                     type: 'text',
                     className: 'col-span-6',
+                    hidden: (values) => {
+                      return !(
+                        values.husbandDetails?.husbandMaritalStatusAtMarriage === 'widower' ||
+                        values.registrationDetails?.isMarriageRegistered === 'yes'
+                      )
+                    },
                   },
                 ],
               },
@@ -2032,12 +2205,18 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     name: 'Marriage Registration Number',
                     type: 'text',
                     className: 'col-span-6',
+                    hidden(values) {
+                      return values.registrationDetails?.isMarriageRegistered === 'no'
+                    },
                   },
                   {
                     id: 'uploadMarriageRegistrationCertificate',
                     name: 'Upload Marriage Registration Certificate',
                     type: 'text',
                     className: 'col-span-6',
+                    hidden(values) {
+                      return values.registrationDetails?.isMarriageRegistered === 'no'
+                    },
                   },
                   {
                     id: 'typeOfMarriageCeremony',
@@ -2082,7 +2261,234 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     id: 'otherNameCeremonyDetail',
                     name: 'Specify Ceremony Detail',
                     type: 'text',
-                    hidden: (values) => values.marriageRegistrationDetails?.typeOfMarriageCeremony !== '7',
+                    hidden: (values) => {
+                      return (
+                        values.marriageRegistrationDetails?.typeOfMarriageCeremony !== '7' ||
+                        values.registrationDetails?.isMarriageRegistered === 'no'
+                      )
+                    },
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'otherNameSelfDeclarationDocument',
+                    name: 'Upload Self Declaration',
+                    type: 'text',
+                    hidden: (values) => {
+                      return (
+                        values.marriageRegistrationDetails?.typeOfMarriageCeremony !== '7' ||
+                        values.registrationDetails?.isMarriageRegistered === 'yes'
+                      )
+                    },
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'saptapadiSelfDeclarationDocument',
+                    name: 'Upload Self-Declaration',
+                    type: 'text',
+                    hidden: (values) =>
+                      values.marriageRegistrationDetails?.typeOfMarriageCeremony !== '1' ||
+                      values.registrationDetails?.isMarriageRegistered === 'yes',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'otherMarriageCeremonyProof',
+                    name: 'Select either of the one',
+                    type: 'select',
+                    options: [
+                      {
+                        value: '1',
+                        name: 'Proof of Marriage Ceremony',
+                      },
+                      {
+                        value: '2',
+                        name: 'Self Declaration (A downloadable PDF link)',
+                      },
+                    ],
+                    hidden: (values) => {
+                      return (
+                        values.marriageRegistrationDetails?.typeOfMarriageCeremony === '1' ||
+                        values.marriageRegistrationDetails?.typeOfMarriageCeremony === '7' ||
+                        values.registrationDetails?.isMarriageRegistered === 'yes'
+                      )
+                    },
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'otherMarriageCeremonyDocument',
+                    name: 'Upload the Document',
+                    type: 'text',
+                    hidden: (values) => {
+                      return (
+                        values.marriageRegistrationDetails?.typeOfMarriageCeremony === '1' ||
+                        values.marriageRegistrationDetails?.typeOfMarriageCeremony === '7' ||
+                        values.registrationDetails?.isMarriageRegistered === 'yes'
+                      )
+                    },
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'degreesOfProhibitedRelationship',
+                    name: 'Whether the parties are within the degrees of prohibited relationship.(kindly refer to the Link)',
+                    type: 'select',
+                    options: [
+                      {
+                        value: 'yes',
+                        name: 'Yes',
+                      },
+                      {
+                        value: 'no',
+                        name: 'No',
+                      },
+                    ],
+                    className: 'col-span-6',
+                    hidden(values) {
+                      return values.registrationDetails?.isMarriageRegistered === 'yes'
+                    },
+                  },
+                  {
+                    id: 'customProof',
+                    name: 'Upload Proof',
+                    type: 'text',
+                    hidden: (values) => values.marriageRegistrationDetails?.degreesOfProhibitedRelationship !== 'yes',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'customOfficiantName',
+                    name: 'Name of Officiant',
+                    type: 'text',
+                    hidden: (values) => values.marriageRegistrationDetails?.degreesOfProhibitedRelationship !== 'yes',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'customOfficiantAddress',
+                    name: 'Address of Officiant',
+                    type: 'text',
+                    hidden: (values) => values.marriageRegistrationDetails?.degreesOfProhibitedRelationship !== 'yes',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'customOfficiantNumber',
+                    name: 'Contact Number of Officiant',
+                    type: 'text',
+                    hidden: (values) => values.marriageRegistrationDetails?.degreesOfProhibitedRelationship !== 'yes',
+                    className: 'col-span-6',
+                  },
+                ],
+              },
+            ],
+            validationSchema: z.object({}),
+          },
+        },
+        verifiersOfficiantDetails: {
+          name: 'Details of Verifiers and Officiant',
+          form: {
+            subforms: [
+              {
+                id: 'verifier1Details',
+                name: 'Details of Verifier 1',
+                fields: [
+                  {
+                    id: 'verifier1AadhaarConsent',
+                    type: 'checkbox',
+                    label:
+                      'I, hereby, give my consent to the Government of Uttarakhand to use my Aadhaar details to establish and authenticate my identity for the registration of marriage',
+                    className: 'col-span-full',
+                  },
+                  {
+                    id: 'verifier1AadhaarNumber',
+                    name: 'Aadhaar Number',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'verifier1Name',
+                    name: 'Name',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'verifier1Address',
+                    name: 'Address',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'verifier1MobileNumber',
+                    name: 'Mobile Number',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'verifier1Photograph',
+                    name: 'Upload Photograph',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                ],
+              },
+              {
+                id: 'verifier2Details',
+                name: 'Details of Verifier 2',
+                fields: [
+                  {
+                    id: 'verifier2AadhaarConsent',
+                    type: 'checkbox',
+                    label:
+                      'I, hereby, give my consent to the Government of Uttarakhand to use my Aadhaar details to establish and authenticate my identity for the registration of marriage',
+                    className: 'col-span-full',
+                  },
+                  {
+                    id: 'verifier2AadhaarNumber',
+                    name: 'Aadhaar Number',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'verifier2Name',
+                    name: 'Name',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'verifier2Address',
+                    name: 'Address',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'verifier2MobileNumber',
+                    name: 'Mobile Number',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'verifier2Photograph',
+                    name: 'Upload Photograph',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                ],
+              },
+              {
+                id: 'officiantPerformedDetails',
+                name: 'Details of Officiant who performed the marriage ceremony',
+                fields: [
+                  {
+                    id: 'officiantPerformedName',
+                    name: 'Name',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'officiantPerformedAddress',
+                    name: 'Address',
+                    type: 'text',
+                    className: 'col-span-6',
+                  },
+                  {
+                    id: 'officiantPerformedMobileNumber',
+                    name: 'Mobile Number',
+                    type: 'text',
                     className: 'col-span-6',
                   },
                 ],
@@ -2117,6 +2523,13 @@ export const ApplicationForRegistrationOfMarriage: Story = {
                     label:
                       'We are well aware of the fact that if we intentionally provide false information or deliver forged or fabricated documents, we shall be liable under sub-section (2) of section 17 of the Uniform Civil Code, Uttarakhand, 2024.',
                   },
+                  {
+                    id: 'declaration4',
+                    type: 'checkbox',
+                    label:
+                      'The marriage is not prohibited under any law which was applicable to the parties at the time of marriage.',
+                    hidden: (values) => values.registrationDetails?.isMarriageRegistered === 'yes',
+                  },
                 ],
               },
             ],
@@ -2133,6 +2546,7 @@ export const ApplicationForRegistrationOfMarriage: Story = {
         'husbandPresentAddress',
         'husbandPermanentAddress',
         'marriageRegistrationDetails',
+        'verifiersOfficiantDetails',
         'declaration',
       ],
     },
