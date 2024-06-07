@@ -245,6 +245,7 @@ export const AsyncSelectInputForm: Story = {
         defaultValues={{}}
         className="container"
         onSubmit={(data) => {
+          // eslint-disable-next-line no-console
           console.log(data)
         }}
       />
@@ -305,6 +306,7 @@ export const AsyncComboboxFormConfig: Story = {
         defaultValues={{}}
         className="container"
         onSubmit={(data) => {
+          // eslint-disable-next-line no-console
           console.log(data)
         }}
       />
