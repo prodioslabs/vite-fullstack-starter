@@ -29,6 +29,14 @@ const FormField = <
   )
 }
 
+type FormFieldWithoutControllerProps = React.PropsWithChildren<{
+  name: string
+}>
+
+const FormFieldWithoutController = ({ name, children }: FormFieldWithoutControllerProps) => {
+  return <FormFieldContext.Provider value={{ name }}>{children}</FormFieldContext.Provider>
+}
+
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext)
   const itemContext = React.useContext(FormItemContext)
@@ -132,4 +140,14 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
 )
 FormMessage.displayName = 'FormMessage'
 
-export { useFormField, Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField }
+export {
+  useFormField,
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormFieldWithoutController,
+  FormDescription,
+  FormMessage,
+  FormField,
+}
