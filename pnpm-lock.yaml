@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@repo/config':
+        specifier: workspace:*
+        version: link:packages/config
       turbo:
         specifier: ^1.13.0
         version: 1.13.0
@@ -255,10 +258,10 @@ importers:
         version: 3.2.5
       tailwindcss:
         specifier: ^3.4.3
-        version: 3.4.3(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3))
+        version: 3.4.3(ts-node@10.9.2(typescript@5.4.3))
       tailwindcss-animate:
         specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3)))
+        version: 1.0.7(tailwindcss@3.4.3(ts-node@10.9.2(typescript@5.4.3)))
 
   packages/contract:
     dependencies:
@@ -277,7 +280,7 @@ importers:
         version: link:../config
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3))(typescript@5.4.3)
+        version: 8.0.2(postcss@8.4.38)(ts-node@10.9.2(typescript@5.4.3))(typescript@5.4.3)
       typescript:
         specifier: ^5.4.3
         version: 5.4.3
@@ -13921,7 +13924,7 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.4.38
 
-  postcss-load-config@4.0.2(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3)):
+  postcss-load-config@4.0.2(postcss@8.4.38)(ts-node@10.9.2(typescript@5.4.3)):
     dependencies:
       lilconfig: 3.1.1
       yaml: 2.4.1
@@ -14710,11 +14713,11 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.24.1
 
-  tailwindcss-animate@1.0.7(tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3))):
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.3(ts-node@10.9.2(typescript@5.4.3))):
     dependencies:
-      tailwindcss: 3.4.3(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3))
+      tailwindcss: 3.4.3(ts-node@10.9.2(typescript@5.4.3))
 
-  tailwindcss@3.4.3(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3)):
+  tailwindcss@3.4.3(ts-node@10.9.2(typescript@5.4.3)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -14733,7 +14736,7 @@ snapshots:
       postcss: 8.4.38
       postcss-import: 15.1.0(postcss@8.4.38)
       postcss-js: 4.0.1(postcss@8.4.38)
-      postcss-load-config: 4.0.2(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3))
+      postcss-load-config: 4.0.2(postcss@8.4.38)(ts-node@10.9.2(typescript@5.4.3))
       postcss-nested: 6.0.1(postcss@8.4.38)
       postcss-selector-parser: 6.0.16
       resolve: 1.22.8
@@ -14936,7 +14939,7 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tsup@8.0.2(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3))(typescript@5.4.3):
+  tsup@8.0.2(postcss@8.4.38)(ts-node@10.9.2(typescript@5.4.3))(typescript@5.4.3):
     dependencies:
       bundle-require: 4.0.2(esbuild@0.19.12)
       cac: 6.7.14
@@ -14946,7 +14949,7 @@ snapshots:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss-load-config: 4.0.2(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.12.2)(typescript@5.4.3))
+      postcss-load-config: 4.0.2(postcss@8.4.38)(ts-node@10.9.2(typescript@5.4.3))
       resolve-from: 5.0.0
       rollup: 4.13.2
       source-map: 0.8.0-beta.0

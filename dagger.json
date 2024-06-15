@@ -1,0 +1,12 @@
+{
+  "name": "ci",
+  "sdk": "typescript",
+  "dependencies": [
+    {
+      "name": "server",
+      "source": "ci/server"
+    }
+  ],
+  "source": "ci",
+  "engineVersion": "v0.11.7"
+}
