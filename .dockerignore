@@ -1,0 +1,12 @@
+# Git files history
+**/.git
+
+# Dependencies
+**/node_modules
+
+# Environment variables
+**/.env
+
+# Docker files
+.dockerignore
+Dockerfile
