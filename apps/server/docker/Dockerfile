@@ -42,11 +42,18 @@ RUN CI=true pnpm prune --prod
 
 FROM base as release
 
+RUN apk add --no-cache curl
+
 USER node
 
 COPY --from=build --chown=node /app/ ./
 
+ENV PORT 3000
+
 EXPOSE 3000
+
+HEALTHCHECK --interval=10s --start-period=10s --retries=3 \
+  CMD curl -f http://127.0.0.1:$PORT/health || exit 1
 
 # Run the server with server app directory as working directory
 WORKDIR /app/apps/server

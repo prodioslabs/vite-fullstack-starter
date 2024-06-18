@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import * as joi from 'joi'
+import { HealthModule } from './health/health.module'
 import { UserModule } from './user/user.module'
 import { AuthModule } from './auth/auth.module'
 
@@ -13,6 +14,7 @@ import { AuthModule } from './auth/auth.module'
         SESSION_COOKIE_MAX_AGE: joi.number(),
       }),
     }),
+    HealthModule,
     UserModule,
     AuthModule,
   ],
