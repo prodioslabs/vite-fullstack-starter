@@ -9,6 +9,7 @@ export const validationSchema = joi
     DATABASE_URL: joi.string().required(),
     JOB_TIMEOUT_MS: joi.number().default(DEFAULT_JOB_TIMEOUT_MS),
     REDIS_URL: joi.string().required(),
+    BROWSERLESS_WS_ENDPOINT: joi.string(),
   })
   .required()
 
