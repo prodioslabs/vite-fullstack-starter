@@ -10,7 +10,6 @@ const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
 
-<<<<<<< Updated upstream
 type SelectTriggerProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
   loading?: boolean
   allowClear?: boolean
@@ -53,27 +52,6 @@ const SelectTrigger = forwardRef<React.ElementRef<typeof SelectPrimitive.Trigger
   ),
 )
 
-=======
-const SelectTrigger = forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & { loading?: boolean }
->(({ className, children, loading, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      'flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
-      className,
-    )}
-    {...props}
-    disabled={loading || props.disabled}
-  >
-    <div className="flex-1 truncate text-left">{children}</div>
-    <SelectPrimitive.Icon asChild>
-      {loading ? <Spinner /> : <ChevronDownIcon className="h-4 w-4 opacity-50" />}
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-))
->>>>>>> Stashed changes
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
 const SelectContent = forwardRef<
