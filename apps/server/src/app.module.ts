@@ -1,22 +1,28 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import * as joi from 'joi'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { BullModule } from '@nestjs/bull'
 import { HealthModule } from './health/health.module'
 import { UserModule } from './user/user.module'
 import { AuthModule } from './auth/auth.module'
+import { Environment, validationSchema } from './config/env.config'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env'],
-      validationSchema: joi.object({
-        SESSION_SECRET: joi.string(),
-        SESSION_COOKIE_MAX_AGE: joi.number(),
-      }),
+      validationSchema,
+      isGlobal: true,
     }),
     HealthModule,
     UserModule,
     AuthModule,
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<Environment>) => ({
+        url: configService.get('REDIS_URL'),
+      }),
+    }),
   ],
   controllers: [],
   providers: [],
