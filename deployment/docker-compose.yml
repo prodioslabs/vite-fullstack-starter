@@ -1,0 +1,134 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    restart: unless-stopped
+    command: >-
+      --api.insecure=true
+      --providers.docker=true
+      --providers.docker.exposedbydefault=false
+      --entrypoints.web.address=:80
+      --entrypoints.websecure.address=:443
+      --entrypoints.web.http.redirections.entrypoint.to=websecure
+      --entrypoints.web.http.redirections.entrypoint.scheme=https
+      --certificatesresolvers.letsencrypt.acme.email=tech@prodios.com
+      --certificatesresolvers.letsencrypt.acme.storage=/ssl/acme.json
+      --certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
+      --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+    ports:
+      - 80:80
+      - 443:443
+      # - 8080:8080
+    volumes:
+      - ./traefik/ssl:/ssl
+      # Mount docker socket to allow traefik to listen to docker events
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  client:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/prodioslabs/ucc-portal/client:latest
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.client.rule: Host(`${HOSTNAME}`)
+      traefik.http.routers.client.entrypoints: web
+      traefik.http.routers.client-secure.rule: Host(`${HOSTNAME}`)
+      traefik.http.routers.client-secure.entrypoints: websecure
+      traefik.http.routers.client-secure.tls: true
+      traefik.http.routers.client-secure.tls.certresolver: letsencrypt
+      # Allow watchtower to update the container
+      com.centurylinklabs.watchtower.enable: true
+
+  server:
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/prodioslabs/ucc-portal/server:latest
+    restart: unless-stopped
+    env_file: ./server/.env
+    deploy:
+      replicas: 2
+    labels:
+      traefik.enable: true
+      traefik.http.routers.server.rule: Host(`${HOSTNAME}`) && PathPrefix(`/api`)
+      traefik.http.routers.server.entrypoints: web
+      traefik.http.routers.server.middlewares: server-strip-prefix
+      traefik.http.middlewares.server-strip-prefix.stripprefix.prefixes: /api
+      traefik.http.routers.server-secure.rule: Host(`${HOSTNAME}`) && PathPrefix(`/api`)
+      traefik.http.routers.server-secure.entrypoints: websecure
+      traefik.http.routers.server-secure.middlewares: server-strip-prefix
+      traefik.http.routers.server-secure.tls: true
+      traefik.http.routers.server-secure.tls.certresolver: letsencrypt
+      # Allow watchtower to update the container
+      com.centurylinklabs.watchtower.enable: true
+
+  browserless:
+    image: ghcr.io/browserless/chromium:v2.11.0
+    restart: unless-stopped
+    env_file: ./browserless/.env
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-05-10T01-41-38Z
+    restart: unless-stopped
+    env_file: ./minio/.env
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./minio/data:/data
+    labels:
+      traefik.enable: true
+      # Setup Minio S3 Buckets Access
+      traefik.http.routers.minio.rule: Host(`minio.${HOSTNAME}`)
+      traefik.http.routers.minio.entrypoints: web
+      traefik.http.routers.minio.service: minio
+      traefik.http.services.minio.loadbalancer.server.port: 9000
+      traefik.http.routers.minio-secure.rule: Host(`minio.${HOSTNAME}`)
+      traefik.http.routers.minio-secure.entrypoints: websecure
+      traefik.http.routers.minio-secure.service: minio-secure
+      traefik.http.services.minio-secure.loadbalancer.server.port: 9000
+      traefik.http.routers.minio-secure.tls: true
+      traefik.http.routers.minio-secure.tls.certresolver: letsencrypt
+      # Setup Minio Console Access
+      traefik.http.routers.minio-console.rule: Host(`minio.${HOSTNAME}`) && PathPrefix(`/console`)
+      traefik.http.routers.minio-console.entrypoints: web
+      traefik.http.routers.minio-console.service: minio-console
+      traefik.http.services.minio-console.loadbalancer.server.port: 9001
+      traefik.http.routers.minio-console.middlewares: minio-console-strip-prefix
+      traefik.http.middlewares.minio-console-strip-prefix.stripprefix.prefixes: /console
+      traefik.http.routers.minio-console-secure.rule: Host(`minio.${HOSTNAME}`) && PathPrefix(`/console`)
+      traefik.http.routers.minio-console-secure.entrypoints: websecure
+      traefik.http.routers.minio-console-secure.middlewares: minio-console-strip-prefix
+      traefik.http.routers.minio-console-secure.service: minio-console-secure
+      traefik.http.services.minio-console-secure.loadbalancer.server.port: 9001
+      traefik.http.routers.minio-console-secure.tls: true
+      traefik.http.routers.minio-console-secure.tls.certresolver: letsencrypt
+
+  redis:
+    image: redis:7.0.15-alpine3.20
+    restart: unless-stopped
+    volumes:
+      - ./redis/data:/data
+
+  # Optional service to monitor and update running containers
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    restart: unless-stopped
+    env_file: ./watchtower/.env
+    environment:
+      - WATCHTOWER_POLL_INTERVAL=300
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_CLEANUP=true
+      # Update path to include aws ecr credentails helper
+      - HOME=/
+      - PATH=$PATH:/go/bin
+    ports:
+      - 6060:8080
+    volumes:
+      # Bind host docker config.json or create a new one
+      - ./watchtower/docker/config.json:/config.json
+      # Allow watchtower to listen to docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Shared volume to store ecr-helper binary
+      - ecr-helper:/go/bin:ro
+    command: --http-api-update --http-api-periodic-polls --log-level debug
+
+  # Credential helper to authenticate with AWS ECR inside watchtower
+  amazon-ecr-credential-helper:
+    build: ./watchtower/amazon-ecr-credential-helper
+    volumes:
+      - ecr-helper:/go/bin
