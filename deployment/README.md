@@ -1,10 +1,10 @@
 # Deployment
 
-This configuration is used to deploy the UCC application on a server using Docker and Docker Compose. The application consists of multiple services, defined in the `docker-compose.yml` file, that work together to provide the full functionality of the application.
+This configuration is used to deploy the Full Stack Starter application on a server using Docker and Docker Compose. The application consists of multiple services, defined in the `docker-compose.yml` file, that work together to provide the full functionality of the application.
 
 ## Components
 
-This is the infrastructure definition of the UCC Portal application:
+This is the infrastructure definition of the Full Stack Starter:
 
 ![Infrastructure Definition](./instrastructure-definition.png)
 

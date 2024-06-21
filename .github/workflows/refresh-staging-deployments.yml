@@ -1,0 +1,16 @@
+name: Refresh staging deployments
+
+on:
+  workflow_run:
+    workflows: ['Build and Publish']
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to staging
+        if: ${{ github.event.workflow_run.conclusion == 'success'  }}
+        run: curl -X POST -H 'Bearer ${{ secrets.STAGING_REFRESH_DEPLOYMENTS_TOKEN }}' ${{ vars.STAGING_REFRESH_DEPLOYMENTS_URL }}

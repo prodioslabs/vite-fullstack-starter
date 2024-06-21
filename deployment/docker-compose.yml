@@ -25,7 +25,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   client:
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/prodioslabs/ucc-portal/client:latest
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/prodioslabs/vite-fullstack-starter/client:latest
     restart: unless-stopped
     labels:
       traefik.enable: true
@@ -39,7 +39,7 @@ services:
       com.centurylinklabs.watchtower.enable: true
 
   server:
-    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/prodioslabs/ucc-portal/server:latest
+    image: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/prodioslabs/vite-fullstack-starter/server:latest
     restart: unless-stopped
     env_file: ./server/.env
     deploy:

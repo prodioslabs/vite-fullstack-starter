@@ -1,0 +1,48 @@
+{
+    "rules": [
+      {
+        "rulePriority": 10,
+        "description": "For `latest` tag, keep last 5 images",
+        "selection": {
+          "tagStatus": "tagged",
+          "tagPrefixList": ["latest"],
+          "countType": "imageCountMoreThan",
+          "countNumber": 5
+        },
+        "action": { "type": "expire" }
+      },
+      {
+        "rulePriority": 20,
+        "description": "For `master` tag, keep last 5 images",
+        "selection": {
+          "tagStatus": "tagged",
+          "tagPrefixList": ["main"],
+          "countType": "imageCountMoreThan",
+          "countNumber": 5
+        },
+        "action": { "type": "expire" }
+      },
+      {
+        "rulePriority": 990,
+        "description": "Only keep untagged images for 7 days",
+        "selection": {
+          "tagStatus": "untagged",
+          "countType": "sinceImagePushed",
+          "countUnit": "days",
+          "countNumber": 7
+        },
+        "action": { "type": "expire" }
+      },
+      {
+        "rulePriority": 1000,
+        "description": "Only keep tagged images for 15 days",
+        "selection": {
+          "tagStatus": "any",
+          "countType": "sinceImagePushed",
+          "countUnit": "days",
+          "countNumber": 15
+        },
+        "action": { "type": "expire" }
+      }
+    ]
+  }
