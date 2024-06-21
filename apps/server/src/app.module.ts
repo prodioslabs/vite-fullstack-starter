@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module'
 import { AuthModule } from './auth/auth.module'
 import { Environment, validationSchema } from './config/env.config'
 import { AuditLogModule } from './audit-log/audit-log.module'
+import { FileModule } from './file/file.module'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AuditLogModule } from './audit-log/audit-log.module'
       }),
     }),
     AuditLogModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],

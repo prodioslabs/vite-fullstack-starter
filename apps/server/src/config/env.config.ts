@@ -10,6 +10,10 @@ export const validationSchema = joi
     JOB_TIMEOUT_MS: joi.number().default(DEFAULT_JOB_TIMEOUT_MS),
     REDIS_URL: joi.string().required(),
     BROWSERLESS_WS_ENDPOINT: joi.string(),
+    MINIO_HOST: joi.string().required(),
+    MINIO_PORT: joi.number().required(),
+    MINIO_ACCESS_KEY: joi.string().required(),
+    MINIO_SECRET_KEY: joi.string().required(),
   })
   .required()
 

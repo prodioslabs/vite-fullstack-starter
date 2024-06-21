@@ -27,14 +27,14 @@ export class AuthController {
   }
 
   @TsRestHandler(contract.auth.signup)
-  @UseInterceptors(AuditLogInterceptor)
-  @AuditLogAction('LOGOUT')
   signup(@Req() request: Request) {
     return tsRestHandler(contract.auth.signup, async ({ body }) => {
       return this.authService.signup(body, request)
     })
   }
 
+  @UseInterceptors(AuditLogInterceptor)
+  @AuditLogAction('LOGOUT')
   @TsRestHandler(contract.auth.logout)
   logout(@Req() request: Request) {
     return tsRestHandler(contract.auth.logout, async () => {

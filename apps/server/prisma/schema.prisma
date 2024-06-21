@@ -27,6 +27,7 @@ model User {
   password      String
   notifications Notification[]
   auditLogs     AuditLog[]
+  files         File[]
 }
 
 model Session {
@@ -71,4 +72,16 @@ model AuditLog {
   ipAddress      String?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
+}
+
+model File {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  filename    String
+  bucket      String
+  mimeType    String
+  size        Int
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String   @db.ObjectId
 }
