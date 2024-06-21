@@ -7,6 +7,7 @@ import { AuthService } from './auth.service'
 import { UserModule } from '../user/user.module'
 import { PrismaModule } from '../prisma/prisma.module'
 import { SessionSerializer } from './session.serializer'
+import { AuditLogModule } from '../audit-log/audit-log.module'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SessionSerializer } from './session.serializer'
     UserModule,
     ConfigModule,
     PrismaModule,
+    AuditLogModule,
   ],
   controllers: [AuthController],
   providers: [LocalStrategy, AuthService, SessionSerializer],

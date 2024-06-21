@@ -26,6 +26,7 @@ model User {
   salt          String
   password      String
   notifications Notification[]
+  auditLogs     AuditLog[]
 }
 
 model Session {
@@ -52,4 +53,22 @@ model Notification {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+}
+
+model AuditLog {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  action         AuditAction
+  user           User        @relation(fields: [userId], references: [id])
+  userId         String      @db.ObjectId
+  metadata       Json        @default("{}")
+  userDeviceInfo Json        @default("{}")
+  response       Json        @default("{}")
+  ipAddress      String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }

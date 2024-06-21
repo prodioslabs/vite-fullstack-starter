@@ -5,6 +5,7 @@ import { HealthModule } from './health/health.module'
 import { UserModule } from './user/user.module'
 import { AuthModule } from './auth/auth.module'
 import { Environment, validationSchema } from './config/env.config'
+import { AuditLogModule } from './audit-log/audit-log.module'
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { Environment, validationSchema } from './config/env.config'
         url: configService.get('REDIS_URL'),
       }),
     }),
+    AuditLogModule,
   ],
   controllers: [],
   providers: [],

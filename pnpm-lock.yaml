@@ -153,6 +153,9 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
+      device-detector-js:
+        specifier: ^3.0.3
+        version: 3.0.3
       express-session:
         specifier: ^1.18.0
         version: 1.18.0
@@ -4127,6 +4130,10 @@ packages:
   detect-port@1.5.1:
     resolution: {integrity: sha512-aBzdj76lueB6uUst5iAs7+0H/oOjqI5D16XUWxlWMIMROhcM0rfsNVk93zTngq1dDNpoXRr++Sus7ETAExppAQ==}
     hasBin: true
+
+  device-detector-js@3.0.3:
+    resolution: {integrity: sha512-jM89LJAvP6uOd84at8OlD9dWP8KeYCCHUde0RT0HQo/stdoRH4b54Xl/fntx2nEXCmqiFhmo+/cJetS2VGUHPw==}
+    engines: {node: '>= 8.11.4'}
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
@@ -12039,6 +12046,8 @@ snapshots:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+
+  device-detector-js@3.0.3: {}
 
   devlop@1.1.0:
     dependencies:
