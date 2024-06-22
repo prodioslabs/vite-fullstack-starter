@@ -67,9 +67,6 @@ jobs:
           provenance: true
           build-args: |
             VITE_API_BASE_URL=${{ vars.CLIENT_VITE_API_BASE_URL }}
-            VITE_DIGI_SIGNER_WEB_SERVER_BASE_URL=${{ vars.CLIENT_VITE_DIGI_SIGNER_WEB_SERVER_BASE_URL }}
-            VITE_DIGI_SIGNER_WEB_SERVER_VERSION=${{ vars.CLIENT_VITE_DIGI_SIGNER_WEB_SERVER_VERSION }}
-            VITE_CLARIFY_TIME_IN_DAYS=${{ vars.CLIENT_VITE_CLARIFY_TIME_IN_DAYS }}
           tags: >
             ${{ steps.create-repository.outputs.repository-uri }}:${{ steps.infer-tag.outputs.tag }},
             ${{ steps.create-repository.outputs.repository-uri }}:${{ github.sha }}
