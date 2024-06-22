@@ -15,7 +15,7 @@ function Home() {
       <div className="text-xl font-medium mb-2">Home</div>
       <div className="items-center space-y-2 border rounded-md p-3 max-w-screen-md">
         <div className="flex-1 text-sm">
-          Current User -{' '}
+          Current logged in user -{' '}
           {match(currentUserQuery)
             .returnType<string>()
             .with({ status: 'pending' }, () => 'Loading...')
