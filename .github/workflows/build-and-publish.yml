@@ -61,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./apps/client/Dockerfile
+          file: ./apps/client/docker/Dockerfile
           pull: true
           push: true
           provenance: true
@@ -117,7 +117,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./apps/server/Dockerfile
+          file: ./apps/server/docker/Dockerfile
           pull: true
           push: true
           provenance: true
