@@ -132,3 +132,6 @@ services:
     build: ./watchtower/amazon-ecr-credential-helper
     volumes:
       - ecr-helper:/go/bin
+
+volumes:
+  ecr-helper:
