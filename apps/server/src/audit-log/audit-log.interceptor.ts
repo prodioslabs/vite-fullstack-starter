@@ -50,12 +50,14 @@ export class AuditLogInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap(async (body) => {
-        await this.auditService.updateLog(log.id, {
-          response: {
-            body,
-            status: context.switchToHttp().getResponse().statusCode,
-          },
-        })
+        if (typeof body !== 'function') {
+          await this.auditService.updateLog(log.id, {
+            response: {
+              body,
+              status: context.switchToHttp().getResponse().statusCode,
+            },
+          })
+        }
       }),
     )
   }

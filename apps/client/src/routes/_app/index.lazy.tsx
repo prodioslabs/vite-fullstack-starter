@@ -21,7 +21,7 @@ function Home() {
             .with({ status: 'pending' }, () => 'Loading...')
             .with(
               { status: 'success' },
-              ({ data: { body: currentUser } }) => `${currentUser.user.name} (${currentUser.user.email})`,
+              ({ data: { body: currentUser } }) => `${currentUser.user?.name} (${currentUser.user?.email})`,
             )
             .with({ status: 'error' }, () => 'Error')
             .exhaustive()}
