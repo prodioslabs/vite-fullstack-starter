@@ -106,8 +106,8 @@ function AppShell() {
             <DropdownMenuContent>
               <DropdownMenuItem disabled>
                 <div>
-                  <div>{loaderData.body.user.name}</div>
-                  <div className="font-medium">{loaderData.body.user.email}</div>
+                  <div>{loaderData.body.user?.name}</div>
+                  <div className="font-medium">{loaderData.body.user?.email}</div>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

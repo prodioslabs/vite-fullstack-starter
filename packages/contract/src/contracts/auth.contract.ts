@@ -25,7 +25,7 @@ export const authContract = client.router(
       path: '/signup',
       body: z.object({
         email: z.string().email(),
-        name: z.string(),
+        name: z.string().min(1, 'Name is required!'),
         role: z.enum(['USER', 'SUPER_ADMIN']).optional().default('USER'),
         password: z.string().min(8),
       }),
