@@ -22,5 +22,6 @@ export * from './components/ui/toast'
 export * from './components/ui/toaster'
 export * from './components/ui/toggle'
 export * from './components/ui/tooltip'
+export * from './components/ui/switch'
 
 export * from './hooks/use-toast'

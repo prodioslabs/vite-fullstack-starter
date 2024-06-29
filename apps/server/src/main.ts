@@ -7,10 +7,11 @@ import { PrismaSessionStore } from '@quixo3/prisma-session-store'
 import { PrismaClient } from '@prisma/client'
 import { AppModule } from './app.module'
 import { HttpExceptionFilter } from './utils/http-exception-filter'
+import { Environment } from './config/env.config'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  const configService = app.get(ConfigService)
+  const configService = app.get(ConfigService<Environment>)
 
   app.enableCors({
     credentials: true,
@@ -37,6 +38,8 @@ async function bootstrap() {
   app.use(passport.session())
   app.use(cookieParser())
 
-  await app.listen(3000)
+  const PORT = configService.get<number>('PORT')!
+
+  await app.listen(PORT)
 }
 bootstrap()

@@ -4,6 +4,7 @@ const DEFAULT_JOB_TIMEOUT_MS = 300000
 
 export const validationSchema = joi
   .object({
+    PORT: joi.number().default(3000),
     SESSION_SECRET: joi.string(),
     SESSION_COOKIE_MAX_AGE: joi.number(),
     DATABASE_URL: joi.string().required(),
