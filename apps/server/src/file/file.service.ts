@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException, StreamableFile } from '@nestjs/common'
 import { Client } from 'minio'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { PrismaService } from '../prisma/prisma.service'
 import { FileResponseShapes } from './file.request'
 import { UserWithoutSensitiveData } from '../user/user.type'

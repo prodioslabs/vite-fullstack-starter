@@ -1,10 +1,9 @@
 {
-  "extends": [
-    "@repo/config/tsconfig/base.json"
-  ],
+  "extends": ["@repo/config/tsconfig/base.json"],
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
     "declaration": false,
     "declarationMap": false,
     "removeComments": true,
@@ -18,6 +17,8 @@
     "skipLibCheck": true,
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": false,
+    "strictPropertyInitialization": false,
     "noFallthroughCasesInSwitch": false,
+    "jsx": "preserve"
   }
 }
