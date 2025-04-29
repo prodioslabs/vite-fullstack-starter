@@ -1,14 +1,15 @@
 {
   "name": "@repo/client",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write --no-error-on-unmatched-pattern \"./src/**/*.{ts,tsx,js,cjs}\" *.{ts,tsx,js,cjs}",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc",
+    "typecheck:watch": "tsc --watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
