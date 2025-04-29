@@ -1,7 +1,5 @@
 export * from './lib/utils'
 
-export * from './components/form-builder'
-
 export * from './components/ui/alert-dialog'
 export * from './components/ui/button'
 export * from './components/ui/calendar'

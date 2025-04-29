@@ -9,7 +9,6 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "format": "turbo format",
-    "storybook": "turbo storybook",
     "typecheck": "turbo typecheck",
     "typecheck:watch": "turbo typecheck:watch"
   },
