@@ -5,11 +5,11 @@ export const Route = createFileRoute('/_app/application/$serviceSlug')({
 })
 
 function Application() {
-  const serviceSlug = Route.useParams().serviceSlug
+  const params = Route.useParams()
 
   return (
     <div className="p-4">
-      <div className="text-xl font-medium mb-2">{serviceSlug} </div>
+      <div className="text-xl font-medium mb-2">{params._splat}</div>
     </div>
   )
 }
