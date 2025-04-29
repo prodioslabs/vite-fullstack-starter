@@ -6,7 +6,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { Observable } from 'rxjs'
-import * as DeviceDetector from 'device-detector-js'
+import DeviceDetector from 'device-detector-js'
 import { tap } from 'rxjs/operators'
 import { Reflector } from '@nestjs/core'
 import { AuditAction } from '@prisma/client'

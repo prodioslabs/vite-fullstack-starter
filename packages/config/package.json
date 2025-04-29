@@ -1,13 +1,12 @@
 {
   "name": "@repo/config",
-  "version": "0.0.1",
   "description": "package containing all the configurations for linter, formatter, typescript, etc",
   "private": true,
   "scripts": {
     "format": "prettier --write --no-error-on-unmatched-pattern *.{ts,tsx,js,cjs}"
   },
   "devDependencies": {
-    "@types/node": "^20.14.9",
+    "@types/node": "22.14.0",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.10.0",
     "autoprefixer": "^10.4.19",

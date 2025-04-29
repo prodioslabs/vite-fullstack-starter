@@ -1,23 +1,24 @@
 {
   "name": "@repo/client",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write --no-error-on-unmatched-pattern \"./src/**/*.{ts,tsx,js,cjs}\" *.{ts,tsx,js,cjs}",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc",
+    "typecheck:watch": "tsc --watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
     "@repo/contract": "workspace:*",
     "@repo/ui": "workspace:*",
     "@t3-oss/env-core": "^0.9.2",
-    "@tanstack/react-query": "^5.28.9",
-    "@tanstack/react-router": "^1.26.1",
-    "@ts-rest/react-query": "^3.39.1",
+    "@tanstack/react-query": "5.35.1",
+    "@tanstack/react-router": "1.105.0",
+    "@ts-rest/react-query": "3.51.0",
     "axios": "^1.6.8",
     "lucide-react": "^0.363.0",
     "react": "^18.2.0",
@@ -40,7 +41,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "typescript": "^5.2.2",
+    "typescript": "5.4.5",
     "vite": "^5.2.0"
   }
 }

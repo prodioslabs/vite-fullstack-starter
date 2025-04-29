@@ -1,18 +1,13 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    "**/.env.*local"
-  ],
+  "ui": "tui",
+  "globalDependencies": ["**/.env.*local"],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "dev": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "cache": false,
       "persistent": true
     },
@@ -22,12 +17,12 @@
     "lint": {
       "cache": true
     },
-    "storybook": {
-      "dependsOn": [
-        "^build"
-      ],
+    "typecheck": {
+      "cache": true
+    },
+    "typecheck:watch": {
       "cache": false,
-      "persistent": true
+      "persistent": false
     }
   }
 }

@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "generate:types": "cross-env PAYLOAD_CONFIG_PATH=src/payload/config.ts payload generate:types",
-    "format": "prettier --write --no-error-on-unmatched-pattern \"src/**/*.{ts,tsx,js}\" *.{ts,tsx,js}"
+    "format": "prettier --write --no-error-on-unmatched-pattern \"src/**/*.{ts,tsx,js}\" *.{ts,tsx,js}",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.4",

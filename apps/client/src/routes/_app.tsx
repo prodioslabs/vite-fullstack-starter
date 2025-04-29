@@ -27,7 +27,7 @@ export const Route = createFileRoute('/_app')({
       })
     }
 
-    return user
+    return user.body
   },
 })
 
@@ -61,7 +61,7 @@ const APP_SHELL_ITEMS: AppShellItem[] = [
 ]
 
 function AppShell() {
-  const loaderData = Route.useLoaderData()
+  const userData = Route.useLoaderData()
 
   const queryClient = useQueryClient()
   const navigate = useNavigate()
@@ -106,8 +106,8 @@ function AppShell() {
             <DropdownMenuContent>
               <DropdownMenuItem disabled>
                 <div>
-                  <div>{loaderData.body.user?.name}</div>
-                  <div className="font-medium">{loaderData.body.user?.email}</div>
+                  <div>{userData?.user?.name}</div>
+                  <div className="font-medium">{userData?.user?.email}</div>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

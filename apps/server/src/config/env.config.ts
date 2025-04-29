@@ -15,6 +15,10 @@ export const validationSchema = joi
     MINIO_PORT: joi.number().required(),
     MINIO_ACCESS_KEY: joi.string().required(),
     MINIO_SECRET_KEY: joi.string().required(),
+    REDIS_HOST: joi.string().required(),
+    REDIS_PORT: joi.number().default(6379),
+    REDIS_USERNAME: joi.string(),
+    REDIS_PASSWORD: joi.string(),
   })
   .required()
 

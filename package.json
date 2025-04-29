@@ -4,11 +4,13 @@
   "description": "React fullstack starter with vite, nestjs and ts-rest",
   "private": true,
   "scripts": {
+    "clean": "rimraf node_modules **/*/node_modules",
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "format": "turbo format",
-    "storybook": "turbo storybook"
+    "typecheck": "turbo typecheck",
+    "typecheck:watch": "turbo typecheck:watch"
   },
   "keywords": [
     "vite",
@@ -20,8 +22,18 @@
   "author": "Team Prodios",
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "turbo": "^2.0.4",
-    "typescript": "^5.4.5"
+    "rimraf": "^6.0.1",
+    "turbo": "2.5.0",
+    "typescript": "5.4.5"
   },
-  "packageManager": "pnpm@9.2.0"
+  "packageManager": "pnpm@9.0.6",
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "@babel/*",
+        "expo-modules-*",
+        "typescript"
+      ]
+    }
+  }
 }

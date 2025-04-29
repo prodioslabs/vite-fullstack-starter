@@ -1,27 +1,28 @@
 {
   "name": "@repo/contract",
-  "version": "0.0.1",
   "description": "API contracts for the @repo service using ts-rest",
   "private": true,
   "types": "./src/index.ts",
   "exports": {
     ".": {
+      "types": "./src/index.ts",
       "require": "./dist/index.js",
-      "import": "./dist/index.mjs",
-      "types": "./src/index.ts"
+      "import": "./dist/index.mjs"
     }
   },
   "scripts": {
     "dev": "tsup --watch",
     "build": "tsup",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "format": "prettier --write --no-error-on-unmatched-pattern \"./src/**/*.{ts,tsx,js,cjs}\" *.{ts,tsx,js,cjs}"
+    "format": "prettier --write --no-error-on-unmatched-pattern \"./src/**/*.{ts,tsx,js,cjs}\" *.{ts,tsx,js,cjs}",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "keywords": [
     "ts-rest"
   ],
   "dependencies": {
-    "@ts-rest/core": "^3.39.1",
+    "@ts-rest/core": "3.51.0",
     "ts-pattern": "^5.1.0",
     "zod": "^3.22.4"
   },
@@ -29,6 +30,6 @@
     "@repo/config": "workspace:*",
     "@types/node": "^20.14.9",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.3"
+    "typescript": "5.4.5"
   }
 }
