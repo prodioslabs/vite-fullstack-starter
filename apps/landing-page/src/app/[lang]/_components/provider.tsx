@@ -4,7 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient, trpc, trpcClient } from '@/lib/trpc/client'
 import { ThemeProvider } from './theme-provider'
 
-type ProviderProps = React.PropsWithChildren<{}>
+type ProviderProps = React.PropsWithChildren<object>
 
 export default function Provider({ children }: ProviderProps) {
   return (

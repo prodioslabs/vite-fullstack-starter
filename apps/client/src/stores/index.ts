@@ -1,5 +1,5 @@
 import { create } from 'zustand'
 
-type AppStore = {}
+type AppStore = Record<string, never>
 
 export const useAppStore = create<AppStore>(() => ({}))

@@ -10,7 +10,7 @@ export async function getUser() {
     const data: { user: UserWithoutSensitiveData | null } = await response.json()
 
     return data.user
-  } catch (error) {
+  } catch {
     return null
   }
 }

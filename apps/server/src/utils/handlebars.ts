@@ -56,7 +56,7 @@ handlebars.helpers.salutation = function (salutation: string, defaultSalutation?
     }
   }
 
-  return typeof defaultSalutation === 'string' ? defaultSalutation ?? salutation : salutation
+  return typeof defaultSalutation === 'string' ? (defaultSalutation ?? salutation) : salutation
 }
 
 // Function to convert salutations into english salutations
@@ -85,16 +85,16 @@ handlebars.helpers.englishSalutation = function (salutation: string, defaultSalu
     }
   }
 
-  return typeof defaultSalutation === 'string' ? defaultSalutation ?? salutation : salutation
+  return typeof defaultSalutation === 'string' ? (defaultSalutation ?? salutation) : salutation
 }
 
 handlebars.registerHelper('ifEqual', function (arg1, arg2, options) {
-  // @ts-expect-error
+  // @ts-expect-error this doesn't have any type annotation
   return arg1 === arg2 ? options.fn(this) : options.inverse(this)
 })
 
 handlebars.registerHelper('ifNotEqual', function (arg1, arg2, options) {
-  // @ts-expect-error
+  // @ts-expect-error this doesn't have any type annotation
   return arg1 !== arg2 ? options.fn(this) : options.inverse(this)
 })
 
@@ -104,11 +104,11 @@ handlebars.registerHelper('get', function (obj, dataIndex) {
 
 handlebars.registerHelper('ifIn', function (elem, list, options) {
   if (list.indexOf(elem) > -1) {
-    // @ts-expect-error
+    // @ts-expect-error this doesn't have any type annotation
     return options.fn(this)
   }
 
-  // @ts-expect-error
+  // @ts-expect-error this doesn't have any type annotation
   return options.inverse(this)
 })
 
@@ -120,11 +120,11 @@ handlebars.registerHelper('ifSome', function (...values) {
 
   const isValid = elements.some((item) => list.indexOf(item) > -1)
   if (isValid) {
-    // @ts-expect-error
+    // @ts-expect-error this doesn't have any type annotation
     return options.fn(this)
   }
 
-  // @ts-expect-error
+  // @ts-expect-error this doesn't have any type annotation
   return options.inverse(this)
 })
 

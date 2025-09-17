@@ -1,4 +1,4 @@
-import { default as defaultConfig } from '@nhm-hris/config/eslint.config.mjs'
+import { default as defaultConfig } from '@repo/config/eslint.config.mjs'
 import { defineConfig } from 'eslint/config'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -30,7 +30,6 @@ export default defineConfig([
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: { 'react-hooks': reactHooks },
-    // ...
     rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',

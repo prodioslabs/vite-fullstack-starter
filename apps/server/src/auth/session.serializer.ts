@@ -3,11 +3,13 @@ import { PassportSerializer } from '@nestjs/passport'
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
-  serializeUser(user: any, done: (err: Error | null, user: any) => void): any {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  serializeUser(user: unknown, done: (err: Error | null, user: unknown) => void): any {
     done(null, user)
   }
 
-  deserializeUser(payload: any, done: (err: Error | null, payload: string) => void): any {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  deserializeUser(payload: string, done: (err: Error | null, payload: string) => void): any {
     done(null, payload)
   }
 }

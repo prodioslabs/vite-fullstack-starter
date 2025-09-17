@@ -25,7 +25,7 @@ export const client = initQueryClient(contract, {
         data: body,
         withCredentials: true,
       })
-      return { status: result.status, body: result.data, headers: result.headers as unknown as any }
+      return { status: result.status, body: result.data, headers: result.headers as Record<string, string> }
     } catch (error) {
       if (isAxiosError(error)) {
         const response = error.response
