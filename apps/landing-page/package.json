@@ -19,7 +19,6 @@
     "@payloadcms/next": "3.55.1",
     "@payloadcms/plugin-cloud": "3.0.2",
     "@payloadcms/richtext-lexical": "3.55.1",
-    "@repo/ui": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@tanstack/react-query": "5.89.0",
     "@trpc/client": "^11.5.1",
