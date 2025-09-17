@@ -1,5 +1,5 @@
-import * as fs from "node:fs/promises";
-import * as path from "node:path";
+import { promises as fs } from "fs";
+import * as path from "path";
 import { z } from "zod";
 
 const packagesDirs = ["packages", "apps"];
