@@ -10,7 +10,8 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "typecheck:watch": "turbo typecheck:watch"
+    "typecheck:watch": "turbo typecheck:watch",
+    "version:match": "tsx scripts/version.match.ts"
   },
   "keywords": [
     "vite",
@@ -23,8 +24,9 @@
   "devDependencies": {
     "@repo/config": "workspace:*",
     "rimraf": "^6.0.1",
-    "turbo": "2.5.0",
-    "typescript": "5.4.5"
+    "tsx": "^4.20.5",
+    "turbo": "2.5.6",
+    "typescript": "5.9.2"
   },
   "packageManager": "pnpm@9.0.6",
   "pnpm": {
@@ -35,5 +37,8 @@
         "typescript"
       ]
     }
+  },
+  "dependencies": {
+    "zod": "4.1.9"
   }
 }
