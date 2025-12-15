@@ -23,13 +23,13 @@
   ],
   "dependencies": {
     "@ts-rest/core": "3.52.1",
-    "ts-pattern": "^5.8.0",
-    "zod": "^4.1.9"
+    "ts-pattern": "5.8.0",
+    "zod": "4.1.9"
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
     "@types/node": "24.5.1",
-    "tsup": "^8.5.0",
+    "tsup": "8.5.0",
     "typescript": "5.9.2"
   }
 }
