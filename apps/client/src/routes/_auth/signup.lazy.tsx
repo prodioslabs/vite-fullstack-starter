@@ -3,11 +3,15 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { contract } from '@repo/contract'
-import { Form, FormItem, FormControl, FormField, FormMessage, FormLabel, Input, Button } from '@repo/ui'
+import { Form, FormItem, FormControl, FormField, FormMessage, FormLabel } from '@/components/ui/form'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { CURRENT_USER_KEY } from '../../hooks/use-current-user'
 import { client } from '../../lib/client'
 import { Logo } from '../../components/icons'
+import { getErrorMessage } from '@/lib/utils'
 
 export const Route = createLazyFileRoute('/_auth/signup')({
   component: Signup,
@@ -17,18 +21,23 @@ function Signup() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const loginMutation = client.auth.signup.useMutation({
-    onSuccess: ({ body }) => {
+    onSuccess: ({ body }: { body: z.infer<(typeof contract.auth.signup.responses)[201]> }) => {
       queryClient.setQueryData(CURRENT_USER_KEY, { status: 200, body })
       navigate({ to: '/' })
+      toast.success('Account created successfully')
+    },
+    onError: (err: { body: unknown }) => {
+      toast.error('Error creating account', { description: getErrorMessage(err.body) })
     },
   })
 
-  const form = useForm<z.infer<typeof contract.auth.signup.body>>({
+  const form = useForm<z.output<typeof contract.auth.signup.body>>({
     resolver: zodResolver(contract.auth.signup.body),
     defaultValues: {
       name: '',
       email: '',
       password: '',
+      role: 'USER' as const,
     },
   })
 
