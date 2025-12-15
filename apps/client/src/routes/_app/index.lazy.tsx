@@ -1,6 +1,6 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
 import { match } from 'ts-pattern'
-import { Button } from '@repo/ui'
+import { Button } from '@/components/ui/button'
 import { useCurrentUser } from '../../hooks/use-current-user'
 
 export const Route = createLazyFileRoute('/_app/')({

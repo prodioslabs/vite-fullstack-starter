@@ -1,7 +1,7 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 
 // Import the generated route tree
-import { Toaster } from '@repo/ui'
+import { Toaster } from 'sonner'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { routeTree } from './routeTree.gen'
 import { queryClient } from './lib/client'

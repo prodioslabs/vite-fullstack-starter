@@ -1,6 +1,6 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
-import { Spinner } from '@repo/ui'
+import { Spinner } from '@/components/ui/spinner'
 import { QueryClient } from '@tanstack/react-query'
 import { useCurrentUser } from '../hooks/use-current-user'
 

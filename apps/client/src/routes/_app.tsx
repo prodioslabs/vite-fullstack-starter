@@ -1,13 +1,13 @@
 import { createFileRoute, Link, Outlet, redirect, ToPathOption, useNavigate } from '@tanstack/react-router'
 import { LucideIcon, HomeIcon, SettingsIcon, ShoppingCartIcon, SearchIcon, UserIcon } from 'lucide-react'
+import { Spinner } from '@/components/ui/spinner'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Spinner,
-} from '@repo/ui'
+} from '@/components/ui/dropdown-menu'
 import { useQueryClient } from '@tanstack/react-query'
 import { CURRENT_USER_KEY } from '../hooks/use-current-user'
 import { client } from '../lib/client'

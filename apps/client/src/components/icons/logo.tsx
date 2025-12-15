@@ -1,4 +1,4 @@
-import { cn } from '@repo/ui'
+import { cn } from '@/lib/utils'
 import { IconProps } from './types'
 
 export function Logo({ className, style }: IconProps) {
