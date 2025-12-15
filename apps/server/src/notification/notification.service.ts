@@ -1,9 +1,8 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { z } from 'zod'
-import { notification } from '@repo/contract'
+import { notification, contract } from '@repo/contract'
 import { PrismaService } from '../prisma/prisma.service'
 import { UserWithoutSensitiveData } from '../user/user.type'
-import { NotificationRequestShapes, NotificationResponseShapes } from './notification.request'
 
 @Injectable()
 export class NotificationService {
@@ -11,7 +10,7 @@ export class NotificationService {
 
   async getUnreadNotificationCount(
     user: UserWithoutSensitiveData,
-  ): Promise<NotificationResponseShapes['getUnreadNotificationCount']> {
+  ): Promise<z.infer<(typeof contract.notifications.getUnreadNotificationCount.responses)['200']>> {
     const unreadNotifications = await this.prisma.notification.count({
       where: { readAt: { isSet: false }, receiverId: user.id },
     })
@@ -22,7 +21,12 @@ export class NotificationService {
     }
   }
 
-  async findAll(user: UserWithoutSensitiveData): Promise<NotificationResponseShapes['findAll']> {
+  async findAll(
+    user: UserWithoutSensitiveData,
+  ): Promise<
+    | z.infer<(typeof contract.notifications.findAll.responses)['200']>
+    | z.infer<(typeof contract.notifications.findAll.responses)['400']>
+  > {
     const notifications = await this.prisma.notification.findMany({
       where: { receiverId: user.id },
       orderBy: { createdAt: 'desc' },
@@ -60,9 +64,12 @@ export class NotificationService {
   }
 
   async markAsRead(
-    body: NotificationRequestShapes['markAsRead']['body'],
+    body: z.infer<typeof contract.notifications.markAsRead.body>,
     user: UserWithoutSensitiveData,
-  ): Promise<NotificationResponseShapes['markAsRead']> {
+  ): Promise<
+    | z.infer<(typeof contract.notifications.markAsRead.responses)['200']>
+    | z.infer<(typeof contract.notifications.markAsRead.responses)['404']>
+  > {
     const notification = await this.findById(body.id, user)
 
     if (!notification) {
@@ -83,7 +90,9 @@ export class NotificationService {
     }
   }
 
-  async markAllAsRead(user: UserWithoutSensitiveData): Promise<NotificationResponseShapes['markAllAsRead']> {
+  async markAllAsRead(
+    user: UserWithoutSensitiveData,
+  ): Promise<z.infer<(typeof contract.notifications.markAllAsRead.responses)['200']>> {
     await this.prisma.notification.updateMany({
       where: { receiverId: user.id, readAt: { isSet: false } },
       data: { readAt: new Date() },

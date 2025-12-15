@@ -3,8 +3,9 @@ import { Request } from 'express'
 import * as bcrypt from 'bcrypt'
 import { USER_SELECT_FIELDS, UserWithoutSensitiveData } from '../user/user.type'
 import { UserService } from '../user/user.service'
-import { AuthRequestShapes, AuthResponseShapes } from './auth.request'
 import { PrismaService } from '../prisma/prisma.service'
+import z from 'zod'
+import { contract } from '@repo/contract'
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,10 @@ export class AuthService {
     return restUser
   }
 
-  async signup(body: AuthRequestShapes['signup']['body'], request: Request): Promise<AuthResponseShapes['signup']> {
+  async signup(
+    body: z.infer<typeof contract.auth.signup.body>,
+    request: Request,
+  ): Promise<z.infer<(typeof contract.auth.signup.responses)['201']>> {
     const userExists = await this.userService.findOneByEmail(body.email)
 
     if (userExists) {
@@ -74,7 +78,7 @@ export class AuthService {
     }
   }
 
-  async logout(request: Request): Promise<AuthResponseShapes['logout']> {
+  async logout(request: Request): Promise<z.infer<(typeof contract.auth.logout.responses)['200']>> {
     await new Promise<void>((resolve, reject) => {
       request.logOut((error) => {
         if (error) {

@@ -1,4 +1,4 @@
-import { TsRestHandler, tsRestHandler } from '@ts-rest/nest'
+import { TsRestHandler } from '@ts-rest/nest'
 import { Controller, UseGuards } from '@nestjs/common'
 import { contract } from '@repo/contract'
 import { User } from '../auth/auth.decorator'
@@ -10,13 +10,13 @@ export class UserController {
   @UseGuards(AuthorizationGuard)
   @TsRestHandler(contract.user.getCurrentUser)
   getCurrentUser(@User() user: UserWithoutSensitiveData) {
-    return tsRestHandler(contract.user.getCurrentUser, async () => {
+    return async () => {
       return {
         status: 200,
         body: {
           user,
         },
       }
-    })
+    }
   }
 }
