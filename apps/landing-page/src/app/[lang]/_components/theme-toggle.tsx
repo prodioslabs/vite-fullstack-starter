@@ -1,6 +1,3 @@
-'use client'
-
-import * as React from 'react'
 import { MoonIcon, SunIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
