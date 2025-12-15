@@ -25,7 +25,8 @@ export const client = initQueryClient(contract, {
         data: body,
         withCredentials: true,
       })
-      return { status: result.status, body: result.data, headers: result.headers as Record<string, string> }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return { status: result.status, body: result.data, headers: result.headers as unknown as any }
     } catch (error) {
       if (isAxiosError(error)) {
         const response = error.response
