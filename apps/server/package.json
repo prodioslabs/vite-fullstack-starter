@@ -1,0 +1,49 @@
+{
+  "name": "@reoo/server",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "nest build",
+    "dev": "bun --bun nest start --watch",
+    "start": "bun --bun node dist/main",
+    "format": "prettier --write --cache --ignore-path ../../.gitignore --ignore-path ./.gitignore --ignore-path ./.prettierignore .",
+    "lint": "eslint --fix --cache .",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@nestjs-modules/mailer": "2.3.4",
+    "@nestjs/common": "11.0.1",
+    "@nestjs/config": "4.0.3",
+    "@nestjs/core": "11.0.1",
+    "@nestjs/platform-express": "11.0.1",
+    "@orpc/nest": "1.13.13",
+    "@thallesp/nestjs-better-auth": "2.5.2",
+    "better-auth": "1.5.6",
+    "drizzle-orm": "0.45.1",
+    "nodemailer": "8.0.4",
+    "pg": "8.20.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.1",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@repo/contracts": "workspace:*",
+    "@nestjs/cli": "11.0.0",
+    "@nestjs/schematics": "11.0.0",
+    "@types/express": "5.0.0",
+    "@types/node": "25.1.0",
+    "@types/pg": "8.20.0",
+    "drizzle-kit": "0.31.10",
+    "eslint": "9.39.1",
+    "prettier": "3.5.3",
+    "typescript": "5.9.3"
+  }
+}

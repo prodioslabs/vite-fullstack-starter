@@ -1,0 +1,44 @@
+{
+  "name": "vite-fullstack-starter",
+  "version": "0.1",
+  "type": "module",
+  "description": "A fullstack starter template using Vite, NestJS, and oRPC",
+  "private": true,
+  "packageManager": "bun@1.3.11",
+  "workspaces": [
+    "apps/**",
+    "packages/**"
+  ],
+  "scripts": {
+    "clean": "rimraf node_modules **/*/node_modules **/*/dist",
+    "prematch-versions": "bun install",
+    "match-versions": "bun run scripts/match-versions.ts",
+    "lint:root": "eslint --fix --cache --no-error-on-unmatched-pattern *.{ts,js} scripts/**/*.{ts,js}",
+    "lint:workspace": "turbo run lint --ui=stream",
+    "lint": "concurrently \"bun run lint:root\" \"bun run lint:workspace\"",
+    "format:root": "prettier --write --cache --no-error-on-unmatched-pattern --ignore-path ./.gitignore *.{ts,js,json,md} scripts/**/*.{ts,js,json,md}",
+    "format:workspace": "turbo run format --ui=stream",
+    "format": "concurrently \"bun run format:root\" \"bun run format:workspace\"",
+    "typecheck": "turbo run typecheck --ui=stream",
+    "typecheck:watch": "turbo run typecheck:watch",
+    "dev": "turbo run dev",
+    "build": "turbo build"
+  },
+  "dependencies": {
+    "picocolors": "1.1.1",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@repo/config": "workspace:*",
+    "@types/bun": "1.3.11",
+    "@types/node": "25.1.0",
+    "concurrently": "9.2.1",
+    "eslint": "9.39.1",
+    "prettier": "3.5.3",
+    "rimraf": "6.1.3",
+    "turbo": "2.8.20"
+  },
+  "peerDependencies": {
+    "typescript": "5.9.3"
+  }
+}
