@@ -1,5 +1,7 @@
+import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConditionalModule, ConfigModule, ConfigService } from '@nestjs/config'
+import { ScheduleModule } from '@nestjs/schedule'
 import { MailerModule, MailerService } from '@nestjs-modules/mailer'
 import { AuthModule } from '@thallesp/nestjs-better-auth'
 import { betterAuth } from 'better-auth'
@@ -12,6 +14,7 @@ import * as schema from './db/schema'
 import { Environment, envSchema } from './env/env'
 import { LogModule } from './log/log.module'
 import { LogService } from './log/log.service'
+import { NotificationModule } from './notification/notification.module'
 import { PASSWORD_RESET_TOKEN_EXPIRY } from './utils/constants'
 
 @Module({
@@ -122,6 +125,20 @@ import { PASSWORD_RESET_TOKEN_EXPIRY } from './utils/constants'
       },
       disableGlobalAuthGuard: true,
     }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<Environment>) => ({
+        connection: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT'),
+          username: configService.get('REDIS_USERNAME'),
+          password: configService.get('REDIS_PASSWORD'),
+        },
+      }),
+    }),
+    ConditionalModule.registerWhen(ScheduleModule.forRoot(), 'CRON_ENABLED'),
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,8 @@
 import { oc } from '@orpc/contract'
 import * as z from 'zod'
 
+import { notificationContract } from './notification.contract'
+
 const helloWorldContract = oc
   .input(
     z
@@ -21,6 +23,8 @@ const helloWorldContract = oc
 
 export const contract = {
   helloWorld: helloWorldContract,
+  notifications: notificationContract,
 }
 
 export * from './auth.contract'
+export * from './notification.contract'
