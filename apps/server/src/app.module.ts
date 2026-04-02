@@ -12,6 +12,7 @@ import { AppService } from './app.service'
 import { db } from './db'
 import * as schema from './db/schema'
 import { Environment, envSchema } from './env/env'
+import { FileModule } from './file/file.module'
 import { LogModule } from './log/log.module'
 import { LogService } from './log/log.service'
 import { NotificationModule } from './notification/notification.module'
@@ -139,6 +140,7 @@ import { PASSWORD_RESET_TOKEN_EXPIRY } from './utils/constants'
     }),
     ConditionalModule.registerWhen(ScheduleModule.forRoot(), 'CRON_ENABLED'),
     NotificationModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

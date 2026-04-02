@@ -8,6 +8,7 @@ import {
   pgEnum,
 } from 'drizzle-orm/pg-core'
 
+import { file } from './file'
 import { notification } from './notification'
 
 export const userRole = pgEnum('role', ['USER', 'ADMIN', 'SUPER_ADMIN'])
@@ -97,6 +98,7 @@ export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   notifications: many(notification),
+  files: many(file),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({

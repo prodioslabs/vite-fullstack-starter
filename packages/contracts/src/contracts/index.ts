@@ -1,6 +1,7 @@
 import { oc } from '@orpc/contract'
 import * as z from 'zod'
 
+import { fileContract } from './file.contract'
 import { notificationContract } from './notification.contract'
 
 const helloWorldContract = oc
@@ -24,7 +25,9 @@ const helloWorldContract = oc
 export const contract = {
   helloWorld: helloWorldContract,
   notifications: notificationContract,
+  file: fileContract,
 }
 
 export * from './auth.contract'
 export * from './notification.contract'
+export * from './file.contract'

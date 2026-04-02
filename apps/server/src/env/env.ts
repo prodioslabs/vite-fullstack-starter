@@ -13,6 +13,16 @@ export const envSchema = z.object({
   REDIS_USERNAME: z.string().optional(),
   REDIS_PASSWORD: z.string().optional(),
   JOB_TIMEOUT_MS: z.string().default(DEFAULT_JOB_TIMEOUT_MS.toString()),
+  S3_BUCKET: z.string(),
+  S3_ENDPOINT: z.string().optional(),
+  S3_PORT: z.string().default('9000'),
+  S3_USE_SSL: z
+    .string()
+    .default('false')
+    .transform((value) => value === 'true'),
+  S3_ACCESS_KEY: z.string().optional(),
+  S3_SECRET_KEY: z.string().optional(),
+  S3_REGION: z.string().optional(),
 })
 
 export type Environment = z.infer<typeof envSchema>
