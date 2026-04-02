@@ -59,7 +59,7 @@ function ForgotPassword() {
   })
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-3 rounded-lg border bg-card p-8 shadow">
+    <div className="flex w-full max-w-md flex-col gap-3">
       <div className="space-y-2">
         <div className="text-2xl font-semibold text-foreground">
           Reset password

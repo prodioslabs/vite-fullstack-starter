@@ -22,7 +22,10 @@
     "typecheck": "turbo run typecheck --ui=stream",
     "typecheck:watch": "turbo run typecheck:watch",
     "dev": "turbo run dev",
-    "build": "turbo build"
+    "build": "turbo build",
+    "db:generate": "bun --filter=@repo/server db:generate",
+    "db:migrate": "bun --filter=@repo/server db:migrate",
+    "db:seed": "bun --filter=@repo/server db:seed"
   },
   "dependencies": {
     "picocolors": "1.1.1",

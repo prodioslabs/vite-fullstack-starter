@@ -12,10 +12,10 @@ export const Route = createFileRoute('/_auth')({
 function AuthLayout() {
   return (
     <div className="h-screen flex">
-      <div className="flex-1 flex flex-col items-center justify-center">
+      <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-4 lg:md-0">
         <Outlet />
       </div>
-      <div className="flex-2 hidden md:block">
+      <div className="lg:flex-2 md:flex-1 hidden md:block">
         <img
           src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
           alt="Login screen"
