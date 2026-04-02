@@ -18,7 +18,7 @@ FROM base AS build
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
-RUN bun run build --filter @coa/client
+RUN bun run build --filter @repo/client
 
 # FROM oven/bun:1.3.6-alpine AS runtime
 FROM joseluisq/static-web-server:2.42.0-alpine AS release

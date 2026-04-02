@@ -12,8 +12,10 @@ import { ConfigService } from '@nestjs/config'
 import { UserSession } from '@thallesp/nestjs-better-auth'
 import dayjs from 'dayjs'
 import { eq } from 'drizzle-orm'
-import type { Express } from 'express'
 import { Client, ItemBucketMetadata, S3Error } from 'minio'
+// DO NOT REMOVE: this is a hack to import the multer type imports (not the package)
+// without this Express.Multer.File will raise typescript error
+import type {} from 'multer'
 import { customAlphabet } from 'nanoid'
 import sharp from 'sharp'
 
@@ -42,12 +44,7 @@ export class FileService {
     private readonly configService: ConfigService<Environment>,
   ) {}
 
-  async uploadFile(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    file: Express.Multer.File,
-    user: User,
-  ) {
+  async uploadFile(file: Express.Multer.File, user: User) {
     this.logger.log(`Uploading file ${file.originalname} for user ${user.id}`)
     try {
       if (!isValidFilename(file.originalname)) {
@@ -135,8 +132,6 @@ export class FileService {
         height: number
       }
     },
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     multerFile: Express.Multer.File,
     user: User,
   ) {
@@ -455,8 +450,6 @@ export class FileService {
 
   private validateFileType(
     fileType: { mime: string; ext: string },
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     file: Express.Multer.File,
     allowedMimeTypes: { mimeType: string; extensions: string[] }[],
   ) {
