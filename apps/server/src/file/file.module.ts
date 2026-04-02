@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { Client } from 'minio'
-import { Environment } from 'src/env/env'
-import { LogModule } from 'src/log/log.module'
+
+import { Environment } from '../env/env'
+import { LoggerModule } from '../logger/logger.module'
 
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
 
 @Module({
-  imports: [ConfigModule, LogModule],
+  imports: [ConfigModule, LoggerModule],
   providers: [
     FileService,
     {

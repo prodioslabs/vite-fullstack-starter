@@ -2,11 +2,11 @@ import { Processor, WorkerHost } from '@nestjs/bullmq'
 import { Logger, UnsupportedMediaTypeException } from '@nestjs/common'
 import { createNotificationSchema } from '@repo/contracts'
 import { Job } from 'bullmq'
-import { db } from 'src/db'
-import { formatErrorMessage } from 'src/utils/format'
 import { z } from 'zod'
 
+import { db } from '../db'
 import { notification } from '../db/schema'
+import { formatErrorMessage } from '../utils/format'
 
 import { NOTIFICATION_QUEUE } from './notification.utils'
 

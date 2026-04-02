@@ -6,21 +6,34 @@ import { MailerModule, MailerService } from '@nestjs-modules/mailer'
 import { AuthModule } from '@thallesp/nestjs-better-auth'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { ClsModule } from 'nestjs-cls'
+import { v4 } from 'uuid'
 
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
 import { db } from './db'
 import * as schema from './db/schema'
 import { Environment, envSchema } from './env/env'
 import { FileModule } from './file/file.module'
-import { LogModule } from './log/log.module'
-import { LogService } from './log/log.service'
+import { LoggerModule } from './logger/logger.module'
+import { LoggerService } from './logger/logger.service'
 import { NotificationModule } from './notification/notification.module'
 import { PASSWORD_RESET_TOKEN_EXPIRY } from './utils/constants'
 
 @Module({
   imports: [
-    LogModule,
+    ClsModule.forRoot({
+      middleware: {
+        mount: true,
+        generateId: true,
+        idGenerator: (req: Request): string => {
+          const headerRequestId = req.headers['x-request-id']
+          if (headerRequestId && typeof headerRequestId === 'string') {
+            return headerRequestId
+          }
+          return v4()
+        },
+      },
+    }),
+    LoggerModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -45,12 +58,12 @@ import { PASSWORD_RESET_TOKEN_EXPIRY } from './utils/constants'
       isGlobal: true,
     }),
     AuthModule.forRootAsync({
-      imports: [ConfigModule, MailerModule, LogModule],
-      inject: [ConfigService, MailerService, LogService],
+      imports: [ConfigModule, MailerModule, LoggerModule],
+      inject: [ConfigService, MailerService, LoggerService],
       useFactory: (
         configService: ConfigService<Environment>,
         mailerService: MailerService,
-        logService: LogService,
+        loggerService: LoggerService,
       ) => {
         const appBaseUrl = configService.get<string>('APP_BASE_URL')
         if (!appBaseUrl) {
@@ -103,20 +116,20 @@ import { PASSWORD_RESET_TOKEN_EXPIRY } from './utils/constants'
               log(level, message, ...args) {
                 switch (level) {
                   case 'debug': {
-                    logService.debug(message, ...args)
+                    loggerService.debug(message, ...args)
                     break
                   }
                   case 'error': {
-                    logService.error(message, ...args)
+                    loggerService.error(message, ...args)
                     break
                   }
                   case 'warn': {
-                    logService.warn(message, ...args)
+                    loggerService.warn(message, ...args)
                     break
                   }
                   case 'info':
                   default: {
-                    logService.log(message, ...args)
+                    loggerService.log(message, ...args)
                   }
                 }
               },
@@ -142,7 +155,7 @@ import { PASSWORD_RESET_TOKEN_EXPIRY } from './utils/constants'
     NotificationModule,
     FileModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

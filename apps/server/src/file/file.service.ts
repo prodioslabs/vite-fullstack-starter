@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
   StreamableFile,
 } from '@nestjs/common'
@@ -11,14 +12,15 @@ import { ConfigService } from '@nestjs/config'
 import { UserSession } from '@thallesp/nestjs-better-auth'
 import dayjs from 'dayjs'
 import { eq } from 'drizzle-orm'
+import type { Express } from 'express'
 import { Client, ItemBucketMetadata, S3Error } from 'minio'
 import { customAlphabet } from 'nanoid'
 import sharp from 'sharp'
-import { db } from 'src/db'
-import { file as fileSchema } from 'src/db/schema/file'
-import { Environment } from 'src/env/env'
-import { LogService } from 'src/log/log.service'
-import { formatErrorMessage } from 'src/utils/format'
+
+import { db } from '../db'
+import { file as fileSchema } from '../db/schema/file'
+import { Environment } from '../env/env'
+import { formatErrorMessage } from '../utils/format'
 
 import {
   ALLOWED_FILE_TYPES,
@@ -33,13 +35,19 @@ type User = UserSession['user']
 
 @Injectable()
 export class FileService {
+  private readonly logger = new Logger(FileService.name)
+
   constructor(
     @Inject('MINIO_CLIENT') private readonly minioClient: Client,
     private readonly configService: ConfigService<Environment>,
-    private readonly logger: LogService,
   ) {}
 
-  async uploadFile(file: Express.Multer.File, user: User) {
+  async uploadFile(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    file: Express.Multer.File,
+    user: User,
+  ) {
     this.logger.log(`Uploading file ${file.originalname} for user ${user.id}`)
     try {
       if (!isValidFilename(file.originalname)) {
@@ -127,6 +135,8 @@ export class FileService {
         height: number
       }
     },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     multerFile: Express.Multer.File,
     user: User,
   ) {
@@ -445,6 +455,8 @@ export class FileService {
 
   private validateFileType(
     fileType: { mime: string; ext: string },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     file: Express.Multer.File,
     allowedMimeTypes: { mimeType: string; extensions: string[] }[],
   ) {

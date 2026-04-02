@@ -1,7 +1,8 @@
 import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { LogModule } from 'src/log/log.module'
+
+import { LoggerModule } from '../logger/logger.module'
 
 import { NotificationConsumerService } from './notification.consumer'
 import { NotificationController } from './notification.controller'
@@ -12,7 +13,7 @@ import { NOTIFICATION_QUEUE } from './notification.utils'
 @Module({
   imports: [
     ConfigModule,
-    LogModule,
+    LoggerModule,
     BullModule.registerQueueAsync({
       name: NOTIFICATION_QUEUE,
       useFactory: () => ({

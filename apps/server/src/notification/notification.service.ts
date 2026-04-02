@@ -2,20 +2,23 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common'
 import { notificationSchema } from '@repo/contracts'
 import { type UserSession } from '@thallesp/nestjs-better-auth'
 import { and, eq, isNull } from 'drizzle-orm'
-import { db } from 'src/db'
-import { notification } from 'src/db/schema'
-import { LogService } from 'src/log/log.service'
-import { formatErrorMessage } from 'src/utils/format'
 import { z } from 'zod'
+
+import { db } from '../db'
+import { notification } from '../db/schema'
+import { formatErrorMessage } from '../utils/format'
 
 @Injectable()
 export class NotificationService {
-  constructor(private readonly logger: LogService) {}
+  private readonly logger = new Logger(NotificationService.name)
+
+  constructor() {}
 
   async getUnreadNotificationCount(user: UserSession['user']) {
     try {

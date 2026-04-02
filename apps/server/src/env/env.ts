@@ -1,5 +1,6 @@
-import { DEFAULT_JOB_TIMEOUT_MS } from 'src/utils/constants'
 import * as z from 'zod'
+
+import { DEFAULT_JOB_TIMEOUT_MS } from '../utils/constants'
 
 export const envSchema = z.object({
   DATABASE_URL: z.string().startsWith('postgresql://'),
@@ -23,6 +24,10 @@ export const envSchema = z.object({
   S3_ACCESS_KEY: z.string().optional(),
   S3_SECRET_KEY: z.string().optional(),
   S3_REGION: z.string().optional(),
+  LOKI_HOST: z.string().url().optional(),
+  LOKI_USERNAME: z.string().optional(),
+  LOKI_PASSWORD: z.string().optional(),
+  LOKI_TOKEN: z.string().optional(),
 })
 
 export type Environment = z.infer<typeof envSchema>
