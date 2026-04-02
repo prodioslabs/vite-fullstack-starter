@@ -63,7 +63,7 @@ function Login() {
   })
 
   return (
-    <div className="flex w-full max-w-md flex-col gap-3">
+    <div className="space-y-3">
       <div className="space-y-2">
         <div className="text-2xl font-semibold text-foreground">Sign in</div>
         <div className="text-sm text-muted-foreground">
