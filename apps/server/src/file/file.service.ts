@@ -123,14 +123,12 @@ export class FileService {
   }
 
   async uploadImage(
-    body: {
-      crop: {
-        unit: '%' | 'px'
-        x: number
-        y: number
-        width: number
-        height: number
-      }
+    crop: {
+      unit: '%' | 'px'
+      x: number
+      y: number
+      width: number
+      height: number
     },
     multerFile: Express.Multer.File,
     user: User,
@@ -164,7 +162,7 @@ export class FileService {
         )
       }
 
-      const buffer = await this.cropImage(multerFile.buffer, body.crop)
+      const buffer = await this.cropImage(multerFile.buffer, crop)
 
       const { bucket, objectName: filename } = await this.uploadBuffer(
         buffer,
