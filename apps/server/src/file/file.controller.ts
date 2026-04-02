@@ -1,15 +1,15 @@
 import {
+  Body,
   Controller,
   Get,
   Header,
   Param,
+  Post,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { Implement, implement } from '@orpc/nest'
-import { contract } from '@repo/contracts'
 import {
   AuthGuard,
   Session,
@@ -19,30 +19,27 @@ import {
 import { FileService } from './file.service'
 
 @UseGuards(AuthGuard)
-@Controller()
+@Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Implement(contract.file.uploadFile)
+  @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Session() session: UserSession,
   ) {
-    return implement(contract.file.uploadFile).handler(async () => {
-      return this.fileService.uploadFile(file, session.user)
-    })
+    return this.fileService.uploadFile(file, session.user)
   }
 
-  @Implement(contract.file.uploadImage)
+  @Post('upload-image')
   @UseInterceptors(FileInterceptor('file'))
   uploadImage(
     @UploadedFile() file: Express.Multer.File,
+    @Body() input: any,
     @Session() session: UserSession,
   ) {
-    return implement(contract.file.uploadImage).handler(async ({ input }) => {
-      return this.fileService.uploadImage(input, file, session.user)
-    })
+    return this.fileService.uploadImage(input, file, session.user)
   }
 
   @Get('uploaded-file/:bucket/{*objectName}')

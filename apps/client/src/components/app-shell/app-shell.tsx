@@ -11,7 +11,7 @@ import {
 
 const APP_SHELL_NAV_ITEMS: NavItem[] = [
   {
-    label: 'Dashboard',
+    label: 'Home',
     icon: <HomeIcon />,
     href: {
       to: '/',

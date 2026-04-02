@@ -28,6 +28,7 @@ export const envSchema = z.object({
   LOKI_USERNAME: z.string().optional(),
   LOKI_PASSWORD: z.string().optional(),
   LOKI_TOKEN: z.string().optional(),
+  CORS_ORIGIN: z.url().optional(),
 })
 
 export type Environment = z.infer<typeof envSchema>

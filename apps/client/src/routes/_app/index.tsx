@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { HomeIcon } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { ErrorMessage } from '@/components/ui/error-message'
+import { FileUploader } from '@/components/ui/file-uploader'
 import { PageHeader } from '@/components/ui/page-header'
 import { Spinner } from '@/components/ui/spinner'
+import { uploadFile } from '@/lib/upload'
 
 export const Route = createFileRoute('/_app/')({
   component: HomePage,
@@ -15,14 +17,13 @@ export const Route = createFileRoute('/_app/')({
       </div>
     )
   },
-  errorComponent: ({ error, reset }) => (
-    <div className="p-4 space-y-2">
-      <div className="text-sm text-destructive">{error.message}</div>
-      <Button variant="outline" size="sm" onClick={reset}>
-        Retry
-      </Button>
-    </div>
-  ),
+  errorComponent: ({ error }) => {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <ErrorMessage title="Error loading dashboard..." error={error} />
+      </div>
+    )
+  },
 })
 
 function HomePage() {
@@ -30,9 +31,14 @@ function HomePage() {
     <div>
       <PageHeader
         icon={<HomeIcon />}
-        title="Dashboard"
-        description="User dashboard"
+        title="Home"
+        description="Examples of various UI components"
+        className="mb-8"
       />
+      <div>
+        <div className="text-sm font-medium mb-2">File Uploader</div>
+        <FileUploader fileUploadHandler={uploadFile} />
+      </div>
     </div>
   )
 }
