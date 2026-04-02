@@ -1,13 +1,7 @@
-import type { User, UserRole } from '@repo/contracts'
+import type { User } from '@repo/contracts'
 import { Link } from '@tanstack/react-router'
-import {
-  FolderKanbanIcon,
-  ClipboardListIcon,
-  CalendarDaysIcon,
-  LayersIcon,
-  type LucideIcon,
-  HomeIcon,
-} from 'lucide-react'
+
+import type { NavItem } from '../types'
 
 import { NavUser } from './nav-user'
 import { SidebarNav } from './sidebar-nav'
@@ -21,93 +15,24 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from '@/components/ui/sidebar'
 import { authClient } from '@/lib/auth-client'
 
-export type NavChild = {
-  label: string
-  icon: LucideIcon
-  href: string
-  availableForRoles: UserRole[]
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  navItems: NavItem[]
 }
 
-export type NavItem =
-  | {
-      label: string
-      icon: LucideIcon
-      href: string
-      children?: never
-      availableForRoles: UserRole[]
-    }
-  | {
-      label: string
-      icon: LucideIcon
-      href?: never
-      children: NavChild[]
-      availableForRoles: UserRole[]
-    }
-
-const NAV_MAIN: NavItem[] = [
-  {
-    label: 'Dashboard',
-    icon: HomeIcon,
-    href: '/',
-    availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-  },
-  {
-    label: 'Projects',
-    icon: FolderKanbanIcon,
-    availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-    children: [
-      {
-        label: 'All Projects',
-        icon: LayersIcon,
-        href: '/projects',
-        availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-      },
-      {
-        label: 'My Projects',
-        icon: FolderKanbanIcon,
-        href: '/projects/mine',
-        availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-      },
-      {
-        label: 'Timeline',
-        icon: CalendarDaysIcon,
-        href: '/projects/timeline',
-        availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-      },
-    ],
-  },
-  {
-    label: 'Tasks',
-    icon: ClipboardListIcon,
-    availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-    children: [
-      {
-        label: 'All Tasks',
-        icon: ClipboardListIcon,
-        href: '/tasks',
-        availableForRoles: ['ADMIN', 'SUPER_ADMIN'],
-      },
-      {
-        label: 'My Tasks',
-        icon: ClipboardListIcon,
-        href: '/tasks/mine',
-        availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-      },
-    ],
-  },
-]
-
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ navItems, ...rest }: AppSidebarProps) {
   const { data: session } = authClient.useSession()
-  const user = session?.user as User
-  const role = user?.role
+
+  if (!session) {
+    return null
+  }
+
+  const user = session.user as User
 
   return (
-    <Sidebar collapsible="icon" variant="floating" {...props}>
+    <Sidebar collapsible="icon" variant="floating" {...rest}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -131,7 +56,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarNav items={NAV_MAIN} role={role!} />
+        <SidebarNav items={navItems} role={user.role} />
       </SidebarContent>
 
       {user ? (
@@ -139,8 +64,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <NavUser user={user} />
         </SidebarFooter>
       ) : null}
-
-      <SidebarRail />
     </Sidebar>
   )
 }

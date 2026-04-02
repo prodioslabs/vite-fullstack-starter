@@ -1,7 +1,7 @@
 import type { User } from '@repo/contracts'
 import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
-import { BadgeCheck, ChevronsUpDown, LogOut } from 'lucide-react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { ChevronsUpDown } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -60,13 +60,10 @@ export function NavUser({ user }: { user: User }) {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
+            <SidebarMenuButton size="lg">
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.image ?? undefined} alt={user.name} />
-                <AvatarFallback className="rounded-lg text-xs">
+                <AvatarFallback className="rounded-full text-xs">
                   {getInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
@@ -90,7 +87,7 @@ export function NavUser({ user }: { user: User }) {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.image} alt={user.name} />
-                  <AvatarFallback className="rounded-lg text-xs">
+                  <AvatarFallback className="rounded-full text-xs">
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -107,10 +104,7 @@ export function NavUser({ user }: { user: User }) {
 
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <div className="w-full">
-                  <BadgeCheck />
-                  Profile
-                </div>
+                <Link to="/">Profile</Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
@@ -120,9 +114,7 @@ export function NavUser({ user }: { user: User }) {
               onClick={() => {
                 signOutMutation.mutate()
               }}
-              className="text-destructive focus:text-destructive"
             >
-              <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

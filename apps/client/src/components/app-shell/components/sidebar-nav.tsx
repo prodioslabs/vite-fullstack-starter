@@ -1,8 +1,10 @@
 import type { UserRole } from '@repo/contracts'
-import { Link, useRouterState } from '@tanstack/react-router'
+import { useMatchRoute } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 
-import type { NavItem } from './app-sidebar'
+import type { NavItem } from '../types'
+
+import NavLink from './nav-link'
 
 import {
   Collapsible,
@@ -16,13 +18,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
-
-function isActive(href: string, pathname: string) {
-  return pathname === href || pathname.startsWith(href + '/')
-}
 
 export function SidebarNav({
   label,
@@ -33,9 +29,9 @@ export function SidebarNav({
   items: NavItem[]
   role: UserRole
 }) {
-  const pathname = useRouterState({ select: (s) => s.location.pathname })
-
   const visible = items.filter((item) => item.availableForRoles.includes(role))
+
+  const matchRoute = useMatchRoute()
 
   if (visible.length === 0) {
     return null
@@ -45,21 +41,16 @@ export function SidebarNav({
     <SidebarGroup>
       {label ? <SidebarGroupLabel>{label}</SidebarGroupLabel> : null}
       <SidebarMenu>
-        {visible.map((item) => {
+        {visible.map((item, index) => {
           if (!item.children) {
             return (
-              <SidebarMenuItem key={item.label}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive(item.href, pathname)}
-                  tooltip={item.label}
-                >
-                  <Link to={item.href}>
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <NavLink
+                {...item.href}
+                icon={item.icon}
+                key={`${item.label}-${index}`}
+              >
+                {item.label}
+              </NavLink>
             )
           }
 
@@ -71,9 +62,7 @@ export function SidebarNav({
             return null
           }
 
-          const groupActive = visibleChildren.some((c) =>
-            isActive(c.href, pathname),
-          )
+          const groupActive = visibleChildren.some((c) => matchRoute(c.href))
 
           return (
             <Collapsible
@@ -88,25 +77,42 @@ export function SidebarNav({
                     tooltip={item.label}
                     isActive={groupActive}
                   >
-                    <item.icon />
+                    {item.icon}
                     <span>{item.label}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
-                    {visibleChildren.map((child) => (
-                      <SidebarMenuSubItem key={child.href}>
-                        <SidebarMenuSubButton
-                          asChild
-                          isActive={isActive(child.href, pathname)}
-                        >
-                          <Link to={child.href}>
-                            <child.icon />
-                            <span>{child.label}</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
+                    {visibleChildren.map((child, index) => (
+                      // <MatchRoute
+                      //   key={`${child.label}-${index}`}
+                      //   to={child.href.to}
+                      //   params={child.href.params}
+                      // >
+                      //   {(matched) => {
+                      //     return (
+                      //       <SidebarMenuSubItem>
+                      //         <SidebarMenuSubButton
+                      //           asChild
+                      //           isActive={!!matched}
+                      //         >
+                      //           <Link {...child.href}>
+                      //             <child.icon />
+                      //             <span>{child.label}</span>
+                      //           </Link>
+                      //         </SidebarMenuSubButton>
+                      //       </SidebarMenuSubItem>
+                      //     )
+                      //   }}
+                      // </MatchRoute>
+                      <NavLink
+                        {...child.href}
+                        icon={child.icon}
+                        key={`${child.label}-${index}`}
+                      >
+                        {child.label}
+                      </NavLink>
                     ))}
                   </SidebarMenuSub>
                 </CollapsibleContent>
