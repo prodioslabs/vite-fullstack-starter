@@ -47,13 +47,24 @@ export class FileController {
 
   @Get('uploaded-file/:bucket/*objectName')
   @Header('Cache-Control', 'max-age=604800')
-  getFile(@Param() params: { bucket: string; objectName: string }) {
-    return this.fileService.getFile(params, false)
-  }
+  getFile(
+    @Param('bucket') bucket: string,
+    @Param('objectName') objectName: string | string[],
+  ) {
+    // NestJS 11 doesn't support wildcard route parameters, so we have to join the objectName array into a string
+    const path = Array.isArray(objectName) ? objectName.join('/') : objectName
 
+    return this.fileService.getFile({ bucket, objectName: path }, false)
+  }
   @Get('file/:bucket/*objectName')
   @Header('Cache-Control', 'max-age=604800')
-  getPublicFile(@Param() params: { bucket: string; objectName: string }) {
-    return this.fileService.getFile(params, true)
+  getPublicFile(
+    @Param('bucket') bucket: string,
+    @Param('objectName') objectName: string | string[],
+  ) {
+    // NestJS 11 doesn't support wildcard route parameters, so we have to join the objectName array into a string
+    const path = Array.isArray(objectName) ? objectName.join('/') : objectName
+
+    return this.fileService.getFile({ bucket, objectName: path }, true)
   }
 }

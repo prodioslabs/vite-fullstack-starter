@@ -255,11 +255,13 @@ export class FileService {
 
     try {
       const objectName = params.objectName.replace(/&amp;/g, '&')
-      // eslint-disable-next-line prefer-const
-      let [objectMetadata, stream] = await Promise.all([
+      const [objectMetadata, stream_] = await Promise.all([
         this.minioClient.statObject(params.bucket, objectName),
         this.minioClient.getObject(params.bucket, objectName),
       ])
+
+      let stream = stream_
+
       const contentType = objectMetadata.metaData['content-type']
       const sizeInByte = objectMetadata.size
       if (
