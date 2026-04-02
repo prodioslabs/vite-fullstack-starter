@@ -9,7 +9,7 @@
   "scripts": {
     "build": "nest build",
     "dev": "bun --bun nest start --watch",
-    "start": "bun --bun node dist/main",
+    "start": "bun --bun node dist/src/main",
     "format": "prettier --write --cache --ignore-path ../../.gitignore --ignore-path ./.gitignore --ignore-path ./.prettierignore .",
     "lint": "eslint --fix --cache .",
     "typecheck": "tsc --noEmit",

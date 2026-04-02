@@ -27,13 +27,14 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --from=build /app/apps/server/dist ./dist
-COPY --from=build /app/apps/server/package.json ./package.json
+COPY --from=build /app/apps/server/dist ./apps/server/dist
+COPY --from=build /app/apps/server/package.json ./apps/server/package.json
 COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/apps/server/node_modules ./apps/server/node_modules
 
 EXPOSE 3000
 
 HEALTHCHECK --interval=10s --start-period=10s --retries=3 \
   CMD curl -f http://127.0.0.1:$PORT/health || exit 1
 
-CMD ["bun", "run", "dist/src/main"]
+CMD ["bun", "run", "apps/server/dist/src/main"]
