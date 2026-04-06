@@ -1,4 +1,3 @@
-import type { UserRole } from '@repo/contracts'
 import { useMatchRoute } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 
@@ -27,7 +26,8 @@ export function SidebarNav({
 }: {
   label?: string
   items: NavItem[]
-  role: UserRole
+  // TODO: update UserRole from server
+  role: any
 }) {
   const visible = items.filter((item) => item.availableForRoles.includes(role))
 

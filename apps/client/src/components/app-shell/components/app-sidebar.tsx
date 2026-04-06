@@ -1,4 +1,3 @@
-import type { User } from '@repo/contracts'
 import { Link } from '@tanstack/react-router'
 
 import type { NavItem } from '../types'
@@ -29,7 +28,8 @@ export function AppSidebar({ navItems, ...rest }: AppSidebarProps) {
     return null
   }
 
-  const user = session.user as User
+  // TODO: update user type
+  const user = session.user as any
 
   return (
     <Sidebar collapsible="icon" variant="floating" {...rest}>

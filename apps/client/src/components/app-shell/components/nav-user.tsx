@@ -1,4 +1,3 @@
-import type { User } from '@repo/contracts'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { ChevronsUpDown } from 'lucide-react'
@@ -33,7 +32,12 @@ function getInitials(name: string) {
     .slice(0, 2)
 }
 
-export function NavUser({ user }: { user: User }) {
+export function NavUser({
+  user,
+}: {
+  // TODO: update user type
+  user: any
+}) {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
 

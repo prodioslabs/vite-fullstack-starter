@@ -1,5 +1,7 @@
-import type { UserRole } from '@repo/contracts'
 import type { LinkProps } from '@tanstack/react-router'
+
+// TODO: update UserRole from server
+type UserRole = unknown
 
 export type NavChild = {
   label: string
