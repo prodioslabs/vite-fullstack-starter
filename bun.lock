@@ -60,7 +60,6 @@
       "devDependencies": {
         "@eslint/js": "9.39.1",
         "@repo/config": "workspace:*",
-        "@repo/contracts": "workspace:*",
         "@tanstack/router-plugin": "1.167.8",
         "@types/node": "25.1.0",
         "@types/react": "19.2.14",
@@ -111,7 +110,6 @@
         "@nestjs/cli": "11.0.0",
         "@nestjs/schematics": "11.0.0",
         "@repo/config": "workspace:*",
-        "@repo/contracts": "workspace:*",
         "@types/express": "5.0.0",
         "@types/multer": "2.1.0",
         "@types/node": "25.1.0",
@@ -132,19 +130,6 @@
         "globals": "16.5.0",
         "prettier": "3.5.3",
         "typescript-eslint": "8.46.4",
-      },
-    },
-    "packages/contracts": {
-      "name": "@repo/contracts",
-      "dependencies": {
-        "@orpc/contract": "1.13.13",
-        "zod": "4.3.6",
-      },
-      "devDependencies": {
-        "@repo/config": "workspace:*",
-        "eslint": "9.39.1",
-        "prettier": "3.5.3",
-        "typescript": "6.0.2",
       },
     },
   },
@@ -712,8 +697,6 @@
     "@repo/client": ["@repo/client@workspace:apps/client"],
 
     "@repo/config": ["@repo/config@workspace:packages/config"],
-
-    "@repo/contracts": ["@repo/contracts@workspace:packages/contracts"],
 
     "@repo/server": ["@repo/server@workspace:apps/server"],
 
