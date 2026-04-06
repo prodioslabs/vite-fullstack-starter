@@ -11,7 +11,7 @@
     "format": "prettier --write --no-error-on-unmatched-pattern --ignore-path .gitignore --ignore-path .prettierignore  --cache ."
   },
   "exports": {
-    ".": {
+    "./app": {
       "types": "./src/app.ts"
     }
   },
