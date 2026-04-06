@@ -1,49 +1,21 @@
-import { env } from './env'
+export type FileData = { mimeType?: string; size?: number } & Record<
+  string,
+  any
+>
 
-export async function uploadFile(file: File) {
-  const formData = new FormData()
-  formData.append('file', file)
-  const res = await fetch(new URL('/file/upload', env.VITE_API_BASE_URL), {
-    method: 'POST',
-    body: formData,
-    credentials: 'include',
-  })
-
-  if (!res.ok) {
-    throw new Error(`Error uploading file - ${res.status}`)
-  }
-
-  const json = await res.json()
-  const parsed = uploadedFileSchema.safeParse(json)
-  if (!parsed.success) {
-    throw new Error('Invalid data')
-  }
-
-  return parsed.data
+export async function uploadFile(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  file: File,
+): Promise<FileData> {
+  throw new Error('not implemented')
 }
 
-export async function uploadImage(file: File, crop: CropInput) {
-  const formData = new FormData()
-  formData.append('file', file)
-  formData.append('crop', JSON.stringify(crop))
-  const res = await fetch(
-    new URL('/file/upload-image', env.VITE_API_BASE_URL),
-    {
-      method: 'POST',
-      body: formData,
-      credentials: 'include',
-    },
-  )
-
-  if (!res.ok) {
-    throw new Error(`Error uploading file - ${res.status}`)
-  }
-
-  const json = await res.json()
-  const parsed = uploadedFileSchema.safeParse(json)
-  if (!parsed.success) {
-    throw new Error('Invalid data')
-  }
-
-  return parsed.data
+export async function uploadImage(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  file: File,
+  // TODO: update crop type
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  crop: unknown,
+): Promise<FileData> {
+  throw new Error('not implemented')
 }

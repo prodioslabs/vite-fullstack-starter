@@ -25,7 +25,7 @@ import { FilePreview } from './file-preview'
 import { Spinner } from './spinner'
 import { Uploader } from './uploader'
 
-type FileData = { mimeType?: string } & Record<string, any>
+import type { FileData } from '@/lib/upload'
 
 const MAX_FILE_SIZE_IN_BYTES = 1024 * 1024 // 1 MB
 

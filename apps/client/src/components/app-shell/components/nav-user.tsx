@@ -20,7 +20,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { authClient } from '@/lib/auth-client'
-import { queryClient } from '@/lib/client'
+import { queryClient } from '@/lib/query'
 import { getErrorMessage } from '@/lib/utils'
 
 function getInitials(name: string) {

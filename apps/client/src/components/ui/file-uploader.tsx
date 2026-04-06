@@ -9,7 +9,7 @@ import { FilePreview } from './file-preview'
 import { Spinner } from './spinner'
 import { Uploader } from './uploader'
 
-type FileData = { mimeType?: string; size?: number } & Record<string, any>
+import type { FileData } from '@/lib/upload'
 
 type FileUploaderProps = React.ComponentProps<typeof Uploader> & {
   value?: File | FileData | null
