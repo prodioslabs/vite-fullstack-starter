@@ -1,6 +1,8 @@
 import { relations } from 'drizzle-orm'
 import { pgTable, text, boolean, timestamp, index } from 'drizzle-orm/pg-core'
 
+import { file } from './file'
+
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -85,6 +87,7 @@ export const verification = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  filesUploaded: many(file),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({

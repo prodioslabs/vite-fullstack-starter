@@ -15,7 +15,7 @@ export const loggerMiddlware = (logger: Logger) =>
 
     logger.info(
       { method, pathname, origin, userAgent, remote, requestId },
-      '<- incoming request',
+      'request',
     )
 
     const start = Date.now()
@@ -29,6 +29,6 @@ export const loggerMiddlware = (logger: Logger) =>
         duration,
         requestId,
       },
-      '-> response',
+      'response',
     )
   })

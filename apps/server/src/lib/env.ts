@@ -3,6 +3,7 @@ import * as z from 'zod'
 
 export const env = z
   .object({
+    BASE_PATH: z.string().optional().default('/api'),
     NODE_ENV: z
       .enum(['development', 'production', 'test'])
       .optional()
@@ -34,5 +35,13 @@ export const env = z
     DATABASE_URL: z.string().startsWith('postgresql://'),
     CORS_ORIGIN: z.url().optional().default('http://localhost:5173'),
     BETTER_AUTH_URL: z.url().optional().default('http://localhost:3000'),
+    HEALTHCHECK_API_KEY: z.string().min(32),
+    S3_ENDPOINT: z.string().optional().default('localhost'),
+    S3_PORT: z.coerce.number().optional().default(9000),
+    S3_USE_SSL: z.coerce.boolean().optional().default(false),
+    S3_ACCESS_KEY: z.string(),
+    S3_SECRET_KEY: z.string(),
+    S3_REGION: z.string().optional(),
+    S3_BUCKET: z.string().optional().default('uploads'),
   })
   .parse(process.env)

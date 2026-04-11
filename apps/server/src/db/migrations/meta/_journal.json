@@ -8,6 +8,13 @@
       "when": 1775479763341,
       "tag": "0000_typical_gressill",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775899125967,
+      "tag": "0001_first_grim_reaper",
+      "breakpoints": true
     }
   ]
 }

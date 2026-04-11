@@ -4,6 +4,8 @@ import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
 import { requestId } from 'hono/request-id'
 
+import { fileRouter } from './file/file.router'
+import { healthRouter } from './health/health.router'
 import { auth } from './lib/auth'
 import type { AppContext } from './lib/context'
 import { env } from './lib/env'
@@ -49,9 +51,11 @@ export const app = new Hono<{ Variables: AppContext }>()
       allowHeaders: ['Content-Type', 'Authorization'],
     }),
   )
-  .basePath('/api')
+  .basePath(env.BASE_PATH)
+  .route('health', healthRouter)
   .on(['POST', 'GET'], 'auth/*', (c) => {
     return auth.handler(c.req.raw)
   })
+  .route('file', fileRouter)
 
 export type App = typeof app
