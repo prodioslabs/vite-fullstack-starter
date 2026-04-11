@@ -3,7 +3,6 @@ import * as z from 'zod'
 
 export const env = z
   .object({
-    BASE_PATH: z.string().optional().default('/api'),
     NODE_ENV: z
       .enum(['development', 'production', 'test'])
       .optional()
@@ -42,6 +41,6 @@ export const env = z
     S3_ACCESS_KEY: z.string(),
     S3_SECRET_KEY: z.string(),
     S3_REGION: z.string().optional(),
-    S3_BUCKET: z.string().optional().default('uploads'),
+    S3_BUCKET: z.string().optional().default('upload'),
   })
   .parse(process.env)

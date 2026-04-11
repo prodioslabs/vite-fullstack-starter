@@ -1,4 +1,4 @@
-name: coa-erp-portal-dev
+name: vite-fullstack-starter
 
 services:
   browserless:

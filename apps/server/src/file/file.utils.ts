@@ -2,11 +2,13 @@ import * as path from 'node:path'
 
 import dayjs from 'dayjs'
 import filenamify from 'filenamify'
+import { tryGetContext } from 'hono/context-storage'
 import { Client as MinioClient, type ItemBucketMetadata } from 'minio'
 import { customAlphabet } from 'nanoid'
 import sharp from 'sharp'
 
 import { env } from '../lib/env'
+import { logger } from '../lib/logger'
 
 export const minioClient = new MinioClient({
   endPoint: env.S3_ENDPOINT,
@@ -89,12 +91,10 @@ export function validateFileType(
   })
 }
 
-export function generateRandomFileId() {
-  return customAlphabet(
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-    16,
-  )
-}
+const generateRandomFileId = customAlphabet(
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+  16,
+)
 
 export const UPLOADED_FILES_ROOT_DIR_NAME = 'portal'
 
@@ -106,6 +106,8 @@ export async function uploadBuffer(
   metaData?: ItemBucketMetadata,
 ) {
   const bucket = env.S3_BUCKET
+  const component = 'uploadBuffer'
+  const requestId = tryGetContext()?.var.requestId ?? 'unknown'
 
   const fileName = [
     generateRandomFileId(),
@@ -120,6 +122,10 @@ export async function uploadBuffer(
     fileName,
   ].join('/')
 
+  logger.info(
+    { requestId, component, objectName, bucket },
+    'uploading file to bucket',
+  )
   await minioClient.putObject(bucket, objectName, buffer, size, metaData)
   return {
     bucket,

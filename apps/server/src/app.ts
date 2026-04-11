@@ -51,7 +51,7 @@ export const app = new Hono<{ Variables: AppContext }>()
       allowHeaders: ['Content-Type', 'Authorization'],
     }),
   )
-  .basePath(env.BASE_PATH)
+  .basePath('api')
   .route('health', healthRouter)
   .on(['POST', 'GET'], 'auth/*', (c) => {
     return auth.handler(c.req.raw)

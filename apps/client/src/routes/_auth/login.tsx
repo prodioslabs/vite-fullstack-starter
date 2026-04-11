@@ -55,8 +55,7 @@ function Login() {
     },
     onError: (error) => {
       const errorMessage = getErrorMessage(error)
-
-      toast.error('Unable to sign you in:', {
+      toast.error('Unable to sign you in', {
         description: errorMessage,
       })
     },

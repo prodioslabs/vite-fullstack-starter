@@ -135,7 +135,9 @@ export function ImageUploader({
               file={
                 value instanceof File
                   ? value
-                  : (value.url ?? getPreviewUrl?.(value))
+                  : value.url
+                    ? (getPreviewUrl?.(value) ?? '')
+                    : ''
               }
               mimeType={value instanceof File ? undefined : value.mimeType}
               hideExtraActions={false}

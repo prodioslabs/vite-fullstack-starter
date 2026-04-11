@@ -27,13 +27,15 @@ import {
 
 export const fileRouter = new Hono()
   .get(
-    '/:bucket/:filename',
+    '/:bucket/:filename{.+\\.*}',
     zValidator('param', z.object({ bucket: z.string(), filename: z.string() })),
     async function getFile(c) {
       const requestId = c.get('requestId')
       const component = 'getFile'
 
       const { bucket, filename } = c.req.param()
+      logger.info({ requestId, component, bucket, filename }, 'fetching file')
+
       const objectMetadata = await minioClient
         .statObject(bucket, filename)
         .catch((error) => {
@@ -46,6 +48,9 @@ export const fileRouter = new Hono()
       const contentType = objectMetadata.metaData['content-type']
       const sizeInByte = objectMetadata.size
 
+      // sometimes the user uploads a large image
+      // but I think the resizing should be done while uploading the file
+      // TODO: figure out why this is done in this manner and update it
       let fileStream = await minioClient.getObject(bucket, filename)
       if (
         sizeInByte >= MAX_FILE_SIZE_IN_BYTES &&
@@ -57,8 +62,11 @@ export const fileRouter = new Hono()
       }
 
       c.res.headers.set('type', contentType)
-      return stream(c, async (stream) => {
-        stream.pipe(Readable.toWeb(fileStream))
+      return stream(c, async function streamFile(stream) {
+        fileStream.on('error', () => {
+          stream.abort()
+        })
+        await stream.pipe(Readable.toWeb(fileStream))
       })
     },
   )
@@ -164,10 +172,10 @@ export const fileRouter = new Hono()
       z.object({
         file: z.file(),
         unit: z.enum(['%', 'px']),
-        width: z.number(),
-        height: z.number(),
-        x: z.number(),
-        y: z.number(),
+        width: z.coerce.number(),
+        height: z.coerce.number(),
+        x: z.coerce.number(),
+        y: z.coerce.number(),
       }),
     ),
     async function uploadImage(c) {

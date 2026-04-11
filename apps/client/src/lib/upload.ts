@@ -1,21 +1,39 @@
-export type FileData = { mimeType?: string; size?: number } & Record<
-  string,
-  any
->
+import type { InferResponseType } from 'hono'
 
-export async function uploadFile(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  file: File,
-): Promise<FileData> {
-  throw new Error('not implemented')
+import { getDataOrThrow, honoClient } from './hono'
+
+export type FileData = InferResponseType<
+  (typeof honoClient.api.file)['upload-file']['$post'],
+  201
+> &
+  Record<string, unknown>
+
+export async function uploadFile(file: File) {
+  return getDataOrThrow(
+    honoClient.api.file['upload-file'].$post({ form: { file } }),
+  )
 }
 
 export async function uploadImage(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   file: File,
-  // TODO: update crop type
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  crop: unknown,
-): Promise<FileData> {
-  throw new Error('not implemented')
+  crop: {
+    unit: '%' | 'px'
+    width: number
+    height: number
+    x: number
+    y: number
+  },
+) {
+  return getDataOrThrow(
+    honoClient.api.file['upload-image'].$post({
+      form: {
+        file,
+        unit: crop.unit,
+        width: crop.width.toString(),
+        height: crop.height.toString(),
+        x: crop.x.toString(),
+        y: crop.y.toString(),
+      },
+    }),
+  )
 }
