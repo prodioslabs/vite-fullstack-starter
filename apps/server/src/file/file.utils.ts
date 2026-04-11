@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import filenamify from 'filenamify'
 import { Client as MinioClient, type ItemBucketMetadata } from 'minio'
 import { customAlphabet } from 'nanoid'
+import sharp from 'sharp'
 
 import { env } from '../lib/env'
 
@@ -29,6 +30,15 @@ export const ALLOWED_FILE_TYPES = [
   },
   { mimeType: 'video/x-matroska', extensions: ['mkv', 'webm'] },
 ]
+
+export const ALLOWED_IMAGE_TYPES = [
+  { mimeType: 'image/jpeg', extensions: ['jpg', 'jpeg'] },
+  { mimeType: 'image/png', extensions: ['png'] },
+]
+
+export const MAX_IMAGE_SIZE = 1000
+export const MAX_FILE_SIZE_IN_BYTES = 200 * 1024 // 500KB
+export const MAX_FILE_SIZE_IN_MB = 1024 * 1024 // 1MB
 
 export function isValidFilename(filename: string) {
   // null byte attacks
@@ -124,4 +134,75 @@ export function sanitizeFileName(filename: string) {
     .map((val) => val.replace(/[^a-zA-Z0-9.]/g, '_'))
     .join('')
   return sanitizedFileName
+}
+
+export async function cropImage(
+  fileBuffer: Buffer,
+  crop: {
+    unit: '%' | 'px'
+    x: number
+    y: number
+    width: number
+    height: number
+  },
+): Promise<Buffer> {
+  const metadata = await sharp(fileBuffer).metadata()
+  const {
+    width: initialWidth = 0,
+    height: initialHeight = 0,
+    orientation = 1,
+  } = metadata
+  const { width, height } = getNormalSize({
+    width: initialWidth,
+    height: initialHeight,
+    orientation,
+  })
+  const extractDimensions = {
+    width:
+      crop.unit === '%'
+        ? Math.floor((width * crop.width) / 100)
+        : Math.floor(crop.width),
+    height:
+      crop.unit === '%'
+        ? Math.floor((height * crop.height) / 100)
+        : Math.floor(crop.height),
+    top:
+      crop.unit === '%'
+        ? Math.floor((height * crop.y) / 100)
+        : Math.floor(crop.y),
+    left:
+      crop.unit === '%'
+        ? Math.floor((width * crop.x) / 100)
+        : Math.floor(crop.x),
+  }
+  const resizeWidth = Math.min(MAX_IMAGE_SIZE, extractDimensions.width)
+  const croppedFileBuffer = await sharp(fileBuffer)
+    .extract(extractDimensions)
+    .rotate()
+    .resize(resizeWidth)
+    .toBuffer()
+  return croppedFileBuffer
+}
+
+function getNormalSize({
+  width,
+  height,
+  orientation,
+}: {
+  width: number
+  height: number
+  orientation: number
+}) {
+  // EXIF orientation values and their meanings:
+  // 1 = Normal
+  // 2 = Horizontal flip
+  // 3 = 180° rotation
+  // 4 = Vertical flip
+  // 5 = Horizontal flip + 90° rotation clockwise
+  // 6 = 90° rotation clockwise
+  // 7 = Horizontal flip + 90° rotation counter-clockwise
+  // 8 = 90° rotation counter-clockwise
+  return (orientation || 0) >= 5
+    ? { width: height, height: width }
+    : { width, height }
 }
