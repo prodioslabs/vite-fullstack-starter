@@ -8,10 +8,10 @@ import { stream } from 'hono/streaming'
 import sharp from 'sharp'
 import * as z from 'zod'
 
+import { authMiddleware } from '../auth/auth.middleware'
 import { file as fileSchema } from '../db/schema'
 import { db } from '../lib/db'
 import { logger } from '../lib/logger'
-import { authMiddleware } from '../middlewares/auth'
 
 import {
   ALLOWED_FILE_TYPES,
