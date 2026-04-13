@@ -35,12 +35,12 @@ export const verifyCaptchaMiddleware = createMiddleware<{
     )
     .then((val) => val[0])
   if (!validCaptcha) {
-    throw new HTTPException(403, { message: 'Unauthorized' })
+    throw new HTTPException(401, { message: 'Unauthorized' })
   }
 
   if (validCaptcha.captcha !== solution) {
     await db.update(captcha).set({ status: 'FAILED' })
-    throw new HTTPException(403, { message: 'Unauthorized' })
+    throw new HTTPException(401, { message: 'Unauthorized' })
   }
 
   await db.update(captcha).set({ status: 'VERIFIED' })

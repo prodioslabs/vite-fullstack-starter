@@ -43,7 +43,14 @@ function Signup() {
 
   const signupMutation = useMutation({
     mutationFn: async (values: SignupValues) => {
-      const result = await authClient.signUp.email(values)
+      const result = await authClient.signUp.email({
+        ...values,
+        fetchOptions: {
+          onError(ctx) {
+            throw ctx.error
+          },
+        },
+      })
 
       if (result?.error) {
         throw new Error(result.error.message)

@@ -17,10 +17,24 @@ export function getErrorMessage(
     errorMessage = error.message
   } else {
     const responseErrorValidation = z
-      .object({ body: z.object({ error: z.string() }) })
+      .object({
+        body: z
+          .object({
+            error: z.string().optional(),
+            message: z.string().optional(),
+          })
+          .optional(),
+        error: z.string().optional(),
+        message: z.string().optional(),
+      })
+      .transform((val) =>
+        val.body
+          ? (val.body.error ?? val.body.message)
+          : (val.error ?? val.message),
+      )
       .safeParse(error)
     if (responseErrorValidation.success) {
-      errorMessage = responseErrorValidation.data.body.error
+      errorMessage = responseErrorValidation.data ?? defaultMessage
     }
   }
   return errorMessage

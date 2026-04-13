@@ -4,6 +4,7 @@ import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
 import { requestId } from 'hono/request-id'
 
+import { authRouter } from './auth/auth.router'
 import { captchaRouter } from './captcha/captcha.router'
 import { fileRouter } from './file/file.router'
 import { healthRouter } from './health/health.router'
@@ -63,9 +64,7 @@ export const app = new Hono<{ Variables: AppContext }>()
     }),
   )
   .basePath('/api')
-  .on(['POST', 'GET'], '/auth/*', (c) => {
-    return auth.handler(c.req.raw)
-  })
+  .route('/auth', authRouter)
   .route('/health', healthRouter)
   .route('/file', fileRouter)
   .route('/captcha', captchaRouter)
