@@ -31,6 +31,6 @@ export const captcha = pgTable(
   },
   (t) => [
     unique('captcha_status_unique').on(t.captcha, t.status),
-    index('expires_at_idx').on(t.expiresAt),
+    index('id_status_expires_at_idx').on(t.id, t.status, t.expiresAt),
   ],
 )

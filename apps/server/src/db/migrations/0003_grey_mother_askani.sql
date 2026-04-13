@@ -1,0 +1,1 @@
+CREATE INDEX "id_status_idx" ON "captcha" USING btree ("id","status");

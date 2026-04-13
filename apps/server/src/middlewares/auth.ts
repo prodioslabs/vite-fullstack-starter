@@ -9,7 +9,7 @@ export const authMiddleware = createMiddleware<{ Variables: AppContext }>(
     const session = await auth.api.getSession({ headers: c.req.raw.headers })
     if (!session) {
       throw new HTTPException(403, {
-        message: 'unauthorized',
+        message: 'Unauthorized',
       })
     }
     c.set('session', session.session)

@@ -10,7 +10,7 @@ import { logger } from '../lib/logger'
 const healthCheckMiddleware = createMiddleware(async (c, next) => {
   const healthcheckApiKey = c.req.query('healthcheckApiKey')
   if (healthcheckApiKey !== env.HEALTHCHECK_API_KEY) {
-    throw new HTTPException(401, { message: 'unauthorized' })
+    throw new HTTPException(401, { message: 'Unauthorized' })
   }
   return next()
 })

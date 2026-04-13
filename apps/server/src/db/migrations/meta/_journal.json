@@ -22,6 +22,27 @@
       "when": 1776080854135,
       "tag": "0002_illegal_nick_fury",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776081189335,
+      "tag": "0003_grey_mother_askani",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1776081258592,
+      "tag": "0004_magenta_xavin",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1776081599549,
+      "tag": "0005_broad_mesmero",
+      "breakpoints": true
     }
   ]
 }
