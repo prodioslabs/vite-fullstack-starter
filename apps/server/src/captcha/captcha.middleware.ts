@@ -5,12 +5,17 @@ import { HTTPException } from 'hono/http-exception'
 import { captcha } from '../db/schema'
 import type { AppContext } from '../lib/context'
 import { db } from '../lib/db'
+import { logger } from '../lib/logger'
 
 export const verifyCaptchaMiddleware = createMiddleware<{
   Variables: AppContext
 }>(async function verifyCaptcha(c, next) {
+  const requestId = c.get('requestId')
+  const component = 'verifyCaptchaMiddleware'
+
   const problem = c.req.header('X-Captcha-Problem')
   if (!problem) {
+    logger.error({ requestId, component }, 'captcha problem header missing')
     throw new HTTPException(403, {
       message: 'Missing captcha problem header',
     })
@@ -18,6 +23,7 @@ export const verifyCaptchaMiddleware = createMiddleware<{
 
   const solution = c.req.header('X-Captcha-Solution')
   if (!solution) {
+    logger.error({ requestId, component }, 'captcha solution header missing')
     throw new HTTPException(403, {
       message: 'Missing captcha solution header',
     })
@@ -35,10 +41,15 @@ export const verifyCaptchaMiddleware = createMiddleware<{
     )
     .then((val) => val[0])
   if (!validCaptcha) {
+    logger.error({ requestId, component, problem }, 'PENDING captcha not found')
     throw new HTTPException(401, { message: 'Unauthorized' })
   }
 
   if (validCaptcha.captcha !== solution) {
+    logger.error(
+      { requestId, component, problem, solution },
+      'invalid solution for captcha',
+    )
     await db.update(captcha).set({ status: 'FAILED' })
     throw new HTTPException(401, { message: 'Unauthorized' })
   }
