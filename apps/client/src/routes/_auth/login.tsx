@@ -58,6 +58,7 @@ function Login() {
       toast.error('Unable to sign you in', {
         description: errorMessage,
       })
+      form.setError('email', { message: errorMessage })
     },
   })
 

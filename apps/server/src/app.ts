@@ -4,6 +4,7 @@ import { cors } from 'hono/cors'
 import { HTTPException } from 'hono/http-exception'
 import { requestId } from 'hono/request-id'
 
+import { captchaRouter } from './captcha/captcha.router'
 import { fileRouter } from './file/file.router'
 import { healthRouter } from './health/health.router'
 import { auth } from './lib/auth'
@@ -46,16 +47,27 @@ export const app = new Hono<{ Variables: AppContext }>()
     cors({
       origin: [env.CORS_ORIGIN],
       credentials: true,
-      exposeHeaders: ['Content-Length', 'Set-Cookie'],
+      exposeHeaders: [
+        'Content-Length',
+        'Set-Cookie',
+        'X-Captcha-Problem',
+        'X-Captcha-Solution',
+      ],
       allowMethods: ['POST', 'GET', 'OPTIONS'],
-      allowHeaders: ['Content-Type', 'Authorization'],
+      allowHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Captcha-Problem',
+        'X-Captcha-Solution',
+      ],
     }),
   )
-  .basePath('api')
-  .route('health', healthRouter)
-  .on(['POST', 'GET'], 'auth/*', (c) => {
+  .basePath('/api')
+  .on(['POST', 'GET'], '/auth/*', (c) => {
     return auth.handler(c.req.raw)
   })
-  .route('file', fileRouter)
+  .route('/health', healthRouter)
+  .route('/file', fileRouter)
+  .route('/captcha', captchaRouter)
 
 export type App = typeof app

@@ -15,6 +15,13 @@
       "when": 1775899125967,
       "tag": "0001_first_grim_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776080854135,
+      "tag": "0002_illegal_nick_fury",
+      "breakpoints": true
     }
   ]
 }

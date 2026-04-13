@@ -16,7 +16,7 @@ const healthCheckMiddleware = createMiddleware(async (c, next) => {
 })
 
 export const healthRouter = new Hono().get(
-  '',
+  '/',
   healthCheckMiddleware,
   async function getHealthStatus(c) {
     const healthChecks = await Promise.all([checkDBHealth()])

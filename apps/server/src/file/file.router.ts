@@ -71,7 +71,7 @@ export const fileRouter = new Hono()
     },
   )
   .post(
-    'upload-file',
+    '/upload-file',
     authMiddleware,
     zValidator('form', z.object({ file: z.file() })),
     async function uploadFile(c) {
@@ -165,7 +165,7 @@ export const fileRouter = new Hono()
     },
   )
   .post(
-    'upload-image',
+    '/upload-image',
     authMiddleware,
     zValidator(
       'form',
