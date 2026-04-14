@@ -28,8 +28,9 @@ export function createCaptchaImage({
     const charWidth = FONT_SIZE / 1.44
     const yPos = Math.floor(random(-20, 20)) + (height + FONT_SIZE) / 2
     const rotation = random(-22.5, 22.5)
+    const haveBlur = Math.random() > 0.8
     textElements.push(
-      `<text x="${xPos}" y="${yPos}" font-size="${FONT_SIZE}" font-family="sans-serif" font-weight="bold" transform="rotate(${rotation}, ${xPos}, ${yPos})" fill="${pickRandom(COLORS)}">${char}</text>`,
+      `<text x="${xPos}" y="${yPos}" font-size="${FONT_SIZE}" font-family="monospace" font-weight="bold" transform="rotate(${rotation}, ${xPos}, ${yPos})" fill="${pickRandom(COLORS)}" ${haveBlur ? 'filter="url(#blur)"' : ''}>${char}</text>`,
     )
     xPos = Math.min(width - MARGIN, xPos + charWidth + FONT_GAP)
   }
@@ -45,7 +46,17 @@ export function createCaptchaImage({
     )
   }
 
-  const svg = `<svg viewBox="0 0 ${width} ${height}" width="${width}px" height="${height}px"><rect x="0" y="0" width="${width}" height="${height}" fill="white"></rect>${textElements.join('\n')}${pathElements.join('\n')}</svg>`
+  const svg = `
+  <svg viewBox="0 0 ${width} ${height}" width="${width}px" height="${height}px">
+    <defs>
+      <filter id="blur" x="0" y="0">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.75" />
+      </filter>
+    </defs>
+    <rect x="0" y="0" width="${width}" height="${height}" fill="white"></rect>
+    ${textElements.join('\n')}
+    ${pathElements.join('\n')}
+  </svg>`.trim()
 
   return sharp(Buffer.from(svg)).png().toBuffer()
 }

@@ -39,7 +39,6 @@ services:
       - ./loki-config.yml:/etc/loki/local-config.yaml
       - loki-data:/loki
     command: -config.file=/etc/loki/local-config.yaml -config.expand-env=true
-    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:main-ubuntu
@@ -70,7 +69,6 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=false
     depends_on:
       - loki
-    restart: unless-stopped
 
 volumes:
   minio_data:

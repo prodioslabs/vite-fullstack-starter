@@ -41,12 +41,9 @@ function Login() {
 
   const loginMutation = useMutation({
     mutationFn: async (values: LoginValues) => {
-      const result = await authClient.signIn.email({
-        ...values,
-        fetchOptions: {
-          onError(ctx) {
-            throw ctx.error
-          },
+      const result = await authClient.signIn.email(values, {
+        onError({ error }) {
+          throw error
         },
       })
 
