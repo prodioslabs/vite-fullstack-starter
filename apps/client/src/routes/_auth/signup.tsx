@@ -60,15 +60,18 @@ function Signup() {
         return
       }
       const problem = captchaInputRef.current.getProblem()
-      const result = await authClient.signUp.email(values, {
-        headers: {
-          'X-Captcha-Problem': problem,
-          'X-Captcha-Solution': captcha,
+      const result = await authClient.signUp.email(
+        { ...values, role: 'USER' },
+        {
+          headers: {
+            'X-Captcha-Problem': problem,
+            'X-Captcha-Solution': captcha,
+          },
+          onError({ error }) {
+            throw error
+          },
         },
-        onError({ error }) {
-          throw error
-        },
-      })
+      )
 
       if (result?.error) {
         throw new Error(result.error.message)

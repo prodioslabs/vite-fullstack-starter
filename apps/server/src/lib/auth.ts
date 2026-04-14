@@ -1,6 +1,5 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { admin } from 'better-auth/plugins/admin'
 import { bearer } from 'better-auth/plugins/bearer'
 import { tryGetContext } from 'hono/context-storage'
 
@@ -54,8 +53,17 @@ export const auth = betterAuth({
       secure: true,
     },
   },
+  user: {
+    additionalFields: {
+      role: {
+        type: ['USER'],
+        required: true,
+        defaultValue: 'USER',
+      },
+    },
+  },
   database: drizzleAdapter(db, { provider: 'pg', schema }),
-  plugins: [bearer(), admin()],
+  plugins: [bearer()],
   logger: {
     disabled: false,
     disableColors: false,
