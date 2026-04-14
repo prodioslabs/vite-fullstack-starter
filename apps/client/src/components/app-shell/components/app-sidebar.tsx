@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { authClient } from '@/lib/auth-client'
+import { authClient, type User } from '@/lib/auth'
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   navItems: NavItem[]
@@ -28,8 +28,7 @@ export function AppSidebar({ navItems, ...rest }: AppSidebarProps) {
     return null
   }
 
-  // TODO: update user type
-  const user = session.user as any
+  const user = session.user as User
 
   return (
     <Sidebar collapsible="icon" variant="floating" {...rest}>
@@ -56,7 +55,7 @@ export function AppSidebar({ navItems, ...rest }: AppSidebarProps) {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarNav items={navItems} role={user.role} />
+        <SidebarNav items={navItems} role={user.role!} />
       </SidebarContent>
 
       {user ? (

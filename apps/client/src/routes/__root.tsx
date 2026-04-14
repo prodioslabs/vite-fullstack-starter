@@ -2,7 +2,7 @@ import { HeadContent, Outlet, createRootRoute } from '@tanstack/react-router'
 
 import { ErrorMessage } from '@/components/ui/error-message'
 import { Spinner } from '@/components/ui/spinner'
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '@/lib/auth'
 
 export const Route = createRootRoute({
   component: () => <Root />,

@@ -11,6 +11,7 @@ import {
 
 const APP_SHELL_NAV_ITEMS: NavItem[] = [
   {
+    type: 'LINK',
     label: 'Home',
     icon: <HomeIcon />,
     href: {
@@ -19,6 +20,7 @@ const APP_SHELL_NAV_ITEMS: NavItem[] = [
     availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
   },
   {
+    type: 'MENU',
     label: 'Projects',
     icon: <FolderKanbanIcon />,
     availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],

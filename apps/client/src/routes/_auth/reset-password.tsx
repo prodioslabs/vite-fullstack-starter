@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Logo } from '@/components/ui/logo'
-import { authClient } from '@/lib/auth-client'
+import { authClient } from '@/lib/auth'
 import { getErrorMessage } from '@/lib/utils'
 
 const resetPasswordSchema = z.object({

@@ -18,3 +18,5 @@ export const authClient = createAuthClient({
 })
 
 export type AuthClient = typeof authClient
+export type User = AuthClient['$Infer']['Session']['user']
+export type UserRole = NonNullable<User['role']>

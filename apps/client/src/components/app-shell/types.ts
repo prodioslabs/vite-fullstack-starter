@@ -1,7 +1,6 @@
 import type { LinkProps } from '@tanstack/react-router'
 
-// TODO: update UserRole from server
-type UserRole = unknown
+import type { UserRole } from '@/lib/auth'
 
 export type NavChild = {
   label: string
@@ -12,6 +11,7 @@ export type NavChild = {
 
 export type NavItem =
   | {
+      type: 'LINK'
       label: string
       icon: React.ReactElement<{ className?: string }>
       href: LinkProps
@@ -19,9 +19,12 @@ export type NavItem =
       availableForRoles: UserRole[]
     }
   | {
+      type: 'MENU'
       label: string
       icon: React.ReactElement<{ className?: string }>
       href?: never
       children: NavChild[]
       availableForRoles: UserRole[]
     }
+  | { type: 'DIVIDER' }
+  | { type: 'SPACER' }

@@ -1,5 +1,6 @@
 import { useMatchRoute } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
+import { match } from 'ts-pattern'
 
 import type { NavItem } from '../types'
 
@@ -18,6 +19,7 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
 } from '@/components/ui/sidebar'
+import type { UserRole } from '@/lib/auth'
 
 export function SidebarNav({
   label,
@@ -26,10 +28,13 @@ export function SidebarNav({
 }: {
   label?: string
   items: NavItem[]
-  // TODO: update UserRole from server
-  role: any
+  role: UserRole
 }) {
-  const visible = items.filter((item) => item.availableForRoles.includes(role))
+  const visible = items.filter((item) =>
+    item.type === 'MENU' || item.type === 'LINK'
+      ? item.availableForRoles.includes(role)
+      : false,
+  )
 
   const matchRoute = useMatchRoute()
 
@@ -42,83 +47,68 @@ export function SidebarNav({
       {label ? <SidebarGroupLabel>{label}</SidebarGroupLabel> : null}
       <SidebarMenu>
         {visible.map((item, index) => {
-          if (!item.children) {
-            return (
-              <NavLink
-                {...item.href}
-                icon={item.icon}
-                key={`${item.label}-${index}`}
-              >
-                {item.label}
-              </NavLink>
-            )
-          }
+          return match(item)
+            .returnType<React.ReactNode>()
+            .with({ type: 'LINK' }, (item) => {
+              return (
+                <NavLink
+                  {...item.href}
+                  icon={item.icon}
+                  key={`${item.label}-${index}`}
+                >
+                  {item.label}
+                </NavLink>
+              )
+            })
+            .with({ type: 'MENU' }, (item) => {
+              const visibleChildren = item.children.filter((c) =>
+                c.availableForRoles.includes(role),
+              )
 
-          const visibleChildren = item.children.filter((c) =>
-            c.availableForRoles.includes(role),
-          )
+              if (visibleChildren.length === 0) {
+                return null
+              }
 
-          if (visibleChildren.length === 0) {
-            return null
-          }
+              const groupActive = visibleChildren.some((c) =>
+                matchRoute(c.href),
+              )
 
-          const groupActive = visibleChildren.some((c) => matchRoute(c.href))
-
-          return (
-            <Collapsible
-              key={item.label}
-              asChild
-              defaultOpen={groupActive}
-              className="group/collapsible"
-            >
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton
-                    tooltip={item.label}
-                    isActive={groupActive}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    {visibleChildren.map((child, index) => (
-                      // <MatchRoute
-                      //   key={`${child.label}-${index}`}
-                      //   to={child.href.to}
-                      //   params={child.href.params}
-                      // >
-                      //   {(matched) => {
-                      //     return (
-                      //       <SidebarMenuSubItem>
-                      //         <SidebarMenuSubButton
-                      //           asChild
-                      //           isActive={!!matched}
-                      //         >
-                      //           <Link {...child.href}>
-                      //             <child.icon />
-                      //             <span>{child.label}</span>
-                      //           </Link>
-                      //         </SidebarMenuSubButton>
-                      //       </SidebarMenuSubItem>
-                      //     )
-                      //   }}
-                      // </MatchRoute>
-                      <NavLink
-                        {...child.href}
-                        icon={child.icon}
-                        key={`${child.label}-${index}`}
+              return (
+                <Collapsible
+                  key={item.label}
+                  asChild
+                  defaultOpen={groupActive}
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton
+                        tooltip={item.label}
+                        isActive={groupActive}
                       >
-                        {child.label}
-                      </NavLink>
-                    ))}
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </SidebarMenuItem>
-            </Collapsible>
-          )
+                        {item.icon}
+                        <span>{item.label}</span>
+                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {visibleChildren.map((child, index) => (
+                          <NavLink
+                            {...child.href}
+                            icon={child.icon}
+                            key={`${child.label}-${index}`}
+                          >
+                            {child.label}
+                          </NavLink>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              )
+            })
+            .otherwise(() => null)
         })}
       </SidebarMenu>
     </SidebarGroup>

@@ -19,7 +19,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { authClient } from '@/lib/auth-client'
+import { authClient, type User } from '@/lib/auth'
 import { queryClient } from '@/lib/query'
 import { getErrorMessage } from '@/lib/utils'
 
@@ -32,12 +32,7 @@ function getInitials(name: string) {
     .slice(0, 2)
 }
 
-export function NavUser({
-  user,
-}: {
-  // TODO: update user type
-  user: any
-}) {
+export function NavUser({ user }: { user: User }) {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
 
@@ -90,7 +85,9 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.image} alt={user.name} />
+                  {user.image ? (
+                    <AvatarImage src={user.image} alt={user.name} />
+                  ) : null}
                   <AvatarFallback className="rounded-full text-xs">
                     {getInitials(user.name)}
                   </AvatarFallback>
