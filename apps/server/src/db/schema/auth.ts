@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm'
 import { pgTable, text, boolean, timestamp, index } from 'drizzle-orm/pg-core'
 
 import { file } from './file'
+import { notification } from './notification'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -88,6 +89,7 @@ export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
   filesUploaded: many(file),
+  notifications: many(notification),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({

@@ -17,10 +17,12 @@ import { logger } from './lib/logger'
 import { redisClient } from './lib/redis'
 import { getErrorMessage } from './lib/utils'
 import { loggerMiddlware } from './middlewares/logger'
+import { notificationRouter } from './notification/notification.router'
 
 export const app = new Hono<{ Variables: AppContext }>()
-  .onError(async (error, c) => {
+  .onError(async function handleError(error, c) {
     const requestId = c.get('requestId')
+    const component = 'handleError'
     if (error instanceof HTTPException) {
       const status = error.status ?? 500
       const errorMessage = error.message ?? getErrorMessage(error)
@@ -29,6 +31,7 @@ export const app = new Hono<{ Variables: AppContext }>()
           status,
           errorMessage,
           requestId,
+          component,
         },
         'HTTP exception occurred',
       )
@@ -39,6 +42,7 @@ export const app = new Hono<{ Variables: AppContext }>()
       {
         errorMessage,
         requestId,
+        component,
       },
       'unhandled exception occurred',
     )
@@ -47,8 +51,8 @@ export const app = new Hono<{ Variables: AppContext }>()
   .use(
     rateLimiter({
       windowMs: 15 * 60 * 1000,
-      // limit each client to 100 requests per window
-      limit: 10,
+      // limit each client to 200 requests per window
+      limit: 200,
       keyGenerator: (c) =>
         c.req.header('x-forwarded-for') ?? getConnInfo(c).remote.address ?? '',
       store: new RedisStore({
@@ -99,5 +103,6 @@ export const app = new Hono<{ Variables: AppContext }>()
   .route('/health', healthRouter)
   .route('/file', fileRouter)
   .route('/captcha', captchaRouter)
+  .route('/notification', notificationRouter)
 
 export type App = typeof app
