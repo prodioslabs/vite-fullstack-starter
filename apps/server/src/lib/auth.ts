@@ -9,6 +9,7 @@ import * as schema from '../db/schema'
 import { db } from './db'
 import { env } from './env'
 import { logger } from './logger'
+import { mailer } from './mailers'
 
 const trustedOrigins: string[] = []
 if (env.CORS_ORIGIN.startsWith('https')) {
@@ -28,6 +29,24 @@ export const auth = betterAuth({
   trustedOrigins,
   emailAndPassword: {
     enabled: true,
+    autoSignIn: false,
+    sendResetPassword: async ({ token, user }) => {
+      const url = new URL('/reset-password', env.APP_BASE_URL)
+      url.searchParams.set('token', token)
+      url.searchParams.set('email', user.email)
+      const emailContent = [
+        `Hello ${user.email},\n`,
+        'To reset your password, please click the link below:',
+        `${url.toString()}\n`,
+        'If you did not request a password reset, please ignore this email.',
+        'Thank you!',
+      ].join('\n')
+      await mailer.sendMail({
+        to: user.email,
+        subject: 'Password Reset Request',
+        text: emailContent,
+      })
+    },
   },
   advanced: {
     defaultCookieAttributes: {

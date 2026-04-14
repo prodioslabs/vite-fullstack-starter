@@ -35,6 +35,7 @@ type LoginValues = z.infer<typeof loginSchema>
 
 export const Route = createFileRoute('/_auth/login')({
   component: Login,
+  head: () => ({ meta: [{ title: 'Sign In | Fullstack Starter' }] }),
 })
 
 function Login() {

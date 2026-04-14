@@ -65,7 +65,7 @@ export const CaptchaInput = forwardRef<CaptchaInputRef, CaptchaInputProps>(
               <div className="space-y-2">
                 <img
                   src={data.url}
-                  className="border rounded-md overflow-hidden w-full object-contain h-20"
+                  className="border rounded-md overflow-hidden w-full object-contain h-20 bg-muted/20 shadow-inner"
                 />
                 <div className="flex items-center gap-2">
                   <Input

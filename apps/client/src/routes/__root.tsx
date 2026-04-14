@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, Outlet, createRootRoute } from '@tanstack/react-router'
 
 import { Spinner } from '@/components/ui/spinner'
 import { authClient } from '@/lib/auth-client'
@@ -20,5 +20,10 @@ export const Route = createRootRoute({
 })
 
 function Root() {
-  return <Outlet />
+  return (
+    <>
+      <HeadContent />
+      <Outlet />
+    </>
+  )
 }

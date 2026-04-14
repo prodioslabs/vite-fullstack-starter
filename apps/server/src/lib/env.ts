@@ -42,5 +42,8 @@ export const env = z
     S3_SECRET_KEY: z.string(),
     S3_REGION: z.string().optional(),
     S3_BUCKET: z.string().optional().default('upload'),
+    APP_BASE_URL: z.url().optional().default('http://localhost:5173'),
+    SMTP_USER: z.email().optional().default('invalid@email.com'),
+    SMTP_PASSWORD: z.string().optional().default('invalid_password'),
   })
   .parse(process.env)

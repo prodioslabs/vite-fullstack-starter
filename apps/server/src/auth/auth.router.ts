@@ -4,13 +4,22 @@ import { verifyCaptchaMiddleware } from '../captcha/captcha.middleware'
 import { auth } from '../lib/auth'
 
 export const authRouter = new Hono()
-  .post('sign-in/email', verifyCaptchaMiddleware, function signInWithEmail(c) {
+  .post('sign-in/email', verifyCaptchaMiddleware, function handleRequest(c) {
     return auth.handler(c.req.raw)
   })
-  .post('sign-up/email', verifyCaptchaMiddleware, function signUpWithEmail(c) {
+  .post('sign-up/email', verifyCaptchaMiddleware, function handleRequest(c) {
     return auth.handler(c.req.raw)
   })
-  // TODO: Add verifyCatpchaMiddleware with verify password
+  .post(
+    'request-password-reset',
+    verifyCaptchaMiddleware,
+    function handleRequest(c) {
+      return auth.handler(c.req.raw)
+    },
+  )
+  .post('reset-password', verifyCaptchaMiddleware, function handleRequest(c) {
+    return auth.handler(c.req.raw)
+  })
   .on(['POST', 'GET'], '/*', function handleRest(c) {
     return auth.handler(c.req.raw)
   })

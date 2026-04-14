@@ -53,7 +53,6 @@ export function createCaptchaImage({
         <feGaussianBlur in="SourceGraphic" stdDeviation="1.75" />
       </filter>
     </defs>
-    <rect x="0" y="0" width="${width}" height="${height}" fill="white"></rect>
     ${textElements.join('\n')}
     ${pathElements.join('\n')}
   </svg>`.trim()

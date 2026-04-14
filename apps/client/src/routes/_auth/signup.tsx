@@ -35,6 +35,7 @@ const signupSchema = z.object({
 type SignupValues = z.infer<typeof signupSchema>
 
 export const Route = createFileRoute('/_auth/signup')({
+  head: () => ({ meta: [{ title: 'Sign Up | Fullstack Starter' }] }),
   component: Signup,
 })
 
@@ -49,6 +50,7 @@ function Signup() {
       name: '',
       email: '',
       password: '',
+      captcha: '',
     },
   })
 
