@@ -1,13 +1,14 @@
 import { useQuery } from '@tanstack/react-query'
-import { RefreshCwIcon } from 'lucide-react'
+import { RefreshCwIcon, TriangleAlertIcon } from 'lucide-react'
 import { forwardRef, useId, useImperativeHandle } from 'react'
 import { match } from 'ts-pattern'
 
 import { Button } from './button'
 import { Input } from './input'
+import { Skeleton } from './skeleton'
 
 import { honoClient } from '@/lib/hono'
-import { type WithBasicProps } from '@/lib/utils'
+import { getErrorMessage, type WithBasicProps } from '@/lib/utils'
 
 type CaptchaInputProps = WithBasicProps<{
   value?: string
@@ -51,9 +52,17 @@ export const CaptchaInput = forwardRef<CaptchaInputRef, CaptchaInputProps>(
       <div className={className} style={style}>
         {match(captchaQuery)
           .returnType<React.ReactNode>()
+          .with({ status: 'pending' }, () => {
+            return (
+              <div className="space-y-2">
+                <Skeleton className="w-full h-[90px]"></Skeleton>
+                <Skeleton className="w-full h-8" />
+              </div>
+            )
+          })
           .with({ status: 'success' }, ({ data }) => {
             return (
-              <div className="flex flex-col gap-2">
+              <div className="space-y-2">
                 <img
                   src={data.url}
                   className="border rounded-md overflow-hidden w-full object-contain h-20"
@@ -78,8 +87,18 @@ export const CaptchaInput = forwardRef<CaptchaInputRef, CaptchaInputProps>(
               </div>
             )
           })
-          .with({ status: 'error' }, () => {
-            return null
+          .with({ status: 'error' }, ({ error }) => {
+            return (
+              <div className="rounded-md border flex flex-col items-center justify-center p-3">
+                <TriangleAlertIcon className="size-5 mb-2" />
+                <div className="text-sm text-destructive">
+                  Error loading captcha
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {getErrorMessage(error)}
+                </div>
+              </div>
+            )
           })
           .otherwise(() => null)}
       </div>
