@@ -22,17 +22,16 @@ if (env.CORS_ORIGIN.startsWith('https')) {
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
-  rateLimit: {
-    enabled: false,
-  },
+  rateLimit: { enabled: false },
   trustedOrigins,
   emailAndPassword: {
     enabled: true,
-    autoSignIn: false,
+    autoSignIn: true,
     sendResetPassword: async ({ token, user }) => {
       const url = new URL('/reset-password', env.APP_BASE_URL)
       url.searchParams.set('token', token)
       url.searchParams.set('email', user.email)
+
       const emailContent = [
         `Hello ${user.email},\n`,
         'To reset your password, please click the link below:',
@@ -40,6 +39,7 @@ export const auth = betterAuth({
         'If you did not request a password reset, please ignore this email.',
         'Thank you!',
       ].join('\n')
+
       await mailer.sendMail({
         to: user.email,
         subject: 'Password Reset Request',
@@ -47,19 +47,10 @@ export const auth = betterAuth({
       })
     },
   },
-  advanced: {
-    defaultCookieAttributes: {
-      sameSite: 'lax',
-      secure: true,
-    },
-  },
+  advanced: { defaultCookieAttributes: { sameSite: 'lax', secure: true } },
   user: {
     additionalFields: {
-      role: {
-        type: ['USER'],
-        required: true,
-        defaultValue: 'USER',
-      },
+      role: { type: ['USER'], required: true, defaultValue: 'USER' },
     },
   },
   database: drizzleAdapter(db, { provider: 'pg', schema }),
