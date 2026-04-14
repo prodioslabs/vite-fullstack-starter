@@ -1,14 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 
 import { Button } from '@/components/ui/button'
 import {
+  CaptchaInput,
+  type CaptchaInputRef,
+} from '@/components/ui/captcha-input'
+import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,8 +25,9 @@ import { authClient } from '@/lib/auth-client'
 import { getErrorMessage } from '@/lib/utils'
 
 const loginSchema = z.object({
-  email: z.email('Enter a valid email'),
+  email: z.email('Invalid email'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  captcha: z.string().min(6, 'Captcha required'),
 })
 
 type LoginValues = z.infer<typeof loginSchema>
@@ -31,17 +38,29 @@ export const Route = createFileRoute('/_auth/login')({
 
 function Login() {
   const navigate = useNavigate()
+
+  const captchaInputRef = useRef<CaptchaInputRef>(null)
+
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
+      captcha: '',
     },
   })
 
   const loginMutation = useMutation({
-    mutationFn: async (values: LoginValues) => {
+    mutationFn: async ({ captcha, ...values }: LoginValues) => {
+      if (!captchaInputRef.current) {
+        return
+      }
+      const problem = captchaInputRef.current.getProblem()
       const result = await authClient.signIn.email(values, {
+        headers: {
+          'X-Captcha-Problem': problem,
+          'X-Captcha-Solution': captcha,
+        },
         onError({ error }) {
           throw error
         },
@@ -63,6 +82,8 @@ function Login() {
         description: errorMessage,
       })
       form.setError('email', { message: errorMessage })
+      form.setValue('captcha', '')
+      captchaInputRef.current?.refetchCaptcha()
     },
   })
 
@@ -80,7 +101,7 @@ function Login() {
 
       <Form {...form}>
         <form
-          className="space-y-6"
+          className="space-y-4"
           onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
         >
           <FormField
@@ -112,6 +133,26 @@ function Login() {
                 <FormMessage />
               </FormItem>
             )}
+          />
+          <FormField
+            control={form.control}
+            name="captcha"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormLabel>Captcha</FormLabel>
+                  <FormDescription>Captcha is case sensitive</FormDescription>
+                  <FormControl>
+                    <CaptchaInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      ref={captchaInputRef}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )
+            }}
           />
 
           <div className="flex items-center justify-end text-sm">

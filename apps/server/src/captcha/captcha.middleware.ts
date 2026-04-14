@@ -50,10 +50,10 @@ export const verifyCaptchaMiddleware = createMiddleware<{
       { requestId, component, problem, solution },
       'invalid solution for captcha',
     )
-    await db.update(captcha).set({ status: 'FAILED' })
-    throw new HTTPException(401, { message: 'Unauthorized' })
+    await db.delete(captcha).where(eq(captcha.id, validCaptcha.id))
+    throw new HTTPException(401, { message: 'Unauthorized. Invalid captcha.' })
   }
 
-  await db.update(captcha).set({ status: 'VERIFIED' })
+  await db.delete(captcha).where(eq(captcha.id, validCaptcha.id))
   return next()
 })
