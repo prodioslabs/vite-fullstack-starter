@@ -9,7 +9,7 @@ export const captchaGenerator = customAlphabet(
 const FONT_SIZE = 24
 const FONT_GAP = 15
 const MARGIN = 10
-const COLORS = ['red', 'green', 'blue', 'black', 'magenta']
+const COLORS = ['#838e83', '#64403e', '#586a6a', '#dd6e42', '#16f4d0']
 const NUM_RANDOM_LINES = 5
 
 export function createCaptchaImage({

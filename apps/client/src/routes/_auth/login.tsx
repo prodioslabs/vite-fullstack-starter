@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Logo } from '@/components/ui/logo'
 import { authClient } from '@/lib/auth-client'
 import { getErrorMessage } from '@/lib/utils'
 
@@ -88,20 +89,17 @@ function Login() {
   })
 
   return (
-    <div className="space-y-3">
-      <div className="space-y-2">
-        <div className="text-2xl font-semibold text-foreground">Sign in</div>
-        <div className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link to="/signup" className="text-primary font-medium">
-            Register here
-          </Link>
+    <div className="space-y-6">
+      <div className="text-center space-y-2">
+        <Logo className="size-10 mx-auto" />
+        <div className="text-xl font-semibold text-foreground text-center">
+          Sign in to your account
         </div>
       </div>
 
       <Form {...form}>
         <form
-          className="space-y-4"
+          className="space-y-4 border rounded-xl p-4 flex-1"
           onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
         >
           <FormField
@@ -170,6 +168,15 @@ function Login() {
           </Button>
         </form>
       </Form>
+
+      <div className="space-y-2 text-center">
+        <div className="text-sm text-muted-foreground">
+          Don&apos;t have an account?{' '}
+          <Link to="/signup" className="text-primary font-medium">
+            Register here
+          </Link>
+        </div>
+      </div>
     </div>
   )
 }
