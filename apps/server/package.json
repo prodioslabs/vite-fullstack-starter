@@ -29,6 +29,7 @@
     "file-type": "22.0.1",
     "filenamify": "7.0.1",
     "hono": "4.12.11",
+    "hono-rate-limiter": "0.5.3",
     "ioredis": "5.10.1",
     "minio": "8.0.7",
     "nanoid": "5.1.7",

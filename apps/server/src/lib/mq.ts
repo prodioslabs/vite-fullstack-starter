@@ -7,7 +7,7 @@ import {
 } from 'bullmq'
 
 import { logger } from './logger'
-import { getRedisClient } from './redis'
+import { redisClient } from './redis'
 
 export function createQueue<DataType = unknown>(
   queueName: string,
@@ -15,7 +15,7 @@ export function createQueue<DataType = unknown>(
 ) {
   const queue = new Queue<DataType>(queueName, {
     ...options,
-    connection: getRedisClient(),
+    connection: redisClient,
   })
 
   queue.on('error', (error) => {
@@ -39,7 +39,7 @@ export function createWorker<
   const worker = new Worker<DataType, ResultType, NameType>(
     queueName,
     processor,
-    { connection: getRedisClient(), ...options },
+    { connection: redisClient, ...options },
   )
 
   worker.on('error', (error) => {
