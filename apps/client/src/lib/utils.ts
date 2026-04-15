@@ -47,3 +47,18 @@ export type WithBasicProps<T = unknown> = T & {
   className?: string
   style?: React.CSSProperties
 }
+
+export function invariant(cond: unknown, message: string): asserts cond {
+  if (!cond) {
+    throw new Error(message)
+  }
+}
+
+export function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+}

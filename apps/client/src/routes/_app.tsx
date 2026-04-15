@@ -8,9 +8,7 @@ export const Route = createFileRoute('/_app')({
     if (!context.user) {
       throw redirect({ to: '/login', replace: true })
     }
-  },
-  loader: ({ context: { user } }) => {
-    return { user }
+    return { user: context.user }
   },
   component: () => {
     return <AppLayout />
@@ -18,8 +16,10 @@ export const Route = createFileRoute('/_app')({
 })
 
 function AppLayout() {
+  const { user } = Route.useRouteContext()
+
   return (
-    <AppShell>
+    <AppShell user={user}>
       <Outlet />
     </AppShell>
   )
