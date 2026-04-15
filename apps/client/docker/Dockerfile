@@ -1,4 +1,4 @@
-FROM oven/bun:1.3.11-alpine AS base
+FROM oven/bun:1.3.12-alpine AS base
 
 WORKDIR /app
 
@@ -6,7 +6,6 @@ COPY package.json .
 COPY apps/server/package.json apps/server/package.json
 COPY apps/client/package.json apps/client/package.json
 COPY packages/config/package.json packages/config/package.json
-COPY packages/contracts/package.json packages/contracts/package.json
 COPY bun.lock bun.lock
 
 RUN bun install --frozen-lockfile
@@ -20,23 +19,22 @@ ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
 RUN bun run build --filter @repo/client
 
-# FROM oven/bun:1.3.6-alpine AS runtime
 FROM joseluisq/static-web-server:2.42.0-alpine AS release
 
 USER root
 RUN apk add --no-cache curl
 
-# Create a non-root user and group
+# create a non-root user and group
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
 COPY --from=build /app/apps/client/dist ./dist
 
-# Change the ownership of the /app directory to the non-root user
+# change the ownership of the /app directory to the non-root user
 RUN chown -R appuser:appgroup /app
 
-# Switch to the non-root user
+# switch to the non-root user
 USER appuser
 
 EXPOSE 80
