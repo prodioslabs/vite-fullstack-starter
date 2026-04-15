@@ -24,7 +24,7 @@ export function createNotificationWorker() {
       const component = 'processNotification'
 
       logger.info(
-        { component, userId: data.userId, type: data.type },
+        { component, userId: data.userId, type: data.type, app: 'worker' },
         'creating notification',
       )
       try {

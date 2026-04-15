@@ -6,6 +6,7 @@ import * as z from 'zod'
 
 import { captcha as captchaSchema } from '../db/schema'
 import { db } from '../lib/db'
+import { logger } from '../lib/logger'
 
 import { captchaGenerator, createCaptchaImage } from './captcha.utils'
 
@@ -19,10 +20,14 @@ export const captchaRouter = new Hono().get(
     }),
   ),
   async function generateCaptcha(c) {
-    const { width, height } = c.req.valid('query')
+    const component = 'generateCapthcha'
+    const requestId = c.get('requestId')
 
+    const { width, height } = c.req.valid('query')
+    logger.info({ component, requestId, width, height }, 'generating captcha')
     const captcha = captchaGenerator()
     const captchaImage = await createCaptchaImage({ width, height, captcha })
+    logger.info({ component, requestId, width, height }, 'generated captcha')
 
     const savedCaptcha = await db
       .insert(captchaSchema)

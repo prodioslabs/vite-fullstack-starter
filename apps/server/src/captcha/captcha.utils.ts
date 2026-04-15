@@ -1,5 +1,8 @@
+import { tryGetContext } from 'hono/context-storage'
 import { customAlphabet } from 'nanoid'
 import sharp from 'sharp'
+
+import { logger } from '../lib/logger'
 
 export const captchaGenerator = customAlphabet(
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
@@ -12,7 +15,7 @@ const MARGIN = 10
 const COLORS = ['#838e83', '#64403e', '#586a6a', '#dd6e42', '#16f4d0']
 const NUM_RANDOM_LINES = 5
 
-export function createCaptchaImage({
+export async function createCaptchaImage({
   width,
   height,
   captcha,
@@ -21,11 +24,14 @@ export function createCaptchaImage({
   height: number
   captcha: string
 }) {
+  const component = 'createCaptchaImage'
+  const requestId = tryGetContext()?.get('requestId')
+
   const textElements: string[] = []
   let xPos = MARGIN
   for (let i = 0; i < captcha.length; i += 1) {
     const char = captcha[i]
-    const charWidth = FONT_SIZE / 1.44
+    const charWidth = Math.floor(FONT_SIZE / 1.44)
     const yPos = Math.floor(random(-20, 20)) + (height + FONT_SIZE) / 2
     const rotation = random(-22.5, 22.5)
     const haveBlur = Math.random() > 0.8
@@ -56,8 +62,18 @@ export function createCaptchaImage({
     ${textElements.join('\n')}
     ${pathElements.join('\n')}
   </svg>`.trim()
+  logger.info({ component, requestId }, 'generated svg')
 
-  return sharp(Buffer.from(svg)).png().toBuffer()
+  const png = await sharp(Buffer.from(svg))
+    .png()
+    .toBuffer()
+    .catch((error) => {
+      logger.error({ component, requestId, error }, 'error converting to png')
+      throw error
+    })
+  logger.info({ component, requestId }, 'generated png')
+
+  return png
 }
 
 function random(min: number, max: number) {

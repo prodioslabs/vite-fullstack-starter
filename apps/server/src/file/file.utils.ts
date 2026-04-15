@@ -107,7 +107,7 @@ export async function uploadBuffer(
 ) {
   const bucket = env.S3_BUCKET
   const component = 'uploadBuffer'
-  const requestId = tryGetContext()?.var.requestId ?? 'unknown'
+  const requestId = tryGetContext()?.get('requestId')
 
   const fileName = [
     generateRandomFileId(),

@@ -8,7 +8,10 @@ import { stream } from 'hono/streaming'
 import sharp from 'sharp'
 import * as z from 'zod'
 
-import { authMiddleware } from '../auth/auth.middleware'
+import {
+  authMiddleware,
+  authorizedForMiddleware,
+} from '../auth/auth.middleware'
 import { file as fileSchema } from '../db/schema'
 import { db } from '../lib/db'
 import { logger } from '../lib/logger'
@@ -76,6 +79,7 @@ export const fileRouter = new Hono()
   .post(
     '/upload-file',
     authMiddleware,
+    authorizedForMiddleware(['USER']),
     zValidator('form', z.object({ file: z.file() })),
     async function uploadFile(c) {
       const component = 'uploadFile'

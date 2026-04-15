@@ -67,3 +67,9 @@ export const auth = betterAuth({
 })
 
 export type Auth = typeof auth
+
+export type AuthSession = NonNullable<
+  Awaited<ReturnType<Auth['api']['getSession']>>
+>
+export type Session = AuthSession['session']
+export type User = AuthSession['user']
