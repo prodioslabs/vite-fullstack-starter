@@ -29,7 +29,7 @@
     "drizzle-orm": "0.45.2",
     "file-type": "22.0.1",
     "filenamify": "7.0.1",
-    "hono": "4.12.11",
+    "hono": "4.12.14",
     "hono-rate-limiter": "0.5.3",
     "ioredis": "5.10.1",
     "minio": "8.0.7",
