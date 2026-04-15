@@ -28,6 +28,11 @@ export const loggerMiddlware = (logger: Logger) =>
         status,
         duration,
         requestId,
+        method,
+        pathname,
+        origin,
+        userAgent,
+        remote,
       },
       'response',
     )
