@@ -4,10 +4,10 @@ import { LayersIcon } from 'lucide-react'
 import { PageHeader } from '@/components/ui/page-header'
 
 export const Route = createFileRoute('/_app/projects/')({
-  component: RouteComponent,
+  component: ProjectsPage,
 })
 
-function RouteComponent() {
+function ProjectsPage() {
   return (
     <div>
       <PageHeader

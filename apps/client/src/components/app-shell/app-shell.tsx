@@ -1,21 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Link, useMatchRoute, useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
-  ChevronRightIcon,
+  BellIcon,
   ChevronsUpDownIcon,
+  FolderIcon,
   FolderKanbanIcon,
-  HomeIcon,
-  LayersIcon,
+  Home,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { match } from 'ts-pattern'
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '../ui/collapsible'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,20 +21,22 @@ import {
 } from '../ui/dropdown-menu'
 import { Logo } from '../ui/logo'
 
+import MenuGroup from './components/menu-group'
 import NavLink from './components/nav-link'
-import type { NavItem } from './types'
+import ShowForUserRole from './components/show-for-user-role'
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
@@ -48,45 +44,11 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { authClient, type User } from '@/lib/auth'
 import { getErrorMessage, getInitials, invariant } from '@/lib/utils'
 
-const APP_SHELL_NAV_ITEMS: NavItem[] = [
-  {
-    type: 'LINK',
-    label: 'Home',
-    icon: <HomeIcon />,
-    href: {
-      to: '/',
-    },
-    availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-  },
-  {
-    type: 'MENU',
-    label: 'Projects',
-    icon: <FolderKanbanIcon />,
-    availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-    children: [
-      {
-        label: 'All Projects',
-        icon: <LayersIcon />,
-        href: { to: '/projects' },
-        availableForRoles: ['USER', 'ADMIN', 'SUPER_ADMIN'],
-      },
-    ],
-  },
-]
-
 type AppShellProps = React.PropsWithChildren<{ user: User }>
 
 export default function AppShell({ user, children }: AppShellProps) {
   const userRole = user.role
   invariant(userRole, 'user role should be present')
-
-  const visible = APP_SHELL_NAV_ITEMS.filter((item) =>
-    item.type === 'MENU' || item.type === 'LINK'
-      ? item.availableForRoles.includes(userRole)
-      : false,
-  )
-
-  const matchRoute = useMatchRoute()
 
   const isMobile = useIsMobile()
 
@@ -137,72 +99,39 @@ export default function AppShell({ user, children }: AppShellProps) {
 
         <SidebarContent>
           <SidebarGroup>
-            <SidebarMenu>
-              {visible.map((item, index) => {
-                return match(item)
-                  .returnType<React.ReactNode>()
-                  .with({ type: 'LINK' }, (item) => {
-                    return (
-                      <NavLink
-                        {...item.href}
-                        icon={item.icon}
-                        key={`${item.label}-${index}`}
-                      >
-                        {item.label}
-                      </NavLink>
-                    )
-                  })
-                  .with({ type: 'MENU' }, (item) => {
-                    const visibleChildren = item.children.filter((c) =>
-                      c.availableForRoles.includes(userRole),
-                    )
-
-                    if (visibleChildren.length === 0) {
-                      return null
-                    }
-
-                    const groupActive = visibleChildren.some((c) =>
-                      matchRoute(c.href),
-                    )
-
-                    return (
-                      <Collapsible
-                        key={item.label}
-                        asChild
-                        defaultOpen={groupActive}
-                        className="group/collapsible"
-                      >
-                        <SidebarMenuItem>
-                          <CollapsibleTrigger asChild>
-                            <SidebarMenuButton
-                              tooltip={item.label}
-                              isActive={groupActive}
-                            >
-                              {item.icon}
-                              <span>{item.label}</span>
-                              <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                            </SidebarMenuButton>
-                          </CollapsibleTrigger>
-                          <CollapsibleContent>
-                            <SidebarMenuSub>
-                              {visibleChildren.map((child, index) => (
-                                <NavLink
-                                  {...child.href}
-                                  icon={child.icon}
-                                  key={`${child.label}-${index}`}
-                                >
-                                  {child.label}
-                                </NavLink>
-                              ))}
-                            </SidebarMenuSub>
-                          </CollapsibleContent>
-                        </SidebarMenuItem>
-                      </Collapsible>
-                    )
-                  })
-                  .otherwise(() => null)
-              })}
-            </SidebarMenu>
+            <SidebarGroupLabel>General</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <ShowForUserRole roles={['USER', 'SUPER_ADMIN', 'ADMIN']}>
+                  <>
+                    <NavLink icon={<Home />} to="/">
+                      Home
+                    </NavLink>
+                    <MenuGroup icon={<FolderKanbanIcon />} label="Projects">
+                      <ShowForUserRole roles={['USER', 'ADMIN', 'SUPER_ADMIN']}>
+                        <NavLink to="/projects" icon={<FolderIcon />}>
+                          All Projects
+                        </NavLink>
+                      </ShowForUserRole>
+                    </MenuGroup>
+                  </>
+                </ShowForUserRole>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel>Notifications</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <ShowForUserRole
+                  roles={['USER', 'ADMIN', 'SUPER_ADMIN', 'OFFICER']}
+                >
+                  <NavLink to="/notifications" icon={<BellIcon />}>
+                    Notifications
+                  </NavLink>
+                </ShowForUserRole>
+              </SidebarMenu>
+            </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
 

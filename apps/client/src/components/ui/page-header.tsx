@@ -23,7 +23,7 @@ export function PageHeader({
   return (
     <div className={cn('flex items-center gap-3', className)} {...rest}>
       {icon ? (
-        <div className="dark:bg-primary/10 bg-primary/20 text-primary border-primary/25 rounded-md border p-2">
+        <div className="dark:bg-primary/10 bg-primary/10 text-primary border-primary/25 rounded-md border p-2">
           {cloneElement(icon, {
             className: cn(icon.props.className, 'size-6'),
           })}
