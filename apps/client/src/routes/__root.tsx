@@ -1,27 +1,42 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
-import { Spinner } from '@repo/ui'
-import { QueryClient } from '@tanstack/react-query'
-import { useCurrentUser } from '../hooks/use-current-user'
+import { HeadContent, Outlet, createRootRoute } from '@tanstack/react-router'
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({ component: Root })
+import { ErrorMessage } from '@/components/ui/error-message'
+import { Spinner } from '@/components/ui/spinner'
+import { authClient } from '@/lib/auth'
 
-function Root() {
-  const currentUserQuery = useCurrentUser()
-
-  if (currentUserQuery.status === 'pending') {
+export const Route = createRootRoute({
+  component: () => <Root />,
+  beforeLoad: async () => {
+    const { data } = await authClient.getSession()
+    return { user: data?.user }
+  },
+  pendingComponent: () => {
     return (
-      <div className="h-screen flex items-center justify-center gap-2">
+      <div className="min-h-screen flex items-center justify-center gap-2">
         <Spinner />
         <div className="text-xs text-muted-foreground">Authenticating...</div>
       </div>
     )
-  }
+  },
+  errorComponent: ({ error, reset }) => {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <ErrorMessage
+          title="Failed to load application"
+          error={error}
+          onReset={reset}
+          showBackHomeLink={false}
+        />
+      </div>
+    )
+  },
+})
 
+function Root() {
   return (
     <>
+      <HeadContent />
       <Outlet />
-      {import.meta.env.DEV ? <TanStackRouterDevtools position="bottom-right" /> : null}
     </>
   )
 }

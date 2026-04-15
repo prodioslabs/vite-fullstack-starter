@@ -8,8 +8,8 @@
 **/.env
 
 # Docker files
-.dockerignore
-Dockerfile
+**/.dockerfile
+**/Dockerfile
 
 # Turbo cache
 **/.turbo

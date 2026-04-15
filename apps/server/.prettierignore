@@ -1,0 +1,2 @@
+src/db/migrations/**/*.json
+src/db/migrations/**/*.sql

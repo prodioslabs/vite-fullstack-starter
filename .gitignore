@@ -24,6 +24,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# caches
+.eslintcache
+.cache
+*.tsbuildinfo
+
 # Environment files
 .env
 .env.*.local

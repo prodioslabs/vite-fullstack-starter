@@ -1,5 +1,5 @@
 {
-  "extends": ["@repo/config/tsconfig/base.json"],
+  "extends": ["@repo/config/base.json"],
   "compilerOptions": {
     "composite": true,
     "module": "ESNext",
