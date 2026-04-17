@@ -50,7 +50,11 @@ export const auth = betterAuth({
   advanced: { defaultCookieAttributes: { sameSite: 'lax', secure: true } },
   user: {
     additionalFields: {
-      role: { type: ['USER'], required: true, defaultValue: 'USER' },
+      role: {
+        type: ['USER', 'OFFICER', 'SUPER_ADMIN'],
+        required: true,
+        defaultValue: 'USER',
+      },
     },
   },
   database: drizzleAdapter(db, { provider: 'pg', schema }),

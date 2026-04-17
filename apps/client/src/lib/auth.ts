@@ -1,3 +1,4 @@
+import { redirect } from '@tanstack/react-router'
 import { inferAdditionalFields } from 'better-auth/client/plugins'
 import { createAuthClient } from 'better-auth/react'
 
@@ -9,7 +10,7 @@ export const authClient = createAuthClient({
     inferAdditionalFields({
       user: {
         role: {
-          type: ['USER', 'OFFICER', 'ADMIN', 'SUPER_ADMIN'] as const,
+          type: ['USER', 'OFFICER', 'SUPER_ADMIN'] as const,
           required: false,
         },
       },
@@ -20,3 +21,11 @@ export const authClient = createAuthClient({
 export type AuthClient = typeof authClient
 export type User = AuthClient['$Infer']['Session']['user']
 export type UserRole = NonNullable<User['role']>
+
+export const USER_ROLES: UserRole[] = ['USER', 'OFFICER', 'SUPER_ADMIN']
+
+export function requireRole(user: User, roles: UserRole[]) {
+  if (!user.role || !roles.includes(user.role)) {
+    throw redirect({ to: '/', replace: true })
+  }
+}
