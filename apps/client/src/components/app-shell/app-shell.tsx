@@ -137,13 +137,15 @@ export default function AppShell({ user, children }: AppShellProps) {
             <SidebarGroupLabel>General</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                <ShowForUserRole roles={['USER', 'SUPER_ADMIN', 'ADMIN']}>
+                <ShowForUserRole roles={['USER', 'OFFICER', 'SUPER_ADMIN']}>
                   <>
                     <NavLink icon={<Home />} to="/">
                       Home
                     </NavLink>
                     <MenuGroup icon={<FolderKanbanIcon />} label="Projects">
-                      <ShowForUserRole roles={['USER', 'ADMIN', 'SUPER_ADMIN']}>
+                      <ShowForUserRole
+                        roles={['USER', 'SUPER_ADMIN', 'OFFICER']}
+                      >
                         <NavLink to="/projects" icon={<FolderIcon />}>
                           All Projects
                         </NavLink>
@@ -158,9 +160,7 @@ export default function AppShell({ user, children }: AppShellProps) {
             <SidebarGroupLabel>Notifications</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                <ShowForUserRole
-                  roles={['USER', 'ADMIN', 'SUPER_ADMIN', 'OFFICER']}
-                >
+                <ShowForUserRole roles={['USER', 'SUPER_ADMIN', 'OFFICER']}>
                   <NavLink to="/notifications" icon={<BellIcon />}>
                     Notifications
                   </NavLink>
