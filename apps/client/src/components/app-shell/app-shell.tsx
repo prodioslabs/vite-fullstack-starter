@@ -8,11 +8,21 @@ import {
   FolderKanbanIcon,
   Home,
   MoonIcon,
+  SearchIcon,
   SunIcon,
 } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '../ui/command'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +35,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
+import { InputGroup, InputGroupAddon } from '../ui/input-group'
+import { Kbd } from '../ui/kbd'
 import { Logo } from '../ui/logo'
 
 import MenuGroup from './components/menu-group'
@@ -59,6 +71,21 @@ export default function AppShell({ user, children }: AppShellProps) {
 
   const isMobile = useIsMobile()
   const { theme, setTheme } = useTheme()
+
+  const [commandOpen, setCommandOpen] = useState(false)
+
+  useEffect(function setCommandOpenShortcut() {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault()
+        setCommandOpen((open) => !open)
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   const navigate = useNavigate()
 
@@ -249,15 +276,65 @@ export default function AppShell({ user, children }: AppShellProps) {
       </Sidebar>
 
       <SidebarInset>
-        <header className="flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-          </div>
+        <header className="bg-background sticky top-0 z-50 flex h-12 shrink-0 items-center gap-4 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <div className="flex-1" />
+          <InputGroup
+            className="w-56 cursor-pointer gap-2"
+            aria-label="Search"
+            role="button"
+            tabIndex={0}
+            onClick={() => setCommandOpen(true)}
+          >
+            <InputGroupAddon>
+              <SearchIcon />
+            </InputGroupAddon>
+            <div className="text-muted-foreground flex-1 text-sm">
+              Search...
+            </div>
+            <InputGroupAddon align="inline-end">
+              <Kbd>⌘</Kbd>
+              <Kbd>K</Kbd>
+            </InputGroupAddon>
+          </InputGroup>
         </header>
         <main className="flex flex-1 flex-col overflow-y-auto p-4">
           {children}
         </main>
       </SidebarInset>
+
+      <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+        <CommandInput placeholder="Search for..." />
+        <CommandList>
+          <CommandEmpty>No results found</CommandEmpty>
+          <CommandGroup heading="Theme">
+            <CommandItem
+              onSelect={() => {
+                setTheme('light')
+                setCommandOpen(false)
+              }}
+            >
+              Light Theme
+            </CommandItem>
+            <CommandItem
+              onSelect={() => {
+                setTheme('dark')
+                setCommandOpen(false)
+              }}
+            >
+              Dark Theme
+            </CommandItem>
+            <CommandItem
+              onSelect={() => {
+                setTheme('system')
+                setCommandOpen(false)
+              }}
+            >
+              System Theme
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
     </SidebarProvider>
   )
 }
