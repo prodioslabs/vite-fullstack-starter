@@ -3,9 +3,12 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import {
   BellIcon,
   ChevronsUpDownIcon,
+  ContrastIcon,
   FolderIcon,
   FolderKanbanIcon,
   Home,
+  MoonIcon,
+  SunIcon,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -17,6 +20,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu'
 import { Logo } from '../ui/logo'
@@ -41,6 +47,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useTheme } from '@/hooks/use-theme'
 import { authClient, type User } from '@/lib/auth'
 import { getErrorMessage, getInitials, invariant } from '@/lib/utils'
 
@@ -51,6 +58,7 @@ export default function AppShell({ user, children }: AppShellProps) {
   invariant(userRole, 'user role should be present')
 
   const isMobile = useIsMobile()
+  const { theme, setTheme } = useTheme()
 
   const navigate = useNavigate()
 
@@ -194,6 +202,35 @@ export default function AppShell({ user, children }: AppShellProps) {
                       <Link to="/">Profile</Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem
+                        onClick={() => setTheme('light')}
+                        className={theme === 'light' ? 'bg-muted' : undefined}
+                      >
+                        <span className="flex-1">Light</span>
+                        <SunIcon className="text-muted-foreground size-4" />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setTheme('dark')}
+                        className={theme === 'dark' ? 'bg-muted' : undefined}
+                      >
+                        <span className="flex-1">Dark</span>
+                        <MoonIcon className="text-muted-foreground size-4" />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setTheme('system')}
+                        className={theme === 'system' ? 'bg-muted' : undefined}
+                      >
+                        <span className="flex-1">System</span>
+                        <ContrastIcon className="text-muted-foreground size-4" />
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
 
                   <DropdownMenuSeparator />
 
