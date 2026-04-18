@@ -7,6 +7,7 @@ export const UNREAD_NOTIFICATIONS_KEY = [...NOTIFICATIONS_KEY, 'unread']
 export function getNotificationsFromQueryClient() {
   return queryClient.ensureQueryData({
     queryKey: NOTIFICATIONS_KEY,
-    queryFn: () => getDataOrThrow(honoClient.api.notification.$get({ query: {} })),
+    queryFn: () =>
+      getDataOrThrow(honoClient.api.notification.$get({ query: {} })),
   })
 }
