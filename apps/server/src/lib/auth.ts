@@ -1,9 +1,11 @@
+import { render } from '@react-email/render'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { bearer } from 'better-auth/plugins/bearer'
 import { tryGetContext } from 'hono/context-storage'
 
 import * as schema from '../db/schema'
+import ResetPasswordEmail from '../emails/reset-password-email'
 
 import { db } from './db'
 import { env } from './env'
@@ -28,23 +30,24 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
     sendResetPassword: async ({ token, user }) => {
-      const url = new URL('/reset-password', env.APP_BASE_URL)
-      url.searchParams.set('token', token)
-      url.searchParams.set('email', user.email)
+      try {
+        const url = new URL('/reset-password', env.APP_BASE_URL)
+        url.searchParams.set('token', token)
+        url.searchParams.set('email', user.email)
 
-      const emailContent = [
-        `Hello ${user.email},\n`,
-        'To reset your password, please click the link below:',
-        `${url.toString()}\n`,
-        'If you did not request a password reset, please ignore this email.',
-        'Thank you!',
-      ].join('\n')
+        const html = await render(
+          ResetPasswordEmail({ email: user.email, resetUrl: url.toString() }),
+        )
 
-      await mailer.sendMail({
-        to: user.email,
-        subject: 'Password Reset Request',
-        text: emailContent,
-      })
+        await mailer.sendMail({
+          from: env.SMTP_USER,
+          to: user.email,
+          subject: 'Reset your password',
+          html,
+        })
+      } catch {
+        throw new Error('Failed to send reset password email')
+      }
     },
   },
   advanced: { defaultCookieAttributes: { sameSite: 'lax', secure: true } },
