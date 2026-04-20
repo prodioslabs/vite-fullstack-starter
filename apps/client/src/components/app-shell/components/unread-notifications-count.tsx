@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { match } from 'ts-pattern'
 
 import { Spinner } from '@/components/ui/spinner'
+import { UNREAD_NOTIFICATIONS_KEY } from '@/hooks/use-notifications'
 import { getDataOrThrow, honoClient } from '@/lib/hono'
 import { cn, type WithBasicProps } from '@/lib/utils'
 
@@ -10,7 +11,7 @@ export default function UnreadNotificationsCount({
   style,
 }: WithBasicProps) {
   const getUnreadNotificationsQuery = useQuery({
-    queryKey: ['unread-notifications'],
+    queryKey: UNREAD_NOTIFICATIONS_KEY,
     queryFn: () => getDataOrThrow(honoClient.api.notification.count.$get()),
   })
 
