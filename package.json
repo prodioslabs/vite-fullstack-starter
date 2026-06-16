@@ -9,7 +9,7 @@
     "packages/**"
   ],
   "scripts": {
-    "clean": "rimraf node_modules **/*/node_modules **/*/dist",
+    "clean": "rimraf node_modules **/*/node_modules **/*/dist **/*/.turbo",
     "prematch-versions": "bun install",
     "match-versions": "bun run scripts/match-versions.ts",
     "lint:root": "eslint --fix --cache --no-error-on-unmatched-pattern *.{ts,js} scripts/**/*.{ts,js}",
