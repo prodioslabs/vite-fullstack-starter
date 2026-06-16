@@ -15,7 +15,7 @@
     "lint:root": "eslint --fix --cache --no-error-on-unmatched-pattern *.{ts,js} scripts/**/*.{ts,js}",
     "lint:workspace": "turbo run lint --ui=stream",
     "lint": "concurrently \"bun run lint:root\" \"bun run lint:workspace\"",
-    "format:root": "prettier --write --cache --no-error-on-unmatched-pattern --ignore-path ./.gitignore *.{ts,js,json,md} scripts/**/*.{ts,js,json,md}",
+    "format:root": "prettier --write --cache --no-error-on-unmatched-pattern --ignore-path ./.gitignore *.{ts,js,json,md} scripts/**/*.{ts,js,json,md} --ignore-path ./.prettierignore",
     "format:workspace": "turbo run format --ui=stream",
     "format": "concurrently \"bun run format:root\" \"bun run format:workspace\"",
     "typecheck": "turbo run typecheck --ui=stream",
