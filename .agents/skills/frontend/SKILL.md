@@ -15,10 +15,11 @@ Apply these conventions for all work in `apps/client/src/`.
 4. **Private to a shared component** → subfolder inside that component's directory.
 5. **Promote when reused** — if a private component is needed elsewhere, move it to `src/components/`.
 6. **Data fetching** — route loaders + TanStack Query + `honoClient`; never `useEffect` for fetch (see `no-use-effect` skill).
-7. **Composition over variants** — shared behavior + different chrome → file-local base + render props + separate exports; not `variant` switches. See [composition-over-variants.md](references/composition-over-variants.md).
-8. **Prop types** — `Component` → `ComponentProps`; wrap with `React.PropsWithChildren` when needed; UI components also use `WithBasicProps` from `@/lib/utils`.
-9. **No external layout** — components must not own margin, position, or offset relative to their parent; the parent sets spacing and placement.
-10. **Page layout** — every route page uses `PageContainer` as the root wrapper, `Breadcrumb` (`@/components/ui/breadcrumb`) as the first child, then `PageHeader` (`@/components/ui/page-header`) with a `title` and `description`.
+7. **Query UI states** — branch on TanStack Query `status` with `match` from `ts-pattern`; derive values from `data` inside `status: 'success'`, not `query.data?.` at the top level.
+8. **Composition over variants** — shared behavior + different chrome → file-local base + render props + separate exports; not `variant` switches. See [composition-over-variants.md](references/composition-over-variants.md).
+9. **Prop types** — `Component` → `ComponentProps`. If the component accepts `children`, use `React.PropsWithChildren<{ ... }>` — never `children?: React.ReactNode`. If it renders a root element callers may style, wrap with `WithBasicProps` from `@/lib/utils` and merge `className` via `cn()`. When both apply, combine: `WithBasicProps<React.PropsWithChildren<{ ... }>>`.
+10. **No external layout** — components must not own margin, position, or offset relative to their parent; the parent sets spacing and placement.
+11. **Page layout** — every route page uses `PageContainer` as the root wrapper, `Breadcrumb` (`@/components/ui/breadcrumb`) as the first child, then `PageHeader` (`@/components/ui/page-header`) with a `title` and `description`.
 
 ## Decision tree
 
@@ -220,6 +221,8 @@ Do **not** roll a custom heading block (`<h1>`, ad-hoc flex rows, etc.) when `Pa
 
 Colocate the props type in the same file as the component. Name it after the component: if the component is `NotificationCard`, the type is `NotificationCardProps`.
 
+**Always apply the wrappers below when they apply.** Do not hand-roll equivalent fields on the props object.
+
 ### Naming
 
 ```tsx
@@ -233,11 +236,12 @@ export default function NotificationCard({ notification, title }: NotificationCa
 }
 ```
 
-### `React.PropsWithChildren`
+### `React.PropsWithChildren` (required when accepting `children`)
 
-When the component accepts `children`, wrap the props object:
+When the component accepts `children`, wrap the props object with `React.PropsWithChildren`. **Never** add `children?: React.ReactNode` to the props type directly.
 
 ```tsx
+// ✅ Correct
 type AppShellProps = React.PropsWithChildren<{
   user: User
 }>
@@ -247,11 +251,20 @@ export default function AppShell({ user, children }: AppShellProps) {
 }
 ```
 
-Combine with other wrappers when both apply (see UI components below).
+```tsx
+// ❌ Wrong — do not declare children on the props object
+type AppShellProps = {
+  user: User
+  children?: React.ReactNode
+}
+```
 
-### UI components (`src/components/ui/`)
+### `WithBasicProps` (required for styleable root elements)
 
-Primitives and layout helpers in `ui/` should include `className` and `style` via `WithBasicProps` from `@/lib/utils`:
+Use `WithBasicProps` from `@/lib/utils` when the component renders a root DOM element that callers may need to customize with `className` or `style`. This applies to:
+
+- All primitives and layout helpers in `src/components/ui/`
+- Reusable section/layout wrappers in `-components/` or `src/components/` (e.g. `SettingsSection`)
 
 ```ts
 export type WithBasicProps<T = unknown> = T & {
@@ -277,26 +290,103 @@ export function Spinner({ size = 16, stop, className, style }: SpinnerProps) {
 }
 ```
 
-With `children`:
+Always destructure `className` and `style`, pass `style` to the root element, and merge `className` with defaults via `cn()`.
+
+### Combining `WithBasicProps` and `React.PropsWithChildren`
+
+When a component accepts both `children` and a styleable root, nest the wrappers:
 
 ```tsx
-type MenuGroupProps = React.PropsWithChildren<{
-  icon: React.ReactElement<WithBasicProps>
-  label: string
-}>
+import { cn, type WithBasicProps } from '@/lib/utils'
+
+type SettingsSectionProps = WithBasicProps<
+  React.PropsWithChildren<{
+    title: string
+    description: string
+  }>
+>
+
+export function SettingsSection({
+  title,
+  description,
+  children,
+  className,
+  style,
+}: SettingsSectionProps) {
+  return (
+    <section
+      className={cn('grid gap-8 lg:grid-cols-2', className)}
+      style={style}
+    >
+      {/* ... */}
+      <div className="min-w-0">{children}</div>
+    </section>
+  )
+}
 ```
+
+`WithBasicProps` on the outside is the usual order; inner `React.PropsWithChildren` carries domain props plus `children`.
 
 ### Rules
 
 | Component kind | Props type pattern |
 |----------------|-------------------|
-| Feature / page (`notification-card`, `-components/`) | `ComponentProps` |
-| Accepts `children` | `React.PropsWithChildren<{ ... }>` |
-| `src/components/ui/*` | `WithBasicProps<{ ... }>` (and `PropsWithChildren` if needed) |
+| Feature / page (`notification-card`, route pages) | `ComponentProps` only |
+| Accepts `children` | **Always** `React.PropsWithChildren<{ ... }>` — never `children?: React.ReactNode` |
+| `src/components/ui/*` | **Always** `WithBasicProps<{ ... }>` (plus `PropsWithChildren` when needed) |
+| Reusable layout/section wrapper (`-components/`, `src/components/`) | `WithBasicProps<{ ... }>` when the root element is styleable (plus `PropsWithChildren` when needed) |
 
 - Define props with `type`, not `interface`.
 - Do not inline large prop objects on the function signature — extract `ComponentProps` above the component.
-- Feature components outside `ui/` do **not** need `WithBasicProps` unless they intentionally expose `className` / `style` as part of their public API.
+- Leaf feature components that do not accept `children` and have no styleable root (e.g. a card that only receives data props) do **not** need `WithBasicProps` or `PropsWithChildren`.
+
+### Anti-patterns
+
+| Do not | Do instead |
+|--------|------------|
+| `children?: React.ReactNode` on the props type | `React.PropsWithChildren<{ ... }>` |
+| Omit `className` / `style` on a layout wrapper with a root `<section>` / `<div>` | `WithBasicProps<...>` + `cn()` on the root |
+| Hardcode root `className` with no merge point | `className={cn('defaults', className)}` |
+| Inline props on the function: `function Foo({ x }: { x: string })` | Extract `type FooProps = ...` above the component |
+
+## Revealing pattern (file order)
+
+Order symbols in a file so the **main export appears first** and supporting pieces follow below. A reader opening the file should see the primary component immediately — not scroll past skeletons, sub-components, or helpers to find it.
+
+### Order
+
+1. **Imports**
+2. **Module-level constants** — schemas, query keys, static config
+3. **Types** — props and value types used by the main component
+4. **Main export** — the default export or primary named export the file exists for
+5. **Supporting symbols** — in the order they are first referenced by the main component (skeletons, sub-components, hooks, helpers)
+
+### Example
+
+```tsx
+// schemas, keys, types at top
+const updatePasswordSchema = z.object({ /* … */ })
+type UpdatePasswordValues = z.infer<typeof updatePasswordSchema>
+
+export default function UpdatePasswordForm() {
+  if (isPending) {
+    return <UpdatePasswordFormSkeleton />
+  }
+
+  return (/* … */)
+}
+
+function UpdatePasswordFormSkeleton() {
+  return (/* … */)
+}
+```
+
+### Rules
+
+- Put the **default export first** among function components in the file.
+- Colocated skeletons, sub-components, and private helpers go **after** the main component — not before it.
+- Do not hoist supporting components above the main export for “definition before use”; function declarations are hoisted in JS, and the revealing order prioritizes readability over dependency order.
+- When a file has multiple private helpers, stack them below the main component in the order the main component references them.
 
 ## No external layout in components
 
@@ -444,6 +534,145 @@ function NotificationsPage() {
 }
 ```
 
+### Pattern: query status with `match`
+
+When a component uses `useQuery` and renders different UI per query state, branch with `match` from `ts-pattern` — not `if (query.isPending)`, ternaries, or early returns scattered above the JSX.
+
+Always chain `.returnType<React.ReactNode>()` so every branch returns renderable output.
+
+| `status` | Render |
+|----------|--------|
+| `pending` | `Skeleton` (or `Spinner` for inline/badge UI) |
+| `success` | Loaded content — derive values from destructured `data` here |
+| `error` | `ErrorMessage` from `@/components/ui/error-message` with `error` and `onReset={() => void refetch()}` |
+| other | `.otherwise(() => null)` only when no UI is appropriate |
+
+**Derive values inside `status: 'success'`** — use the narrowed `data` from the match callback. Do **not** compute them at the top of the component with optional chaining (`query.data?.…`). That bypasses the status guard and forces nullable handling everywhere.
+
+#### Simple read
+
+```tsx
+import { useQuery } from '@tanstack/react-query'
+import { match } from 'ts-pattern'
+
+import { Spinner } from '@/components/ui/spinner'
+
+export default function UnreadNotificationsCount() {
+  const unreadQuery = useQuery({
+    queryKey: UNREAD_NOTIFICATIONS_KEY,
+    queryFn: () => getDataOrThrow(honoClient.api.notification.count.$get()),
+  })
+
+  return match(unreadQuery)
+    .returnType<React.ReactNode>()
+    .with({ status: 'pending' }, () => <Spinner className="size-3" />)
+    .with({ status: 'success' }, ({ data }) => (
+      <div className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs">
+        {data.count}
+      </div>
+    ))
+    .otherwise(() => null) // inline UI — omit error state
+}
+```
+
+Inline or badge-sized UI may omit the `error` branch and fall through to `.otherwise(() => null)`.
+
+#### Section UI with skeleton + error recovery
+
+```tsx
+import { useQuery } from '@tanstack/react-query'
+import { match } from 'ts-pattern'
+
+import { ErrorMessage } from '@/components/ui/error-message'
+
+export default function UpdatePasswordForm() {
+  const accountsQuery = useQuery({
+    queryKey: ACCOUNTS_QUERY_KEY,
+    queryFn: async () => {
+      const { data, error } = await authClient.listAccounts()
+      if (error) throw error
+      return data
+    },
+  })
+
+  return match(accountsQuery)
+    .returnType<React.ReactNode>()
+    .with({ status: 'pending' }, () => <UpdatePasswordFormSkeleton />)
+    .with({ status: 'success' }, ({ data }) => {
+      const hasCredentialAccount = data.some(
+        (account) => account.providerId === 'credential',
+      )
+      const formDisabled = !hasCredentialAccount
+
+      return (
+        <div className="flex flex-col gap-6">
+          {!hasCredentialAccount ? <OAuthOnlyMessage /> : null}
+          <PasswordForm disabled={formDisabled} />
+        </div>
+      )
+    })
+    .with({ status: 'error' }, ({ error, refetch }) => (
+      <ErrorMessage
+        title="Unable to load password settings"
+        error={error}
+        onReset={() => void refetch()}
+        showBackHomeLink={false}
+      />
+    ))
+    .otherwise(() => null)
+}
+
+function UpdatePasswordFormSkeleton() {
+  return (/* … */)
+}
+```
+
+Use a block body `({ data }) => { … return (…) }` when the success branch needs local constants before JSX.
+
+#### Anti-patterns
+
+```tsx
+// BAD — optional chaining at top level; data may be undefined while pending/error
+const hasCredentialAccount = accountsQuery.data?.some(
+  (account) => account.providerId === 'credential',
+)
+const formDisabled = accountsQuery.isError || !hasCredentialAccount
+
+if (accountsQuery.isPending) return <UpdatePasswordFormSkeleton />
+return <PasswordForm disabled={formDisabled} />
+
+// BAD — ternary instead of explicit status branches
+return accountsQuery.isPending ? <Skeleton /> : <Form />
+
+// GOOD — status branches; derived values only in success
+return match(accountsQuery)
+  .returnType<React.ReactNode>()
+  .with({ status: 'pending' }, () => <UpdatePasswordFormSkeleton />)
+  .with({ status: 'success' }, ({ data }) => {
+    const hasCredentialAccount = data.some(
+      (account) => account.providerId === 'credential',
+    )
+    return <PasswordForm disabled={!hasCredentialAccount} />
+  })
+  .with({ status: 'error' }, ({ error, refetch }) => (
+    <ErrorMessage
+      title="Unable to load password settings"
+      error={error}
+      onReset={() => void refetch()}
+      showBackHomeLink={false}
+    />
+  ))
+  .otherwise(() => null)
+```
+
+Rules:
+
+- Match on the **query result object** (`match(accountsQuery)`), not individual flags like `isPending`.
+- Always handle `status: 'success'` explicitly — do not fold loaded UI into `.otherwise()`.
+- For section- or form-level queries, handle `status: 'error'` with `ErrorMessage` — pass `error`, wire `onReset` to `refetch`, and set `showBackHomeLink={false}` when the user is already inside the app shell.
+- Colocate skeleton components below the main export (revealing pattern).
+- Hooks (`useForm`, `useMutation`, etc.) still run unconditionally **before** the `match` return — only **derived data values** move into the success branch.
+
 ### Pattern: write data
 
 Use `useMutation` in the component that triggers the action:
@@ -461,6 +690,52 @@ const markAsReadMutation = useMutation({
 ```
 
 Keep mutation logic in the component (or a colocated hook) that owns the UI — not in `src/hooks/` unless the same mutation is shared across pages.
+
+### Pattern: user feedback with `toast.promise`
+
+For form submissions and other user-initiated writes, surface loading/success/error with `toast.promise` from `sonner` — not separate `toast.success` / `toast.error` calls in `onSuccess` / `onError`.
+
+Wrap `mutateAsync` (not `mutate`) so the toast tracks the promise lifecycle:
+
+```tsx
+import { toast } from 'sonner'
+
+import { getErrorMessage } from '@/lib/utils'
+
+const updatePasswordMutation = useMutation({
+  mutationFn: (values: UpdatePasswordValues) =>
+    getDataOrThrow(
+      honoClient.api.user['change-password'].$post({ json: values }),
+    ),
+})
+
+const handleSubmit = (values: UpdatePasswordValues) => {
+  void toast
+    .promise(updatePasswordMutation.mutateAsync(values), {
+      loading: 'Updating password...',
+      success: 'Password updated',
+      error: (error) => ({
+        message: 'Unable to update password',
+        description: getErrorMessage(error),
+      }),
+    })
+    .unwrap()
+    .then(() => form.reset())
+    .catch((error: unknown) => {
+      form.setError('currentPassword', {
+        message: getErrorMessage(error),
+      })
+    })
+}
+```
+
+Rules:
+
+- Use `toast.promise` for user-facing mutation feedback; keep `onSuccess` only for cache invalidation or other side effects that are not toast messages.
+- Chain `.unwrap()` after `toast.promise` to get the underlying promise (sonner v2).
+- Return `{ message, description }` from the `error` callback when a title and body are both needed.
+- Use `getErrorMessage` for the `description` — never surface raw error objects.
+- Reset the form in `.then()` after success; set field errors in `.catch()` when the form should reflect the failure.
 
 ### Rules
 
@@ -480,8 +755,13 @@ When moving or splitting components:
 - [ ] Sub-component now shared? → promote to `src/components/`
 - [ ] Imports updated to use `@/components/<name>` (directory import)
 - [ ] Query keys centralized in `src/hooks/` if fetch is shared
-- [ ] Props type named `ComponentProps`, `PropsWithChildren` / `WithBasicProps` applied as needed
+- [ ] Props type named `ComponentProps`
+- [ ] Accepts `children`? → `React.PropsWithChildren<{ ... }>` (never `children?: React.ReactNode`)
+- [ ] Styleable root element? → `WithBasicProps<{ ... }>` + `cn()` merge on root (required for `ui/`, layout wrappers in `-components/` / `src/components/`)
+- [ ] Both? → `WithBasicProps<React.PropsWithChildren<{ ... }>>`
 - [ ] No external layout (`margin`, `position`, offsets) on component — parent owns spacing/placement
+- [ ] Main export at top of file? → supporting skeletons, sub-components, and helpers below it (revealing pattern)
+- [ ] `useQuery` UI states? → `match(query).returnType<React.ReactNode>()` with explicit `pending` / `success` / `error` branches; derive values from `data` inside `success`, not `query.data?.` at top level; section UI errors use `ErrorMessage` + `refetch`
 
 ## Additional resources
 
