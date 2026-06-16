@@ -1,9 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { BellIcon, MailOpenIcon } from 'lucide-react'
 import { match } from 'ts-pattern'
 
 import NotificationCard from '@/components/notification-card/notification-card'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import {
   Empty,
@@ -11,6 +19,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from '@/components/ui/empty'
+import { PageContainer } from '@/components/ui/page-container'
 import { PageHeader } from '@/components/ui/page-header'
 import { Spinner } from '@/components/ui/spinner'
 import {
@@ -49,7 +58,20 @@ function NotificationsPage() {
   })
 
   return (
-    <div>
+    <PageContainer>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Notifications</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <PageHeader
         icon={<BellIcon />}
         title="Notifications"
@@ -66,7 +88,7 @@ function NotificationsPage() {
         }
       />
 
-      <div className="mt-6 space-y-3">
+      <div className="space-y-3">
         {match(notifications)
           .when(
             (n) => n.length === 0,
@@ -98,6 +120,6 @@ function NotificationsPage() {
             )),
           )}
       </div>
-    </div>
+    </PageContainer>
   )
 }

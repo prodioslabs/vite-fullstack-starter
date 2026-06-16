@@ -4,6 +4,7 @@ import { HomeIcon } from 'lucide-react'
 import { ErrorMessage } from '@/components/ui/error-message'
 import { FileUploader } from '@/components/ui/file-uploader'
 import { ImageUploader } from '@/components/ui/image-uploader'
+import { PageContainer } from '@/components/ui/page-container'
 import { PageHeader } from '@/components/ui/page-header'
 import { Spinner } from '@/components/ui/spinner'
 import { uploadFile, uploadImage } from '@/lib/upload'
@@ -29,7 +30,7 @@ export const Route = createFileRoute('/_app/')({
 
 function HomePage() {
   return (
-    <div className="space-y-8">
+    <PageContainer>
       <PageHeader
         icon={<HomeIcon />}
         title="Home"
@@ -43,6 +44,6 @@ function HomePage() {
         <div className="text-sm font-medium mb-2">Image Uploader</div>
         <ImageUploader imageUploadHandler={uploadImage} />
       </div>
-    </div>
+    </PageContainer>
   )
 }

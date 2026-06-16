@@ -7,10 +7,10 @@ import {
   forwardRef,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
 } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 
 import { Button } from './button'
 import { Input } from './input'
@@ -104,21 +104,18 @@ const SidebarProvider = forwardRef<
         : setOpen((open) => !open)
     }, [isMobile, setOpen, setOpenMobile])
 
-    // Adds a keyboard shortcut to toggle the sidebar.
-    useEffect(() => {
-      const handleKeyDown = (event: KeyboardEvent) => {
-        if (
-          event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
-          (event.metaKey || event.ctrlKey)
-        ) {
-          event.preventDefault()
-          toggleSidebar()
-        }
-      }
-
-      window.addEventListener('keydown', handleKeyDown)
-      return () => window.removeEventListener('keydown', handleKeyDown)
-    }, [toggleSidebar])
+    useHotkeys(
+      `mod+${SIDEBAR_KEYBOARD_SHORTCUT}`,
+      () => {
+        toggleSidebar()
+      },
+      {
+        preventDefault: true,
+        enableOnFormTags: false,
+        enableOnContentEditable: false,
+      },
+      [toggleSidebar],
+    )
 
     // We add a state so that we can do data-state="expanded" or "collapsed".
     // This makes it easier to style the sidebar with Tailwind classes.
