@@ -15,10 +15,10 @@ A fullstack monorepo starter using **Vite**, **React**, **TanStack Router**, and
 ```
 .
 ├── apps/
-│   ├── client/          # Vite + React frontend (@repo/client)
-│   └── server/          # Hono API, workers, and cron jobs (@repo/server)
+│   ├── client/          # Vite + React frontend (@repo/client) — see [apps/client/README.md](apps/client/README.md)
+│   └── server/          # Hono API, workers, and cron jobs (@repo/server) — see [apps/server/README.md](apps/server/README.md)
 ├── packages/
-│   └── config/          # Shared ESLint and Prettier config (@repo/config)
+│   └── config/          # Shared ESLint and Prettier config (@repo/config) — see [packages/config/README.md](packages/config/README.md)
 ├── docker/              # Docker Compose for local infrastructure
 └── scripts/             # Root-level utility scripts
 ```
@@ -35,6 +35,10 @@ A fullstack monorepo starter using **Vite**, **React**, **TanStack Router**, and
 # Install dependencies
 bun install
 
+# Configure environment variables
+cp apps/client/.env.example apps/client/.env
+cp apps/server/.env.example apps/server/.env
+
 # Start infrastructure (Redis, MinIO, etc.)
 docker compose -f docker/docker-compose.yaml up -d
 
@@ -45,15 +49,23 @@ bun run db:migrate
 bun run dev
 ```
 
-The client runs on [http://localhost:5173](http://localhost:5173) by default. The server listens on port `3000`.
+The client runs at [http://localhost:5173](http://localhost:5173) by default. The server listens on port `3000`.
+
+Copy the `.env.example` files and adjust values for your local setup. The server example includes defaults that match `docker/docker-compose.yaml` (Redis on `6379`, MinIO on `9000`).
 
 ### Environment variables
+
+Example files live at `apps/client/.env.example` and `apps/server/.env.example`. See the package READMEs for full details:
+
+- [Client environment variables](apps/client/README.md#environment-variables)
+- [Server environment variables](apps/server/README.md#environment-variables)
+- [Server runtime subsystems](apps/server/README.md#runtime-subsystems) — `ENABLE_HTTP_SERVER`, `ENABLE_QUEUE_WORKERS`, `ENABLE_CRON`
 
 **Client** (`apps/client`):
 
 | Variable | Description |
 | --- | --- |
-| `VITE_API_BASE_URL` | Base URL of the API server |
+| `VITE_API_BASE_URL` | Base URL of the API server (embedded at build time) |
 
 **Server** (`apps/server`):
 
@@ -66,8 +78,11 @@ The client runs on [http://localhost:5173](http://localhost:5173) by default. Th
 | `BETTER_AUTH_URL` | Auth server URL (default: `http://localhost:3000`) |
 | `APP_BASE_URL` | Frontend URL for emails and links (default: `http://localhost:5173`) |
 | `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB` | Redis connection settings |
-| `S3_ENDPOINT`, `S3_PORT`, `S3_BUCKET` | Object storage settings |
-| `ENABLE_CRON`, `ENABLE_QUEUE_WORKERS`, `ENABLE_HTTP_SERVER` | Toggle subsystems (`true`/`false`) |
+| `S3_ENDPOINT`, `S3_PORT`, `S3_USE_SSL`, `S3_BUCKET` | Object storage settings |
+| `ENABLE_HTTP_SERVER` | Enable the HTTP API server (default: `true`) |
+| `ENABLE_QUEUE_WORKERS` | Enable BullMQ background workers (default: `true`) |
+| `ENABLE_CRON` | Enable scheduled cron jobs (default: `true`) |
+| `NODE_ENV`, `PORT` | Runtime mode and HTTP port (default: `3000`) |
 | `LOKI_HOST`, `LOKI_USERNAME`, `LOKI_PASSWORD` | Optional log shipping to Grafana Loki |
 | `SMTP_USER`, `SMTP_PASSWORD` | Optional email delivery |
 
@@ -172,7 +187,15 @@ docker build \
 
 ### Run containers
 
-The server image expects runtime environment variables (see [Environment variables](#environment-variables) above). Example:
+The server image expects runtime environment variables (see [Environment variables](#environment-variables) above). Pass them with `-e` flags or an env file:
+
+```bash
+docker run --rm -p 3000:3000 \
+  --env-file apps/server/.env \
+  vite-fullstack-starter-server
+```
+
+Or pass variables individually:
 
 ```bash
 docker run --rm -p 3000:3000 \
@@ -182,6 +205,8 @@ docker run --rm -p 3000:3000 \
   -e S3_SECRET_KEY=minioadmin \
   vite-fullstack-starter-server
 ```
+
+To run API-only, worker-only, or cron-only containers, set the `ENABLE_*` flags — see [Server runtime subsystems](apps/server/README.md#runtime-subsystems).
 
 ```bash
 docker run --rm -p 8080:80 vite-fullstack-starter-client

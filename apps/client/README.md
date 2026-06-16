@@ -9,12 +9,14 @@ See the [root README](../../README.md) for monorepo setup, infrastructure, and D
 From the repository root:
 
 ```bash
+cp apps/client/.env.example apps/client/.env
 bun run --filter=@repo/client dev
 ```
 
 Or from this directory after installing dependencies at the root:
 
 ```bash
+cp .env.example .env
 bun run dev
 ```
 
@@ -22,13 +24,17 @@ The dev server runs at [http://localhost:5173](http://localhost:5173) by default
 
 ## Environment variables
 
-Create a `.env` file in this directory (or set variables in your shell):
+Copy [`.env.example`](.env.example) to `.env` and adjust values:
+
+```bash
+cp .env.example .env
+```
 
 | Variable | Description |
 | --- | --- |
 | `VITE_API_BASE_URL` | Base URL of the API server (for example `http://localhost:3000`) |
 
-`VITE_*` variables are embedded at build time.
+`VITE_*` variables are embedded at build time. For Docker builds, pass `VITE_API_BASE_URL` as a `--build-arg` instead.
 
 ## Scripts
 

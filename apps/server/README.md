@@ -9,12 +9,14 @@ See the [root README](../../README.md) for monorepo setup, infrastructure, and D
 From the repository root:
 
 ```bash
+cp apps/server/.env.example apps/server/.env
 bun run --filter=@repo/server dev
 ```
 
 Or from this directory after installing dependencies at the root:
 
 ```bash
+cp .env.example .env
 bun run dev
 ```
 
@@ -113,7 +115,13 @@ ENABLE_CRON=true
 
 ## Environment variables
 
-Create a `.env` file in this directory (or set variables in your shell):
+Copy [`.env.example`](.env.example) to `.env` and adjust values:
+
+```bash
+cp .env.example .env
+```
+
+The example file includes defaults for local development that align with `docker/docker-compose.yaml` (Redis, MinIO).
 
 | Variable | Description |
 | --- | --- |
@@ -124,7 +132,9 @@ Create a `.env` file in this directory (or set variables in your shell):
 | `BETTER_AUTH_URL` | Auth server URL (default: `http://localhost:3000`) |
 | `APP_BASE_URL` | Frontend URL for emails and links (default: `http://localhost:5173`) |
 | `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB` | Redis connection settings |
-| `S3_ENDPOINT`, `S3_PORT`, `S3_BUCKET` | Object storage settings |
+| `S3_ENDPOINT`, `S3_PORT`, `S3_USE_SSL`, `S3_BUCKET` | Object storage settings |
+| `NODE_ENV` | Runtime mode (default: `development`) |
+| `PORT` | HTTP server port (default: `3000`) |
 | `ENABLE_CRON` | Enable scheduled cron jobs (default: `true`) — see [Runtime subsystems](#runtime-subsystems) |
 | `ENABLE_QUEUE_WORKERS` | Enable BullMQ background workers (default: `true`) — see [Runtime subsystems](#runtime-subsystems) |
 | `ENABLE_HTTP_SERVER` | Enable the HTTP API server (default: `true`) — see [Runtime subsystems](#runtime-subsystems) |
@@ -213,4 +223,12 @@ docker build \
   .
 ```
 
-Run with the required environment variables (see above). The container exposes port `3000`.
+Run with the required environment variables. The container exposes port `3000`:
+
+```bash
+docker run --rm -p 3000:3000 \
+  --env-file apps/server/.env \
+  vite-fullstack-starter-server
+```
+
+Use the `ENABLE_*` flags to run API-only, worker-only, or cron-only containers — see [Deployment examples](#deployment-examples).
