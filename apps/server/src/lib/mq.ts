@@ -7,8 +7,7 @@ import {
 } from 'bullmq'
 
 import { logger } from './logger'
-import { redisClient, redisOptions } from './redis'
-import { env } from './env'
+import { redisOptions } from './redis'
 
 export function createQueue<DataType = unknown>(
   queueName: string,

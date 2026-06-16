@@ -35,7 +35,7 @@ export function Uploader({
     >
       <input {...getInputProps()} />
       <div className="flex h-full flex-col items-center justify-center">
-        <UploadIcon className="mb-2 h-6 w-6 text-muted-foreground" />
+        <UploadIcon className="mb-2 size-6  text-muted-foreground" />
         <div className="text-sm text-muted-foreground text-center">
           {isDragActive ? (
             <>Drop the files here ...</>

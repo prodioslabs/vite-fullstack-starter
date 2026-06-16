@@ -46,11 +46,11 @@ export const buttonVariants = cva(
   },
 )
 
-const iconVariants = cva('flex-shrink-0', {
+const iconVariants = cva('shrink-0', {
   variants: {
     type: {
-      withChildren: '!h-4 !w-4',
-      withoutChildren: 'block !h-4 !w-4',
+      withChildren: 'size-4! ',
+      withoutChildren: 'block size-4! ',
     },
   },
   defaultVariants: {

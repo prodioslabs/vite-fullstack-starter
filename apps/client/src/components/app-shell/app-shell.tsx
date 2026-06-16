@@ -118,7 +118,7 @@ export default function AppShell({ user, children }: AppShellProps) {
                   <div className="flex aspect-square size-8 items-center justify-center">
                     <Logo className="size-12" />
                   </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
+                  <div className="grid flex-1 text-left text-sm/tight ">
                     <span className="truncate font-semibold">
                       Vite Full Stack
                     </span>
@@ -176,7 +176,7 @@ export default function AppShell({ user, children }: AppShellProps) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton size="lg">
-                    <Avatar className="h-8 w-8 rounded-lg">
+                    <Avatar className="size-8  rounded-lg">
                       <AvatarImage
                         src={user.image ?? undefined}
                         alt={user.name}
@@ -185,7 +185,7 @@ export default function AppShell({ user, children }: AppShellProps) {
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
+                    <div className="grid flex-1 text-left text-sm/tight ">
                       <span className="truncate font-medium">{user.name}</span>
                       <span className="truncate text-xs text-muted-foreground">
                         {user.email}
@@ -203,7 +203,7 @@ export default function AppShell({ user, children }: AppShellProps) {
                 >
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                      <Avatar className="h-8 w-8 rounded-lg">
+                      <Avatar className="size-8  rounded-lg">
                         {user.image ? (
                           <AvatarImage src={user.image} alt={user.name} />
                         ) : null}
@@ -211,7 +211,7 @@ export default function AppShell({ user, children }: AppShellProps) {
                           {getInitials(user.name)}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
+                      <div className="grid flex-1 text-left text-sm/tight ">
                         <span className="truncate font-medium">
                           {user.name}
                         </span>
