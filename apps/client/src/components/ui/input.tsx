@@ -5,8 +5,7 @@ import { match } from 'ts-pattern'
 import { Toggle } from '@/components/ui/toggle'
 import { cn } from '@/lib/utils'
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   addonBefore?: React.ReactNode
 }
 

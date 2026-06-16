@@ -4,11 +4,11 @@ A fullstack monorepo starter using **Vite**, **React**, **TanStack Router**, and
 
 ## Tech stack
 
-| Layer | Technologies |
-| --- | --- |
-| Client | React 19, Vite, TanStack Router, TanStack Query, Tailwind CSS, shadcn/ui |
-| Server | Bun, Hono, Drizzle ORM, Better Auth, BullMQ, Redis, MinIO |
-| Tooling | TypeScript, ESLint, Prettier, Turbo |
+| Layer   | Technologies                                                             |
+| ------- | ------------------------------------------------------------------------ |
+| Client  | React 19, Vite, TanStack Router, TanStack Query, Tailwind CSS, shadcn/ui |
+| Server  | Bun, Hono, Drizzle ORM, Better Auth, BullMQ, Redis, MinIO                |
+| Tooling | TypeScript, ESLint, Prettier, Turbo                                      |
 
 ## Project structure
 
@@ -63,28 +63,28 @@ Example files live at `apps/client/.env.example` and `apps/server/.env.example`.
 
 **Client** (`apps/client`):
 
-| Variable | Description |
-| --- | --- |
+| Variable            | Description                                         |
+| ------------------- | --------------------------------------------------- |
 | `VITE_API_BASE_URL` | Base URL of the API server (embedded at build time) |
 
 **Server** (`apps/server`):
 
-| Variable | Description |
-| --- | --- |
-| `DATABASE_URL` | PostgreSQL connection string (`postgresql://…`) |
-| `HEALTHCHECK_API_KEY` | API key for health checks (min. 32 characters) |
-| `S3_ACCESS_KEY` / `S3_SECRET_KEY` | MinIO / S3 credentials |
-| `CORS_ORIGIN` | Allowed CORS origin (default: `http://localhost:5173`) |
-| `BETTER_AUTH_URL` | Auth server URL (default: `http://localhost:3000`) |
-| `APP_BASE_URL` | Frontend URL for emails and links (default: `http://localhost:5173`) |
-| `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB` | Redis connection settings |
-| `S3_ENDPOINT`, `S3_PORT`, `S3_USE_SSL`, `S3_BUCKET` | Object storage settings |
-| `ENABLE_HTTP_SERVER` | Enable the HTTP API server (default: `true`) |
-| `ENABLE_QUEUE_WORKERS` | Enable BullMQ background workers (default: `true`) |
-| `ENABLE_CRON` | Enable scheduled cron jobs (default: `true`) |
-| `NODE_ENV`, `PORT` | Runtime mode and HTTP port (default: `3000`) |
-| `LOKI_HOST`, `LOKI_USERNAME`, `LOKI_PASSWORD` | Optional log shipping to Grafana Loki |
-| `SMTP_USER`, `SMTP_PASSWORD` | Optional email delivery |
+| Variable                                            | Description                                                          |
+| --------------------------------------------------- | -------------------------------------------------------------------- |
+| `DATABASE_URL`                                      | PostgreSQL connection string (`postgresql://…`)                      |
+| `HEALTHCHECK_API_KEY`                               | API key for health checks (min. 32 characters)                       |
+| `S3_ACCESS_KEY` / `S3_SECRET_KEY`                   | MinIO / S3 credentials                                               |
+| `CORS_ORIGIN`                                       | Allowed CORS origin (default: `http://localhost:5173`)               |
+| `BETTER_AUTH_URL`                                   | Auth server URL (default: `http://localhost:3000`)                   |
+| `APP_BASE_URL`                                      | Frontend URL for emails and links (default: `http://localhost:5173`) |
+| `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB`              | Redis connection settings                                            |
+| `S3_ENDPOINT`, `S3_PORT`, `S3_USE_SSL`, `S3_BUCKET` | Object storage settings                                              |
+| `ENABLE_HTTP_SERVER`                                | Enable the HTTP API server (default: `true`)                         |
+| `ENABLE_QUEUE_WORKERS`                              | Enable BullMQ background workers (default: `true`)                   |
+| `ENABLE_CRON`                                       | Enable scheduled cron jobs (default: `true`)                         |
+| `NODE_ENV`, `PORT`                                  | Runtime mode and HTTP port (default: `3000`)                         |
+| `LOKI_HOST`, `LOKI_USERNAME`, `LOKI_PASSWORD`       | Optional log shipping to Grafana Loki                                |
+| `SMTP_USER`, `SMTP_PASSWORD`                        | Optional email delivery                                              |
 
 ## Scripts
 
@@ -92,59 +92,59 @@ Scripts are defined per package and orchestrated from the root. Run any script f
 
 ### Root (`package.json`)
 
-| Script | Description |
-| --- | --- |
-| `dev` | Starts all packages in dev mode via Turbo (client Vite server + server with watch) |
-| `build` | Builds all packages via Turbo (`server` must build before dependents) |
-| `clean` | Removes `node_modules` and `dist` directories across the monorepo |
-| `lint` | Runs root ESLint and workspace lint in parallel |
-| `lint:root` | Lints root-level `*.{ts,js}` and `scripts/**/*.{ts,js}` |
-| `lint:workspace` | Runs `lint` in every workspace package via Turbo |
-| `format` | Runs root Prettier and workspace format in parallel |
-| `format:root` | Formats root-level `*.{ts,js,json,md}` and `scripts/**/*` |
-| `format:workspace` | Runs `format` in every workspace package via Turbo |
-| `typecheck` | Type-checks all packages via Turbo |
-| `typecheck:watch` | Runs `typecheck:watch` in all packages via Turbo |
-| `match-versions` | Syncs dependency versions across workspaces (`prematch-versions` runs `bun install` first) |
-| `db:generate` | Generates Drizzle migrations in `@repo/server` |
-| `db:migrate` | Applies Drizzle migrations in `@repo/server` |
-| `db:seed` | Forwards to `@repo/server` (script not yet defined in the server package) |
+| Script             | Description                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| `dev`              | Starts all packages in dev mode via Turbo (client Vite server + server with watch)         |
+| `build`            | Builds all packages via Turbo (`server` must build before dependents)                      |
+| `clean`            | Removes `node_modules` and `dist` directories across the monorepo                          |
+| `lint`             | Runs root ESLint and workspace lint in parallel                                            |
+| `lint:root`        | Lints root-level `*.{ts,js}` and `scripts/**/*.{ts,js}`                                    |
+| `lint:workspace`   | Runs `lint` in every workspace package via Turbo                                           |
+| `format`           | Runs root Prettier and workspace format in parallel                                        |
+| `format:root`      | Formats root-level `*.{ts,js,json,md}` and `scripts/**/*`                                  |
+| `format:workspace` | Runs `format` in every workspace package via Turbo                                         |
+| `typecheck`        | Type-checks all packages via Turbo                                                         |
+| `typecheck:watch`  | Runs `typecheck:watch` in all packages via Turbo                                           |
+| `match-versions`   | Syncs dependency versions across workspaces (`prematch-versions` runs `bun install` first) |
+| `db:generate`      | Generates Drizzle migrations in `@repo/server`                                             |
+| `db:migrate`       | Applies Drizzle migrations in `@repo/server`                                               |
+| `db:seed`          | Forwards to `@repo/server` (script not yet defined in the server package)                  |
 
 ### Client — `@repo/client` (`apps/client/package.json`)
 
-| Script | Description |
-| --- | --- |
-| `dev` | Starts the Vite development server with HMR |
-| `build` | Type-checks with `tsc`, then produces a production build with Vite |
-| `preview` | Serves the production build locally for testing |
-| `lint` | Runs ESLint with auto-fix on the client source |
-| `format` | Formats client files with Prettier |
-| `typecheck` | Runs `tsc --noEmit` to verify types without emitting files |
-| `typecheck:watch` | Runs `tsc --watch --noEmit` for continuous type checking |
+| Script            | Description                                                        |
+| ----------------- | ------------------------------------------------------------------ |
+| `dev`             | Starts the Vite development server with HMR                        |
+| `build`           | Type-checks with `tsc`, then produces a production build with Vite |
+| `preview`         | Serves the production build locally for testing                    |
+| `lint`            | Runs ESLint with auto-fix on the client source                     |
+| `format`          | Formats client files with Prettier                                 |
+| `typecheck`       | Runs `tsc --noEmit` to verify types without emitting files         |
+| `typecheck:watch` | Runs `tsc --watch --noEmit` for continuous type checking           |
 
 ### Server — `@repo/server` (`apps/server/package.json`)
 
-| Script | Description |
-| --- | --- |
-| `dev` | Starts the server with Bun in watch mode (`src/index.ts`) |
-| `prebuild` | Cleans the `dist` directory before building |
-| `build` | Bundles the server for production via `scripts/build.ts` |
-| `start` | Runs the compiled server from `dist/index.js` |
-| `db:generate` | Generates Drizzle ORM migration files from schema changes |
-| `db:migrate` | Applies pending Drizzle migrations to the database |
-| `lint` | Runs ESLint with auto-fix on the server source |
-| `format` | Formats server files with Prettier |
-| `typecheck` | Runs `tsc --noEmit` to verify types without emitting files |
-| `typecheck:watch` | Runs `tsc --watch --noEmit` for continuous type checking |
+| Script            | Description                                                |
+| ----------------- | ---------------------------------------------------------- |
+| `dev`             | Starts the server with Bun in watch mode (`src/index.ts`)  |
+| `prebuild`        | Cleans the `dist` directory before building                |
+| `build`           | Bundles the server for production via `scripts/build.ts`   |
+| `start`           | Runs the compiled server from `dist/index.js`              |
+| `db:generate`     | Generates Drizzle ORM migration files from schema changes  |
+| `db:migrate`      | Applies pending Drizzle migrations to the database         |
+| `lint`            | Runs ESLint with auto-fix on the server source             |
+| `format`          | Formats server files with Prettier                         |
+| `typecheck`       | Runs `tsc --noEmit` to verify types without emitting files |
+| `typecheck:watch` | Runs `tsc --watch --noEmit` for continuous type checking   |
 
 ### Config — `@repo/config` (`packages/config/package.json`)
 
 Shared tooling package. It does not expose `dev`, `build`, or `typecheck` scripts — it provides ESLint and Prettier configuration consumed by other packages.
 
-| Script | Description |
-| --- | --- |
-| `lint` | Runs ESLint with auto-fix on the config package |
-| `format` | Formats config files with Prettier |
+| Script   | Description                                     |
+| -------- | ----------------------------------------------- |
+| `lint`   | Runs ESLint with auto-fix on the config package |
+| `format` | Formats config files with Prettier              |
 
 ## Running scripts in a single package
 
@@ -216,10 +216,10 @@ The client container serves the built SPA with [static-web-server](https://githu
 
 ### Image overview
 
-| Image | Dockerfile | Default port | Notes |
-| --- | --- | --- | --- |
-| Client | `apps/client/docker/Dockerfile` | `80` | Multi-stage: Bun installs deps and runs `bun run build --filter @repo/client`, then copies `apps/client/dist` into a static-web-server image |
-| Server | `apps/server/docker/Dockerfile` | `3000` | Multi-stage: Bun builds `@repo/server`, then runs `dist/index.js`; `sharp` is reinstalled in the final stage as a native dependency |
+| Image  | Dockerfile                      | Default port | Notes                                                                                                                                        |
+| ------ | ------------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Client | `apps/client/docker/Dockerfile` | `80`         | Multi-stage: Bun installs deps and runs `bun run build --filter @repo/client`, then copies `apps/client/dist` into a static-web-server image |
+| Server | `apps/server/docker/Dockerfile` | `3000`       | Multi-stage: Bun builds `@repo/server`, then runs `dist/index.js`; `sharp` is reinstalled in the final stage as a native dependency          |
 
 ### Local infrastructure
 

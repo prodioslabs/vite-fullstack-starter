@@ -6,11 +6,11 @@ See the [root README](../../README.md) for monorepo setup and workspace scripts.
 
 ## Contents
 
-| File | Purpose |
-| --- | --- |
-| `eslint.config.js` | Base ESLint flat config (TypeScript, import ordering, stylistic rules) |
-| `prettier.config.js` | Shared Prettier formatting options |
-| `base.json` | Shared TypeScript compiler options extended by workspace `tsconfig.json` files |
+| File                 | Purpose                                                                        |
+| -------------------- | ------------------------------------------------------------------------------ |
+| `eslint.config.js`   | Base ESLint flat config (TypeScript, import ordering, stylistic rules)         |
+| `prettier.config.js` | Shared Prettier formatting options                                             |
+| `base.json`          | Shared TypeScript compiler options extended by workspace `tsconfig.json` files |
 
 ## Usage
 
@@ -50,17 +50,17 @@ The shared config enforces:
 
 ## Base Prettier options
 
-| Option | Value |
-| --- | --- |
-| `semi` | `false` |
-| `singleQuote` | `true` |
+| Option          | Value   |
+| --------------- | ------- |
+| `semi`          | `false` |
+| `singleQuote`   | `true`  |
 | `trailingComma` | `'all'` |
 
 ## Scripts
 
-| Script | Description |
-| --- | --- |
-| `lint` | Runs ESLint with auto-fix on this package |
-| `format` | Formats files with Prettier |
+| Script   | Description                               |
+| -------- | ----------------------------------------- |
+| `lint`   | Runs ESLint with auto-fix on this package |
+| `format` | Formats files with Prettier               |
 
 This package does not define `dev`, `build`, or `typecheck` scripts. Linting and formatting are also run from the root via Turbo (`bun run lint`, `bun run format`).

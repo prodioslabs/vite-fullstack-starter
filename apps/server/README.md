@@ -28,11 +28,11 @@ On startup, `src/index.ts` conditionally bootstraps three subsystems. All three 
 
 The server process is split into three independently toggled subsystems. Each is controlled by a boolean environment variable (set the string `"true"` or `"false"`). This lets you run everything in one process locally, or split responsibilities across separate deployments in production.
 
-| Variable | Default | Bootstraps |
-| --- | --- | --- |
-| `ENABLE_HTTP_SERVER` | `true` | Hono API via `Bun.serve` |
-| `ENABLE_QUEUE_WORKERS` | `true` | BullMQ job processors |
-| `ENABLE_CRON` | `true` | Scheduled tasks via `croner` |
+| Variable               | Default | Bootstraps                   |
+| ---------------------- | ------- | ---------------------------- |
+| `ENABLE_HTTP_SERVER`   | `true`  | Hono API via `Bun.serve`     |
+| `ENABLE_QUEUE_WORKERS` | `true`  | BullMQ job processors        |
+| `ENABLE_CRON`          | `true`  | Scheduled tasks via `croner` |
 
 `src/index.ts` starts only the subsystems whose flags are enabled, then registers a shared graceful shutdown handler for `SIGTERM` and `SIGINT` that stops each bootstrapped subsystem in turn.
 
@@ -56,8 +56,8 @@ When enabled, `src/worker.ts` registers BullMQ workers that consume jobs from Re
 
 Current workers:
 
-| Worker | Queue | What it does |
-| --- | --- | --- |
+| Worker              | Queue                | What it does                                                                          |
+| ------------------- | -------------------- | ------------------------------------------------------------------------------------- |
 | Notification worker | `NOTIFICATION_QUEUE` | Processes `CREATE_NOTIFICATION` jobs and inserts notification records into PostgreSQL |
 
 Jobs are added to Redis queues by application code and processed asynchronously by these workers. If workers are disabled, queued jobs will accumulate in Redis and not be processed.
@@ -72,8 +72,8 @@ When enabled, `src/cron.ts` registers scheduled tasks using [`croner`](https://g
 
 Current jobs:
 
-| Job | Schedule | What it does |
-| --- | --- | --- |
+| Job                     | Schedule   | What it does                                             |
+| ----------------------- | ---------- | -------------------------------------------------------- |
 | `deleteExpiredCaptchas` | Every hour | Deletes captcha records whose `expiresAt` is in the past |
 
 Cron jobs run in-process and do not use Redis. They only need database access.
@@ -123,38 +123,38 @@ cp .env.example .env
 
 The example file includes defaults for local development that align with `docker/docker-compose.yaml` (Redis, MinIO).
 
-| Variable | Description |
-| --- | --- |
-| `DATABASE_URL` | PostgreSQL connection string (`postgresql://…`) |
-| `HEALTHCHECK_API_KEY` | API key for health checks (min. 32 characters) |
-| `S3_ACCESS_KEY` / `S3_SECRET_KEY` | MinIO / S3 credentials |
-| `CORS_ORIGIN` | Allowed CORS origin (default: `http://localhost:5173`) |
-| `BETTER_AUTH_URL` | Auth server URL (default: `http://localhost:3000`) |
-| `APP_BASE_URL` | Frontend URL for emails and links (default: `http://localhost:5173`) |
-| `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB` | Redis connection settings |
-| `S3_ENDPOINT`, `S3_PORT`, `S3_USE_SSL`, `S3_BUCKET` | Object storage settings |
-| `NODE_ENV` | Runtime mode (default: `development`) |
-| `PORT` | HTTP server port (default: `3000`) |
-| `ENABLE_CRON` | Enable scheduled cron jobs (default: `true`) — see [Runtime subsystems](#runtime-subsystems) |
-| `ENABLE_QUEUE_WORKERS` | Enable BullMQ background workers (default: `true`) — see [Runtime subsystems](#runtime-subsystems) |
-| `ENABLE_HTTP_SERVER` | Enable the HTTP API server (default: `true`) — see [Runtime subsystems](#runtime-subsystems) |
-| `LOKI_HOST`, `LOKI_USERNAME`, `LOKI_PASSWORD` | Optional log shipping to Grafana Loki |
-| `SMTP_USER`, `SMTP_PASSWORD` | Optional email delivery |
+| Variable                                            | Description                                                                                        |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                                      | PostgreSQL connection string (`postgresql://…`)                                                    |
+| `HEALTHCHECK_API_KEY`                               | API key for health checks (min. 32 characters)                                                     |
+| `S3_ACCESS_KEY` / `S3_SECRET_KEY`                   | MinIO / S3 credentials                                                                             |
+| `CORS_ORIGIN`                                       | Allowed CORS origin (default: `http://localhost:5173`)                                             |
+| `BETTER_AUTH_URL`                                   | Auth server URL (default: `http://localhost:3000`)                                                 |
+| `APP_BASE_URL`                                      | Frontend URL for emails and links (default: `http://localhost:5173`)                               |
+| `REDIS_HOST`, `REDIS_PORT`, `REDIS_DB`              | Redis connection settings                                                                          |
+| `S3_ENDPOINT`, `S3_PORT`, `S3_USE_SSL`, `S3_BUCKET` | Object storage settings                                                                            |
+| `NODE_ENV`                                          | Runtime mode (default: `development`)                                                              |
+| `PORT`                                              | HTTP server port (default: `3000`)                                                                 |
+| `ENABLE_CRON`                                       | Enable scheduled cron jobs (default: `true`) — see [Runtime subsystems](#runtime-subsystems)       |
+| `ENABLE_QUEUE_WORKERS`                              | Enable BullMQ background workers (default: `true`) — see [Runtime subsystems](#runtime-subsystems) |
+| `ENABLE_HTTP_SERVER`                                | Enable the HTTP API server (default: `true`) — see [Runtime subsystems](#runtime-subsystems)       |
+| `LOKI_HOST`, `LOKI_USERNAME`, `LOKI_PASSWORD`       | Optional log shipping to Grafana Loki                                                              |
+| `SMTP_USER`, `SMTP_PASSWORD`                        | Optional email delivery                                                                            |
 
 ## Scripts
 
-| Script | Description |
-| --- | --- |
-| `dev` | Starts the server with Bun in watch mode (`src/index.ts`) |
-| `prebuild` | Cleans the `dist` directory before building |
-| `build` | Bundles the server for production via `scripts/build.ts` |
-| `start` | Runs the compiled server from `dist/index.js` |
-| `db:generate` | Generates Drizzle ORM migration files from schema changes |
-| `db:migrate` | Applies pending Drizzle migrations to the database |
-| `lint` | Runs ESLint with auto-fix |
-| `format` | Formats files with Prettier |
-| `typecheck` | Runs `tsc --noEmit` |
-| `typecheck:watch` | Runs `tsc --watch --noEmit` |
+| Script            | Description                                               |
+| ----------------- | --------------------------------------------------------- |
+| `dev`             | Starts the server with Bun in watch mode (`src/index.ts`) |
+| `prebuild`        | Cleans the `dist` directory before building               |
+| `build`           | Bundles the server for production via `scripts/build.ts`  |
+| `start`           | Runs the compiled server from `dist/index.js`             |
+| `db:generate`     | Generates Drizzle ORM migration files from schema changes |
+| `db:migrate`      | Applies pending Drizzle migrations to the database        |
+| `lint`            | Runs ESLint with auto-fix                                 |
+| `format`          | Formats files with Prettier                               |
+| `typecheck`       | Runs `tsc --noEmit`                                       |
+| `typecheck:watch` | Runs `tsc --watch --noEmit`                               |
 
 Database commands can also be run from the root: `bun run db:generate` and `bun run db:migrate`.
 

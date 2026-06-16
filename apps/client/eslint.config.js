@@ -7,6 +7,9 @@ import globals from 'globals'
 export default defineConfig([
   ...defaultConfig,
   {
+    ignores: ['./src/routeTree.gen.ts'],
+  },
+  {
     files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
     plugins: {
       react,

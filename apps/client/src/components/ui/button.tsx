@@ -59,7 +59,8 @@ const iconVariants = cva('flex-shrink-0', {
 })
 
 export interface BaseButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }

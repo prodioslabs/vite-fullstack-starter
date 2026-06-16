@@ -30,23 +30,23 @@ Copy [`.env.example`](.env.example) to `.env` and adjust values:
 cp .env.example .env
 ```
 
-| Variable | Description |
-| --- | --- |
+| Variable            | Description                                                      |
+| ------------------- | ---------------------------------------------------------------- |
 | `VITE_API_BASE_URL` | Base URL of the API server (for example `http://localhost:3000`) |
 
 `VITE_*` variables are embedded at build time. For Docker builds, pass `VITE_API_BASE_URL` as a `--build-arg` instead.
 
 ## Scripts
 
-| Script | Description |
-| --- | --- |
-| `dev` | Starts the Vite development server with HMR |
-| `build` | Type-checks with `tsc`, then produces a production build with Vite |
-| `preview` | Serves the production build locally for testing |
-| `lint` | Runs ESLint with auto-fix |
-| `format` | Formats files with Prettier |
-| `typecheck` | Runs `tsc --noEmit` |
-| `typecheck:watch` | Runs `tsc --watch --noEmit` |
+| Script            | Description                                                        |
+| ----------------- | ------------------------------------------------------------------ |
+| `dev`             | Starts the Vite development server with HMR                        |
+| `build`           | Type-checks with `tsc`, then produces a production build with Vite |
+| `preview`         | Serves the production build locally for testing                    |
+| `lint`            | Runs ESLint with auto-fix                                          |
+| `format`          | Formats files with Prettier                                        |
+| `typecheck`       | Runs `tsc --noEmit`                                                |
+| `typecheck:watch` | Runs `tsc --watch --noEmit`                                        |
 
 ## Project structure
 
