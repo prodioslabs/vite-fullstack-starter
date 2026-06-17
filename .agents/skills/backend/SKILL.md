@@ -219,6 +219,21 @@ See `notification/notification.worker.ts` and `src/worker.ts` for the full patte
 - Keep helpers that are **only used within one module** here.
 - If a util is needed by two or more modules, move it to `src/lib/`.
 
+## Database schema
+
+Drizzle schemas live in `apps/server/src/db/schema/`. Export new tables from `schema/index.ts`. Import `db` from `../lib/db` (or `../../lib/db` from routers/workers).
+
+**Do not** edit or create files under `src/db/migrations/` manually — Drizzle Kit generates those from schema changes.
+
+After adding or changing schema files, **do not run** `db:generate` or `db:migrate` yourself. Ask the user to run them:
+
+```sh
+bun run db:generate
+bun run db:migrate
+```
+
+These can be run from the repo root or from `apps/server`.
+
 ## Checklist for new backend features
 
 ```
@@ -234,6 +249,11 @@ New module or endpoint
 ├─ Background job?
 │  ├─ Add <module>.worker.ts (zod schema, createQueue, createWorker)
 │  └─ Register in src/worker.ts → bootstrapWorkers()
-└─ Shared helper needed elsewhere?
-   └─ Move to src/lib/
+├─ Shared helper needed elsewhere?
+│  └─ Move to src/lib/
+└─ Database schema change?
+   ├─ Add or update files in src/db/schema/
+   ├─ Export from src/db/schema/index.ts
+   ├─ Do not write or edit src/db/migrations/ by hand
+   └─ Ask the user to run `bun run db:generate` then `bun run db:migrate`
 ```

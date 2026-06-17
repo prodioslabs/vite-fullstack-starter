@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { pgTable, text, boolean, timestamp, index } from 'drizzle-orm/pg-core'
 
+import { event, eventHistory, eventParticipant } from './event'
 import { file } from './file'
 import { notification } from './notification'
 
@@ -91,6 +92,9 @@ export const userRelations = relations(user, ({ many }) => ({
   accounts: many(account),
   filesUploaded: many(file),
   notifications: many(notification),
+  eventsCreated: many(event),
+  eventParticipations: many(eventParticipant),
+  eventHistoryEntries: many(eventHistory),
 }))
 
 export const sessionRelations = relations(session, ({ one }) => ({
