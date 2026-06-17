@@ -10,6 +10,7 @@ import { db } from '../lib/db'
 import { logger } from '../lib/logger'
 
 import { eventAccessMiddleware, eventOwnerMiddleware } from './event.middleware'
+import { queueEventNotifications } from './event.utils'
 
 const eventTimeSchema = z
   .object({
@@ -83,6 +84,19 @@ export const eventRouter = new Hono()
         })
 
         return record
+      })
+
+      await queueEventNotifications({
+        eventId: createdEvent.id,
+        eventName: createdEvent.name,
+        ownerId: createdEvent.createdById,
+        notificationType: 'EVENT_CREATED',
+        performedById: user.id,
+        metadata: {
+          startTime: createdEvent.startTime.toISOString(),
+          endTime: createdEvent.endTime?.toISOString() ?? null,
+          isEventAllDay: createdEvent.isEventAllDay,
+        },
       })
 
       return c.json({ event: createdEvent }, 201)
@@ -194,6 +208,14 @@ export const eventRouter = new Hono()
         return updated
       })
 
+      await queueEventNotifications({
+        eventId: cancelledEvent.id,
+        eventName: cancelledEvent.name,
+        ownerId: cancelledEvent.createdById,
+        notificationType: 'EVENT_CANCELLED',
+        performedById: user.id,
+      })
+
       return c.json({ event: cancelledEvent })
     },
   )
@@ -252,6 +274,134 @@ export const eventRouter = new Hono()
         return updated
       })
 
+      await queueEventNotifications({
+        eventId: rescheduledEvent.id,
+        eventName: rescheduledEvent.name,
+        ownerId: rescheduledEvent.createdById,
+        notificationType: 'EVENT_RESCHEDULED',
+        performedById: user.id,
+        metadata: {
+          startTime: rescheduledEvent.startTime.toISOString(),
+          endTime: rescheduledEvent.endTime?.toISOString() ?? null,
+          isEventAllDay: rescheduledEvent.isEventAllDay,
+          previousStartTime: record.startTime.toISOString(),
+          previousEndTime: record.endTime?.toISOString() ?? null,
+          previousIsEventAllDay: record.isEventAllDay,
+        },
+      })
+
       return c.json({ event: rescheduledEvent })
+    },
+  )
+  .post(
+    '/:id/update',
+    authMiddleware,
+    eventIdParamValidator,
+    eventOwnerMiddleware,
+    zValidator(
+      'json',
+      z
+        .object({
+          name: z.string().min(1).optional(),
+          description: z.string().optional(),
+          conferenceLink: z.string().url().optional(),
+          participantIds: z.array(z.string().min(1)).optional(),
+        })
+        .refine(
+          (data) =>
+            data.name !== undefined ||
+            data.description !== undefined ||
+            data.conferenceLink !== undefined ||
+            data.participantIds !== undefined,
+          { message: 'At least one field must be provided' },
+        ),
+    ),
+    async function updateEvent(c) {
+      const component = 'updateEvent'
+      const requestId = c.get('requestId')
+      const user = c.get('user')
+      const record = c.get('event')!
+      const body = c.req.valid('json')
+
+      logger.info(
+        { component, requestId, userId: user.id, eventId: record.id },
+        'updating event',
+      )
+
+      if (record.eventStatus === 'cancelled') {
+        throw new HTTPException(400, {
+          message: 'Cannot update a cancelled event',
+        })
+      }
+
+      const updatedEvent = await db.transaction(async (tx) => {
+        const [updated] = await tx
+          .update(event)
+          .set({
+            ...(body.name !== undefined && { name: body.name }),
+            ...(body.description !== undefined && {
+              description: body.description,
+            }),
+            ...(body.conferenceLink !== undefined && {
+              conferenceLink: body.conferenceLink,
+            }),
+          })
+          .where(eq(event.id, record.id))
+          .returning()
+
+        if (!updated) {
+          throw new HTTPException(500, { message: 'Failed to update event' })
+        }
+
+        if (body.participantIds !== undefined) {
+          await tx
+            .delete(eventParticipant)
+            .where(eq(eventParticipant.eventId, record.id))
+
+          if (body.participantIds.length > 0) {
+            await tx.insert(eventParticipant).values(
+              body.participantIds.map((userId) => ({
+                eventId: record.id,
+                userId,
+              })),
+            )
+          }
+        }
+
+        await tx.insert(eventHistory).values({
+          eventId: record.id,
+          action: 'updated',
+          performedById: user.id,
+          metadata: {
+            ...(body.name !== undefined && {
+              previousName: record.name,
+              name: body.name,
+            }),
+            ...(body.description !== undefined && {
+              previousDescription: record.description,
+              description: body.description,
+            }),
+            ...(body.conferenceLink !== undefined && {
+              previousConferenceLink: record.conferenceLink,
+              conferenceLink: body.conferenceLink,
+            }),
+            ...(body.participantIds !== undefined && {
+              participantIds: body.participantIds,
+            }),
+          },
+        })
+
+        return updated
+      })
+
+      await queueEventNotifications({
+        eventId: updatedEvent.id,
+        eventName: updatedEvent.name,
+        ownerId: updatedEvent.createdById,
+        notificationType: 'EVENT_UPDATED',
+        performedById: user.id,
+      })
+
+      return c.json({ event: updatedEvent })
     },
   )

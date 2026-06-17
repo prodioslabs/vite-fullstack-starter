@@ -30,4 +30,5 @@ export const logger = pino({
     targets: transportTargets,
   },
   base: { app: 'server', serverId: APP_SERVER_ID },
+  errorKey: 'error',
 })
