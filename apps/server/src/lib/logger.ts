@@ -1,4 +1,4 @@
-import { pino, type TransportTargetOptions } from 'pino'
+import { pino, type TransportTargetOptions, stdSerializers } from 'pino'
 
 import { env } from './env'
 import { APP_SERVER_ID } from './id'
@@ -30,5 +30,8 @@ export const logger = pino({
     targets: transportTargets,
   },
   base: { app: 'server', serverId: APP_SERVER_ID },
-  errorKey: 'error',
+  serializers: {
+    err: stdSerializers.err,
+    error: stdSerializers.err,
+  },
 })
