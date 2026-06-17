@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import {
   BellIcon,
+  CalendarIcon,
   ChevronsUpDownIcon,
   ContrastIcon,
   FolderIcon,
@@ -148,6 +149,9 @@ export default function AppShell({ user, children }: AppShellProps) {
                   <>
                     <NavLink icon={<Home />} to="/">
                       Home
+                    </NavLink>
+                    <NavLink icon={<CalendarIcon />} to="/calendar">
+                      Calendar
                     </NavLink>
                     <MenuGroup icon={<FolderKanbanIcon />} label="Projects">
                       <ShowForUserRole
