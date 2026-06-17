@@ -1,5 +1,6 @@
 import type { InferResponseType } from 'hono'
 
+import { env } from './env'
 import { getDataOrThrow, honoClient } from './hono'
 
 export type FileData = InferResponseType<
@@ -7,6 +8,12 @@ export type FileData = InferResponseType<
   201
 > &
   Record<string, unknown>
+
+export function getUploadedFileUrl(
+  file: Pick<FileData, 'bucket' | 'filename'>,
+) {
+  return `${env.VITE_API_BASE_URL}/api/file/${file.bucket}/${file.filename}`
+}
 
 export async function uploadFile(file: File) {
   return getDataOrThrow(

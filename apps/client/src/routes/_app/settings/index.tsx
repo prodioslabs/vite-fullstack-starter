@@ -58,7 +58,7 @@ function SettingsPage() {
           })
         }}
       >
-        <TabsList>
+        <TabsList variant="line">
           <TabsTrigger value="account">Account</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>

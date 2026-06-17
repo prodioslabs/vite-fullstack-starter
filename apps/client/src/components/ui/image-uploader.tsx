@@ -25,6 +25,7 @@ import { FilePreview } from './file-preview'
 import { Spinner } from './spinner'
 import { Uploader } from './uploader'
 
+import { getImageSize } from '@/lib/image'
 import type { FileData } from '@/lib/upload'
 
 const MAX_FILE_SIZE_IN_BYTES = 1024 * 1024 // 1 MB
@@ -203,19 +204,4 @@ export function ImageUploader({
       </Dialog>
     </>
   )
-}
-
-async function getImageSize(file: File) {
-  return new Promise<{ width: number; height: number }>((resolve, reject) => {
-    const fileReader = new FileReader()
-    fileReader.onload = function () {
-      const img = new Image()
-      img.onload = function () {
-        resolve({ width: img.naturalWidth, height: img.naturalHeight })
-      }
-      img.onerror = reject
-      img.src = fileReader.result as string
-    }
-    fileReader.readAsDataURL(file)
-  })
 }

@@ -1,5 +1,6 @@
 import { SettingsSection } from './settings-section'
 import UpdatePasswordForm from './update-password-form'
+import UpdatePersonalInfoForm from './update-personal-info-form'
 
 import { Separator } from '@/components/ui/separator'
 
@@ -9,7 +10,9 @@ export default function AccountSettings() {
       <SettingsSection
         title="Personal Information"
         description="Update your profile photo and personal details."
-      />
+      >
+        <UpdatePersonalInfoForm />
+      </SettingsSection>
       <Separator />
       <SettingsSection
         title="Update Password"
