@@ -9,6 +9,7 @@ import type { RedisValue } from 'ioredis'
 
 import { authRouter } from './auth/auth.router'
 import { captchaRouter } from './captcha/captcha.router'
+import { eventRouter } from './event/event.router'
 import { fileRouter } from './file/file.router'
 import { healthRouter } from './health/health.router'
 import type { AppContext } from './lib/context'
@@ -104,5 +105,6 @@ export const app = new Hono<{ Variables: AppContext }>()
   .route('/file', fileRouter)
   .route('/captcha', captchaRouter)
   .route('/notification', notificationRouter)
+  .route('/event', eventRouter)
 
 export type App = typeof app
