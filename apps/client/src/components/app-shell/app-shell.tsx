@@ -9,9 +9,11 @@ import {
   Home,
   MoonIcon,
   SearchIcon,
+  SettingsIcon,
   SunIcon,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useHotkeys } from 'react-hotkeys-hook'
 import { toast } from 'sonner'
 
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
@@ -74,18 +76,17 @@ export default function AppShell({ user, children }: AppShellProps) {
 
   const [commandOpen, setCommandOpen] = useState(false)
 
-  useEffect(function setCommandOpenShortcut() {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault()
-        setCommandOpen((open) => !open)
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [])
+  useHotkeys(
+    'mod+k',
+    () => {
+      setCommandOpen((open) => !open)
+    },
+    {
+      preventDefault: true,
+      enableOnFormTags: false,
+      enableOnContentEditable: false,
+    },
+  )
 
   const navigate = useNavigate()
 
@@ -108,7 +109,13 @@ export default function AppShell({ user, children }: AppShellProps) {
   })
 
   return (
-    <SidebarProvider>
+    <SidebarProvider
+      style={
+        {
+          '--header-height': '3rem',
+        } as React.CSSProperties
+      }
+    >
       <Sidebar collapsible="icon" variant="floating">
         <SidebarHeader>
           <SidebarMenu>
@@ -118,7 +125,7 @@ export default function AppShell({ user, children }: AppShellProps) {
                   <div className="flex aspect-square size-8 items-center justify-center">
                     <Logo className="size-12" />
                   </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
+                  <div className="grid flex-1 text-left text-sm/tight ">
                     <span className="truncate font-semibold">
                       Vite Full Stack
                     </span>
@@ -168,6 +175,18 @@ export default function AppShell({ user, children }: AppShellProps) {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel>Account</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <ShowForUserRole roles={['USER', 'SUPER_ADMIN', 'OFFICER']}>
+                  <NavLink to="/settings" icon={<SettingsIcon />}>
+                    Settings
+                  </NavLink>
+                </ShowForUserRole>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         </SidebarContent>
 
         <SidebarFooter>
@@ -176,7 +195,7 @@ export default function AppShell({ user, children }: AppShellProps) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton size="lg">
-                    <Avatar className="h-8 w-8 rounded-lg">
+                    <Avatar className="size-8  rounded-lg">
                       <AvatarImage
                         src={user.image ?? undefined}
                         alt={user.name}
@@ -185,7 +204,7 @@ export default function AppShell({ user, children }: AppShellProps) {
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
+                    <div className="grid flex-1 text-left text-sm/tight ">
                       <span className="truncate font-medium">{user.name}</span>
                       <span className="truncate text-xs text-muted-foreground">
                         {user.email}
@@ -203,7 +222,7 @@ export default function AppShell({ user, children }: AppShellProps) {
                 >
                   <DropdownMenuLabel className="p-0 font-normal">
                     <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                      <Avatar className="h-8 w-8 rounded-lg">
+                      <Avatar className="size-8  rounded-lg">
                         {user.image ? (
                           <AvatarImage src={user.image} alt={user.name} />
                         ) : null}
@@ -211,7 +230,7 @@ export default function AppShell({ user, children }: AppShellProps) {
                           {getInitials(user.name)}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
+                      <div className="grid flex-1 text-left text-sm/tight ">
                         <span className="truncate font-medium">
                           {user.name}
                         </span>
@@ -276,7 +295,7 @@ export default function AppShell({ user, children }: AppShellProps) {
       </Sidebar>
 
       <SidebarInset>
-        <header className="bg-background sticky top-0 z-50 flex h-12 shrink-0 items-center gap-4 border-b px-4">
+        <header className="bg-background sticky top-0 z-50 flex h-(--header-height) shrink-0 items-center gap-4 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <div className="flex-1" />
           <InputGroup
@@ -284,7 +303,9 @@ export default function AppShell({ user, children }: AppShellProps) {
             aria-label="Search"
             role="button"
             tabIndex={0}
-            onClick={() => setCommandOpen(true)}
+            onClick={() => {
+              setCommandOpen(true)
+            }}
           >
             <InputGroupAddon>
               <SearchIcon />
@@ -298,9 +319,7 @@ export default function AppShell({ user, children }: AppShellProps) {
             </InputGroupAddon>
           </InputGroup>
         </header>
-        <main className="flex flex-1 flex-col overflow-y-auto p-4">
-          {children}
-        </main>
+        <main className="flex flex-1 flex-col overflow-y-auto">{children}</main>
       </SidebarInset>
 
       <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>

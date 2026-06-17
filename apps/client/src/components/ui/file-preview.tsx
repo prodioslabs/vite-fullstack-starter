@@ -45,14 +45,11 @@ export function FilePreview({
 
   let icon: React.ReactNode
   if (fileUrl) {
-    icon = <img src={fileUrl} className="w-12 h-12 object-cover rounded-md" />
+    icon = <img src={fileUrl} className="size-12  object-cover rounded-md" />
   } else {
     const FileIcon = MIME_TYPE_ICONS[mimeType ?? ''] ?? FileSpreadsheetIcon
     icon = (
-      <FileIcon
-        className="w-12 h-12 text-muted-foreground"
-        strokeWidth={1.25}
-      />
+      <FileIcon className="size-12  text-muted-foreground" strokeWidth={1.25} />
     )
   }
 
@@ -92,17 +89,17 @@ export function FilePreview({
                 />
               </DialogTrigger>
 
-              <DialogContent className="max-w-screen-lg overflow-hidden">
+              <DialogContent className="max-w-5xl overflow-hidden">
                 <DialogHeader>
                   <DialogTitle>Preview</DialogTitle>
                 </DialogHeader>
 
                 {match(mimeType)
                   .with(P.string.startsWith('image/'), () => (
-                    <div className="flex items-center justify-center w-full h-full">
+                    <div className="flex items-center justify-center size-full ">
                       <img
                         src={fileUrl}
-                        className="object-contain w-[70%] h-[70%]"
+                        className="object-contain size-[70%] "
                       />
                     </div>
                   ))

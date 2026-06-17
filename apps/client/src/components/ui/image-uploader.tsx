@@ -25,6 +25,7 @@ import { FilePreview } from './file-preview'
 import { Spinner } from './spinner'
 import { Uploader } from './uploader'
 
+import { getImageSize } from '@/lib/image'
 import type { FileData } from '@/lib/upload'
 
 const MAX_FILE_SIZE_IN_BYTES = 1024 * 1024 // 1 MB
@@ -95,7 +96,7 @@ export function ImageUploader({
         style={style}
       >
         {progress !== 0 && progress !== 1 ? (
-          <div className="absolute left-0 right-0 top-0 h-1 overflow-hidden rounded-full">
+          <div className="absolute inset-x-0  top-0 h-1 overflow-hidden rounded-full">
             <div
               className="h-full bg-primary transition-all"
               style={{ width: `${progress * 100}%` }}
@@ -127,7 +128,7 @@ export function ImageUploader({
           }}
         />
         {uploadImageMutation.isPending ? (
-          <Spinner className="absolute right-3 top-3 h-4 w-4" />
+          <Spinner className="absolute right-3 top-3 size-4 " />
         ) : null}
         {value ? (
           <div className="relative mt-2">
@@ -149,7 +150,7 @@ export function ImageUploader({
               type="button"
               className="bg-card text-card-foreground absolute top-1 left-6 p-1 rounded flex items-center justify-center"
             >
-              <XIcon className="w-3 h-3" />
+              <XIcon className="size-3 " />
             </button>
           </div>
         ) : null}
@@ -203,19 +204,4 @@ export function ImageUploader({
       </Dialog>
     </>
   )
-}
-
-async function getImageSize(file: File) {
-  return new Promise<{ width: number; height: number }>((resolve, reject) => {
-    const fileReader = new FileReader()
-    fileReader.onload = function () {
-      const img = new Image()
-      img.onload = function () {
-        resolve({ width: img.naturalWidth, height: img.naturalHeight })
-      }
-      img.onerror = reject
-      img.src = fileReader.result as string
-    }
-    fileReader.readAsDataURL(file)
-  })
 }

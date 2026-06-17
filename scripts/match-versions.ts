@@ -1,99 +1,243 @@
+#!/usr/bin/env bun
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
-import { fileURLToPath } from 'node:url'
 
-import colors from 'picocolors'
-import * as z from 'zod'
+import { cancel, intro, isCancel, log, outro, select } from '@clack/prompts'
 
-const packagesDirs = ['.', 'packages', 'apps']
-const packageJSONSchema = z.object({
-  dependencies: z.record(z.string(), z.string()).optional(),
-  devDependencies: z.record(z.string(), z.string()).optional(),
-})
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const DEPENDENCY_FIELDS = [
+  'dependencies',
+  'devDependencies',
+  'peerDependencies',
+  'optionalDependencies',
+] as const
 
-async function main() {
-  const packageVersions = new Map<string, Set<string>>()
+type DependencyField = (typeof DEPENDENCY_FIELDS)[number]
 
-  const errors: string[] = []
+type PackageJson = {
+  name?: string
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+  peerDependencies?: Record<string, string>
+  optionalDependencies?: Record<string, string>
+  [key: string]: unknown
+}
 
-  async function parsePackageJSON(child: string, relPath: string) {
-    const packageJSONPath = path.resolve(relPath, 'package.json')
-    if (
-      await fs
-        .stat(packageJSONPath)
-        .then(() => true)
-        .catch(() => false)
-    ) {
-      const packageJSONContent = packageJSONSchema.parse(
-        JSON.parse(await fs.readFile(packageJSONPath, 'utf-8')),
-      )
-      const allDependencies = {
-        ...(packageJSONContent.dependencies ?? {}),
-        ...(packageJSONContent.devDependencies ?? {}),
-      }
-      for (const [packageName, version] of Object.entries(allDependencies)) {
-        if (version.startsWith('^')) {
-          errors.push(
-            `${child} - ${packageName} - ${version} is not pinned to exact version`,
-          )
-        }
+type DependencyRef = {
+  filePath: string
+  field: DependencyField
+  version: string
+}
 
-        if (packageVersions.has(packageName)) {
-          packageVersions.get(packageName)?.add(version)
-        } else {
-          packageVersions.set(packageName, new Set([version]))
-        }
-      }
-    }
-  }
+const ROOT = path.resolve(__dirname, '..')
 
-  for (const dir of packagesDirs) {
-    const dirPath = path.resolve(__dirname, '..', dir)
+function isSkippableVersion(version: string): boolean {
+  return (
+    version.startsWith('workspace:') ||
+    version.startsWith('file:') ||
+    version.startsWith('link:') ||
+    version.startsWith('npm:')
+  )
+}
 
-    const dirExists = await fs
-      .stat(dirPath)
-      .then((stat) => stat.isDirectory())
-      .catch(() => false)
-    if (!dirExists) {
-      // eslint-disable-next-line no-console
-      console.log(
-        colors.yellow(`directory ${dirPath} does not exist, skipping...`),
-      )
+function isPinned(version: string): boolean {
+  return /^\d/.test(version) && !/^[\^~>=<*]/.test(version)
+}
+
+function normalizeVersion(version: string): string {
+  if (isSkippableVersion(version)) return version
+  if (version === 'latest' || version === '*') return version
+
+  const match = version.match(/(\d+\.\d+\.\d+(?:[-+][\w.-]+)?)/)
+  return match?.[1] ?? version
+}
+
+async function findPackageJsonFiles(dir: string): Promise<Array<string>> {
+  const results: Array<string> = []
+  const entries = await fs.readdir(dir, { withFileTypes: true })
+
+  for (const entry of entries) {
+    if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
       continue
     }
 
-    const childrenPackages = await fs.readdir(dirPath)
-    for (const child of childrenPackages) {
-      const childPath = path.resolve(dirPath, child)
-      const stat = await fs.stat(childPath)
-      if (stat.isDirectory()) {
-        await parsePackageJSON(child, childPath)
-      } else if (stat.isFile() && child === 'package.json') {
-        await parsePackageJSON('.', dirPath)
+    const fullPath = path.join(dir, entry.name)
+
+    if (entry.isDirectory()) {
+      results.push(...(await findPackageJsonFiles(fullPath)))
+      continue
+    }
+
+    if (entry.isFile() && entry.name === 'package.json') {
+      results.push(fullPath)
+    }
+  }
+
+  return results
+}
+
+function collectDependencyRefs(
+  packageJsonFiles: Array<string>,
+  contents: Map<string, PackageJson>,
+): Map<string, Array<DependencyRef>> {
+  const byPackage = new Map<string, Array<DependencyRef>>()
+
+  for (const filePath of packageJsonFiles) {
+    const pkg = contents.get(filePath)
+    if (!pkg) continue
+
+    for (const field of DEPENDENCY_FIELDS) {
+      const deps = pkg[field]
+      if (!deps) continue
+
+      for (const [name, version] of Object.entries(deps)) {
+        if (isSkippableVersion(version)) continue
+
+        const refs = byPackage.get(name) ?? []
+        refs.push({ filePath, field, version })
+        byPackage.set(name, refs)
       }
     }
   }
-  for (const [packageName, versions] of packageVersions.entries()) {
-    if (versions.size !== 1) {
-      errors.push(
-        `${packageName} version mismatch - ${Array.from(versions).join(', ')}`,
-      )
-    }
-  }
 
-  if (errors.length > 0) {
-    // eslint-disable-next-line no-console
-    console.log(colors.red('version mismatches found:'))
-    for (const error of errors) {
-      // eslint-disable-next-line no-console
-      console.error(colors.red(`- ${error}`))
-    }
-    process.exit(1)
-  } else {
-    // eslint-disable-next-line no-console
-    console.log(colors.green('all package versions are consistent and pinned.'))
-  }
+  return byPackage
 }
 
-main()
+async function resolveTargetVersion(
+  packageName: string,
+  refs: Array<DependencyRef>,
+): Promise<string | null> {
+  const rawVersions = [...new Set(refs.map((ref) => ref.version))]
+  const normalizedVersions = [
+    ...new Set(rawVersions.map((version) => normalizeVersion(version))),
+  ]
+
+  const needsManualInput = normalizedVersions.some(
+    (version) => version === 'latest' || version === '*',
+  )
+
+  if (needsManualInput) {
+    log.warn(
+      `Skipping ${packageName}: uses "${rawVersions.join('", "')}" (cannot auto-pin).`,
+    )
+    return null
+  }
+
+  if (normalizedVersions.length === 1) {
+    return normalizedVersions[0]!
+  }
+
+  const options = normalizedVersions
+    .map((version) => {
+      const usages = refs.filter(
+        (ref) => normalizeVersion(ref.version) === version,
+      )
+      const locations = [
+        ...new Set(
+          usages.map((ref) => {
+            const relative = path.relative(ROOT, ref.filePath)
+            return `${relative} (${ref.field})`
+          }),
+        ),
+      ]
+
+      return {
+        value: version,
+        label: version,
+        hint: locations.join(', '),
+        count: usages.length,
+      }
+    })
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
+    .map(({ value, label, hint }) => ({ value, label, hint }))
+
+  const selected = await select({
+    message: `Multiple versions found for "${packageName}". Choose the pinned version:`,
+    options,
+  })
+
+  if (isCancel(selected)) {
+    cancel('Version matching cancelled.')
+    process.exit(0)
+  }
+
+  return selected
+}
+
+function applyPinnedVersions(
+  pkg: PackageJson,
+  pinnedVersions: Map<string, string>,
+): boolean {
+  let changed = false
+
+  for (const field of DEPENDENCY_FIELDS) {
+    const deps = pkg[field]
+    if (!deps) continue
+
+    for (const [name, version] of Object.entries(deps)) {
+      const target = pinnedVersions.get(name)
+      if (!target || version === target) continue
+
+      deps[name] = target
+      changed = true
+    }
+  }
+
+  return changed
+}
+
+async function main() {
+  intro('Match dependency versions across the monorepo')
+
+  const packageJsonFiles = (await findPackageJsonFiles(ROOT)).sort()
+  const contents = new Map<string, PackageJson>()
+
+  for (const filePath of packageJsonFiles) {
+    const raw = await fs.readFile(filePath, 'utf8')
+    contents.set(filePath, JSON.parse(raw) as PackageJson)
+  }
+
+  const dependencyRefs = collectDependencyRefs(packageJsonFiles, contents)
+  const pinnedVersions = new Map<string, string>()
+  let updatedFiles = 0
+
+  for (const [packageName, refs] of [...dependencyRefs.entries()].sort(
+    ([a], [b]) => a.localeCompare(b),
+  )) {
+    const targetVersion = await resolveTargetVersion(packageName, refs)
+    if (!targetVersion) continue
+
+    const alreadyPinned = refs.every(
+      (ref) => ref.version === targetVersion && isPinned(ref.version),
+    )
+
+    if (alreadyPinned) continue
+
+    pinnedVersions.set(packageName, targetVersion)
+  }
+
+  for (const filePath of packageJsonFiles) {
+    const pkg = contents.get(filePath)
+    if (!pkg) continue
+
+    const changed = applyPinnedVersions(pkg, pinnedVersions)
+    if (!changed) continue
+
+    await fs.writeFile(filePath, `${JSON.stringify(pkg, null, 2)}\n`)
+    updatedFiles += 1
+    log.info(`Updated ${path.relative(ROOT, filePath)}`)
+  }
+
+  if (pinnedVersions.size === 0) {
+    outro('All dependency versions are already pinned and aligned.')
+    return
+  }
+
+  outro(
+    `Pinned ${pinnedVersions.size} package(s) across ${updatedFiles} file(s). Run "bun install" to refresh the lockfile.`,
+  )
+}
+
+main().catch((error) => {
+  log.error(error)
+  process.exit(1)
+})

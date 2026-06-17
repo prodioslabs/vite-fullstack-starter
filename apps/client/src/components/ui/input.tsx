@@ -5,8 +5,7 @@ import { match } from 'ts-pattern'
 import { Toggle } from '@/components/ui/toggle'
 import { cn } from '@/lib/utils'
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   addonBefore?: React.ReactNode
 }
 
@@ -16,7 +15,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div
         className={cn(
-          'border-input focus-within:ring-ring flex h-8 w-full items-center overflow-hidden rounded-md border focus-within:ring-1 focus-within:outline-none has-[:disabled]:bg-muted',
+          'border-input focus-within:ring-ring flex h-8 w-full items-center overflow-hidden rounded-md border focus-within:ring-1 focus-within:outline-none has-disabled:bg-muted',
           className,
         )}
         style={style}
@@ -43,15 +42,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               disabled={props.disabled}
             >
               {passwordVisible ? (
-                <EyeOffIcon className="text-muted-foreground h-4 w-4" />
+                <EyeOffIcon className="text-muted-foreground size-4 " />
               ) : (
-                <EyeIcon className="text-muted-foreground h-4 w-4" />
+                <EyeIcon className="text-muted-foreground size-4 " />
               )}
             </Toggle>
           ))
           .with('search', () => (
             <div className="text-muted-foreground flex shrink-0 items-center justify-center self-stretch px-2">
-              <SearchIcon className="h-4 w-4" />
+              <SearchIcon className="size-4 " />
             </div>
           ))
           .otherwise(() => null)}

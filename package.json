@@ -9,13 +9,13 @@
     "packages/**"
   ],
   "scripts": {
-    "clean": "rimraf node_modules **/*/node_modules **/*/dist",
+    "clean": "rimraf node_modules **/*/node_modules **/*/dist **/*/.turbo",
     "prematch-versions": "bun install",
     "match-versions": "bun run scripts/match-versions.ts",
     "lint:root": "eslint --fix --cache --no-error-on-unmatched-pattern *.{ts,js} scripts/**/*.{ts,js}",
     "lint:workspace": "turbo run lint --ui=stream",
     "lint": "concurrently \"bun run lint:root\" \"bun run lint:workspace\"",
-    "format:root": "prettier --write --cache --no-error-on-unmatched-pattern --ignore-path ./.gitignore *.{ts,js,json,md} scripts/**/*.{ts,js,json,md}",
+    "format:root": "prettier --write --cache --no-error-on-unmatched-pattern --ignore-path ./.gitignore *.{ts,js,json,md} scripts/**/*.{ts,js,json,md} --ignore-path ./.prettierignore",
     "format:workspace": "turbo run format --ui=stream",
     "format": "concurrently \"bun run format:root\" \"bun run format:workspace\"",
     "typecheck": "turbo run typecheck --ui=stream",
@@ -27,20 +27,21 @@
     "db:seed": "bun --filter=@repo/server db:seed"
   },
   "dependencies": {
+    "@clack/prompts": "1.5.1",
     "picocolors": "1.1.1",
-    "zod": "4.3.6"
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@repo/config": "workspace:*",
-    "@types/bun": "1.3.11",
-    "@types/node": "25.5.1",
-    "concurrently": "9.2.1",
+    "@types/bun": "1.3.14",
+    "@types/node": "25.9.3",
+    "concurrently": "10.0.3",
     "eslint": "9.39.1",
-    "prettier": "3.5.3",
+    "prettier": "3.8.4",
     "rimraf": "6.1.3",
-    "turbo": "2.9.3"
+    "turbo": "2.9.18"
   },
   "peerDependencies": {
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   }
 }

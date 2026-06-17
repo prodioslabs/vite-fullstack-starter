@@ -17,6 +17,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/_auth/reset-pass
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/_auth/forgot-password'
 import { Route as AppNotificationsRouteImport } from './routes/_app/notifications'
+import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
 import { Route as AppProjectsIndexRouteImport } from './routes/_app/projects/index'
 
 const AuthRoute = AuthRouteImport.update({
@@ -57,6 +58,11 @@ const AppNotificationsRoute = AppNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProjectsIndexRoute = AppProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/projects/': typeof AppProjectsIndexRoute
+  '/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof AuthResetPasswordRoute
   '/signup': typeof AuthSignupRoute
   '/projects': typeof AppProjectsIndexRoute
+  '/settings': typeof AppSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/_auth/signup': typeof AuthSignupRoute
   '/_app/': typeof AppIndexRoute
   '/_app/projects/': typeof AppProjectsIndexRoute
+  '/_app/settings/': typeof AppSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/projects/'
+    | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -112,6 +122,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/projects'
+    | '/settings'
   id:
     | '__root__'
     | '/_app'
@@ -123,6 +134,7 @@ export interface FileRouteTypes {
     | '/_auth/signup'
     | '/_app/'
     | '/_app/projects/'
+    | '/_app/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -188,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNotificationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/settings/': {
+      id: '/_app/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AppSettingsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/projects/': {
       id: '/_app/projects/'
       path: '/projects'
@@ -202,12 +221,14 @@ interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppProjectsIndexRoute: typeof AppProjectsIndexRoute
+  AppSettingsIndexRoute: typeof AppSettingsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppIndexRoute: AppIndexRoute,
   AppProjectsIndexRoute: AppProjectsIndexRoute,
+  AppSettingsIndexRoute: AppSettingsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

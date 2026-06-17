@@ -61,7 +61,7 @@ export function FileUploader({
       style={style}
     >
       {progress !== 0 && progress !== 1 ? (
-        <div className="absolute left-0 right-0 top-0 h-1 overflow-hidden rounded-full">
+        <div className="absolute inset-x-0  top-0 h-1 overflow-hidden rounded-full">
           <div
             className="h-full bg-primary transition-all"
             style={{ width: `${progress * 100}%` }}
@@ -75,7 +75,7 @@ export function FileUploader({
         }}
       />
       {uploadFileMutation.isPending ? (
-        <Spinner className="absolute right-3 top-3 h-4 w-4" />
+        <Spinner className="absolute right-3 top-3 size-4 " />
       ) : null}
       {value ? (
         <div className="relative mt-2">
@@ -102,7 +102,7 @@ export function FileUploader({
           >
             <XIcon
               className={cn(
-                'w-3 h-3',
+                'size-3 ',
                 { 'cursor-not-allowed opacity-50': props.disabled },
                 className,
               )}

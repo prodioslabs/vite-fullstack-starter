@@ -19,7 +19,7 @@ export default function UnreadNotificationsCount({
     <div className={cn('inline-block', className)} style={style}>
       {match(getUnreadNotificationsQuery)
         .returnType<React.ReactNode>()
-        .with({ status: 'pending' }, () => <Spinner className="w-3 h-3" />)
+        .with({ status: 'pending' }, () => <Spinner className="size-3 " />)
         .with({ status: 'success' }, ({ data }) => (
           <div className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs">
             {data.count}
