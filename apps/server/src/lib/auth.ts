@@ -1,6 +1,7 @@
 import { render } from '@react-email/render'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { twoFactor } from 'better-auth/plugins'
 import { bearer } from 'better-auth/plugins/bearer'
 import { tryGetContext } from 'hono/context-storage'
 
@@ -61,7 +62,7 @@ export const auth = betterAuth({
     },
   },
   database: drizzleAdapter(db, { provider: 'pg', schema }),
-  plugins: [bearer()],
+  plugins: [bearer(), twoFactor()],
   logger: {
     disabled: false,
     disableColors: false,

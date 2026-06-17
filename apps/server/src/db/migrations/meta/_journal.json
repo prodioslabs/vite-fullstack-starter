@@ -15,6 +15,13 @@
       "when": 1776172096403,
       "tag": "0001_robust_sheva_callister",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781685481531,
+      "tag": "0002_lonely_james_howlett",
+      "breakpoints": true
     }
   ]
 }
