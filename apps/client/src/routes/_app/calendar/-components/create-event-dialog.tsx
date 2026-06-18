@@ -2,12 +2,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import dayjs from 'dayjs'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { DatePicker } from '@/components/ui/date-picker'
 import {
   Dialog,
   DialogClose,
@@ -27,6 +28,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { TimePicker } from '@/components/ui/time-picker'
 import { EVENTS_KEY } from '@/hooks/use-events'
 import { getDataOrThrow, honoClient } from '@/lib/hono'
 import { cn, getErrorMessage } from '@/lib/utils'
@@ -38,7 +40,7 @@ const createEventSchema = z
     isEventAllDay: z.boolean(),
     startTime: z.string().min(1, 'Start time is required'),
     endTime: z.string().optional(),
-    conferenceLink: z.string().optional(),
+    conferenceLink: z.url().optional(),
   })
   .superRefine((data, ctx) => {
     if (!data.isEventAllDay && !data.endTime) {
@@ -60,18 +62,6 @@ const createEventSchema = z
         path: ['endTime'],
       })
     }
-
-    const conferenceLink = data.conferenceLink?.trim()
-    if (conferenceLink) {
-      const parsed = z.string().url().safeParse(conferenceLink)
-      if (!parsed.success) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'Enter a valid URL',
-          path: ['conferenceLink'],
-        })
-      }
-    }
   })
 
 type CreateEventValues = z.infer<typeof createEventSchema>
@@ -82,6 +72,7 @@ type CreateEventDialogProps = {
   defaultSlot?: {
     start: Date
     end: Date
+    isAllDay?: boolean
   }
 }
 
@@ -98,7 +89,10 @@ export default function CreateEventDialog({
     defaultValues: getDefaultValues(defaultSlot),
   })
 
-  const isEventAllDay = form.watch('isEventAllDay')
+  const isEventAllDay = useWatch<CreateEventValues, 'isEventAllDay'>({
+    control: form.control,
+    name: 'isEventAllDay',
+  })
 
   const createEventMutation = useMutation({
     mutationFn: (values: CreateEventValues) =>
@@ -212,37 +206,23 @@ export default function CreateEventDialog({
             />
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="startTime"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel required>
-                      {isEventAllDay ? 'Start date' : 'Start time'}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type={isEventAllDay ? 'date' : 'datetime-local'}
-                        disabled={createEventMutation.isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {!isEventAllDay ? (
+              {isEventAllDay ? (
                 <FormField
                   control={form.control}
-                  name="endTime"
+                  name="startTime"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel required>End time</FormLabel>
+                    <FormItem className="sm:col-span-2">
+                      <FormLabel required>Start date</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          type="datetime-local"
+                        <DatePicker
+                          value={
+                            field.value
+                              ? dayjs(field.value).toDate()
+                              : undefined
+                          }
+                          onChange={(date) => {
+                            field.onChange(date ? toDateValue(date) : '')
+                          }}
                           disabled={createEventMutation.isPending}
                         />
                       </FormControl>
@@ -250,7 +230,108 @@ export default function CreateEventDialog({
                     </FormItem>
                   )}
                 />
-              ) : null}
+              ) : (
+                <div className="grid gap-4 sm:col-span-2 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="startTime"
+                    render={({ field }) => (
+                      <>
+                        <FormItem className="sm:col-span-2">
+                          <FormLabel required>Date</FormLabel>
+                          <FormControl>
+                            <DatePicker
+                              value={
+                                field.value
+                                  ? dayjs(field.value).toDate()
+                                  : undefined
+                              }
+                              onChange={(date) => {
+                                if (!date) {
+                                  return
+                                }
+
+                                const nextStart = combineDateAndTime(
+                                  date,
+                                  getTimeFromDatetime(field.value),
+                                )
+                                const endTime = form.getValues('endTime')
+                                const nextEnd = endTime
+                                  ? combineDateAndTime(
+                                      date,
+                                      getTimeFromDatetime(endTime),
+                                    )
+                                  : undefined
+
+                                field.onChange(nextStart)
+                                if (nextEnd) {
+                                  form.setValue('endTime', nextEnd)
+                                }
+                              }}
+                              disabled={createEventMutation.isPending}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+
+                        <FormItem>
+                          <FormLabel required>Start time</FormLabel>
+                          <FormControl>
+                            <TimePicker
+                              value={
+                                field.value
+                                  ? getTimeFromDatetime(field.value)
+                                  : ''
+                              }
+                              onChange={(event) => {
+                                const date = dayjs(field.value)
+                                  .startOf('day')
+                                  .toDate()
+
+                                field.onChange(
+                                  combineDateAndTime(date, event.target.value),
+                                )
+                              }}
+                              disabled={createEventMutation.isPending}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      </>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="endTime"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel required>End time</FormLabel>
+                        <FormControl>
+                          <TimePicker
+                            value={
+                              field.value
+                                ? getTimeFromDatetime(field.value)
+                                : ''
+                            }
+                            onChange={(event) => {
+                              const startTime = form.getValues('startTime')
+                              const date = dayjs(startTime)
+                                .startOf('day')
+                                .toDate()
+
+                              field.onChange(
+                                combineDateAndTime(date, event.target.value),
+                              )
+                            }}
+                            disabled={createEventMutation.isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
             </div>
 
             <FormField
@@ -297,7 +378,19 @@ export default function CreateEventDialog({
 function getDefaultValues(slot?: {
   start: Date
   end: Date
+  isAllDay?: boolean
 }): CreateEventValues {
+  if (slot?.isAllDay) {
+    return {
+      name: '',
+      description: '',
+      isEventAllDay: true,
+      startTime: toDateValue(slot.start),
+      endTime: undefined,
+      conferenceLink: '',
+    }
+  }
+
   const start = slot?.start ?? dayjs().startOf('hour').add(1, 'hour').toDate()
   const end = slot?.end ?? dayjs(start).add(1, 'hour').toDate()
 
@@ -311,8 +404,27 @@ function getDefaultValues(slot?: {
   }
 }
 
+function toDateValue(date: Date) {
+  return dayjs(date).format('YYYY-MM-DD')
+}
+
 function toDatetimeLocalValue(date: Date) {
   return dayjs(date).format('YYYY-MM-DDTHH:mm')
+}
+
+function getTimeFromDatetime(value: string) {
+  return dayjs(value).format('HH:mm')
+}
+
+function combineDateAndTime(date: Date, time: string) {
+  const [hours, minutes] = time.split(':').map(Number)
+
+  return dayjs(date)
+    .hour(hours)
+    .minute(minutes)
+    .second(0)
+    .millisecond(0)
+    .format('YYYY-MM-DDTHH:mm')
 }
 
 function toCreateEventPayload(values: CreateEventValues) {

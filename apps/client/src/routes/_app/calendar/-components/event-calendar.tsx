@@ -41,16 +41,24 @@ export default function EventCalendar({
 }: EventCalendarProps) {
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [selectedSlot, setSelectedSlot] = useState<
-    { start: Date; end: Date } | undefined
+    { start: Date; end: Date; isAllDay?: boolean } | undefined
   >()
 
-  const openCreateDialog = (slot?: { start: Date; end: Date }) => {
+  const openCreateDialog = (slot?: {
+    start: Date
+    end: Date
+    isAllDay?: boolean
+  }) => {
     setSelectedSlot(slot)
     setCreateDialogOpen(true)
   }
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
-    openCreateDialog({ start: slotInfo.start, end: slotInfo.end })
+    openCreateDialog({
+      start: slotInfo.start,
+      end: slotInfo.end,
+      isAllDay: view === 'month',
+    })
   }
 
   return (

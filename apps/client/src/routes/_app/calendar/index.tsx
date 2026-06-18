@@ -5,9 +5,7 @@ import { CalendarIcon } from 'lucide-react'
 import type { View } from 'react-big-calendar'
 import * as z from 'zod'
 
-import EventCalendar, {
-  type CalendarEvent,
-} from './-components/event-calendar'
+import EventCalendar, { type CalendarEvent } from './-components/event-calendar'
 
 import {
   Breadcrumb,
